@@ -1,0 +1,18 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type AuthResponse {
+  access_token: String!
+  expires_in: Float!
+  id_token: String
+  refresh_token: String!
+}
+
+type Mutation {
+  login(password: String!, username: String!): AuthResponse!
+}
+
+type Query {
+  hello: String!
+}
