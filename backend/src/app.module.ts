@@ -14,6 +14,7 @@ import { KeycloakModule } from './keycloak/keycloak.module';
 import { AuthResolver } from './auth/auth.resolver';
 import { join } from 'path';
 import { AuthModule } from './auth/auth.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [GraphQLModule.forRoot<ApolloDriverConfig>({
@@ -24,7 +25,9 @@ import { AuthModule } from './auth/auth.module';
       context: ({ req, res }) => ({ req, res }),
 
     }),
-
+    ConfigModule.forRoot({
+      isGlobal: true, 
+    }),
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: 'localhost',
