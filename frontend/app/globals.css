@@ -1,112 +1,197 @@
 @import "tailwindcss";
 
-/* Variables CSS pour shadcn avec vos couleurs */
-:root {
-  --color-1: #944455;
-  --color-2: #ebdde0;
-  --color-3: #944454;
-  --color-4: #c497a2;
-  --color-5: #b77f8e;
-  --color-6: #cca4ac;
-  --color-7: #cca8b4;
-  --color-8: #cc9cac;
-  --color-9: #ac6778;
-  --color-10: #a45e71;
-  --color-11: #ac6c84;
+@theme {
+  /* MedFlow Healthcare Design System - Light Theme */
+  --color-background: hsl(350 30% 96%);
+  --color-foreground: hsl(350 15% 15%);
 
-  /* Variables pour shadcn */
-  --background: var(--color-2);
-  --foreground: var(--color-1);
-  
-  --card: #ffffff;
-  --card-foreground: var(--foreground);
-  
-  --primary: var(--color-1);
-  --primary-foreground: #ffffff;
-  
-  --secondary: var(--color-2);
-  --secondary-foreground: var(--color-1);
-  
-  --accent: var(--color-4);
-  --accent-foreground: var(--color-1);
-  
-  --destructive: #ff4d4f;
-  --destructive-foreground: #ffffff;
-  
-  --border: var(--color-6);
-  --input: var(--color-6);
-  --ring: var(--primary);
-  
+  --color-card: hsl(0 0% 100%);
+  --color-card-foreground: hsl(350 15% 15%);
+
+  --color-popover: hsl(0 0% 100%);
+  --color-popover-foreground: hsl(350 15% 15%);
+
+  /* Primary: Rose medical (#944455) */
+  --color-primary: hsl(350 35% 42%);
+  --color-primary-foreground: hsl(0 0% 100%);
+  --color-primary-hover: hsl(350 40% 38%);
+
+  /* Secondary: Blush (#ebdde0) */
+  --color-secondary: hsl(350 30% 91%);
+  --color-secondary-foreground: hsl(350 35% 42%);
+
+  /* Muted backgrounds */
+  --color-muted: hsl(350 25% 94%);
+  --color-muted-foreground: hsl(350 12% 45%);
+
+  /* Accent: Mauve tones */
+  --color-accent: hsl(350 30% 72%);
+  --color-accent-foreground: hsl(350 35% 25%);
+  --color-accent-light: hsl(350 30% 85%);
+
+  /* Medical status colors */
+  --color-success: hsl(142 71% 45%);
+  --color-success-foreground: hsl(0 0% 100%);
+  --color-warning: hsl(38 92% 50%);
+  --color-warning-foreground: hsl(0 0% 100%);
+  --color-destructive: hsl(0 84% 60%);
+  --color-destructive-foreground: hsl(0 0% 100%);
+  --color-info: hsl(217 91% 60%);
+  --color-info-foreground: hsl(0 0% 100%);
+
+  --color-border: hsl(350 25% 88%);
+  --color-input: hsl(350 25% 88%);
+  --color-ring: hsl(350 35% 42%);
+
   --radius: 1.25rem;
+
+  --color-sidebar-background: hsl(0 0% 98%);
+  --color-sidebar-foreground: hsl(240 5.3% 26.1%);
+  --color-sidebar-primary: hsl(240 5.9% 10%);
+  --color-sidebar-primary-foreground: hsl(0 0% 98%);
+  --color-sidebar-accent: hsl(240 4.8% 95.9%);
+  --color-sidebar-accent-foreground: hsl(240 5.9% 10%);
+  --color-sidebar-border: hsl(220 13% 91%);
+  --color-sidebar-ring: hsl(217.2 91.2% 59.8%);
 }
 
 .dark {
-  --background: var(--color-1);
-  --foreground: var(--color-2);
-  
-  --card: var(--color-9);
-  --card-foreground: #ffffff;
-  
-  --primary: var(--color-3);
-  --primary-foreground: #ffffff;
-  
-  --secondary: var(--color-10);
-  --secondary-foreground: #ffffff;
-  
-  --accent: var(--color-7);
-  --accent-foreground: #ffffff;
-  
-  --destructive: #ff4d4f;
-  --destructive-foreground: #ffffff;
-  
-  --border: var(--color-11);
-  --input: var(--color-11);
-  --ring: var(--primary);
+  /* MedFlow Healthcare Design System - Dark Theme */
+  --color-background: hsl(350 20% 8%);
+  --color-foreground: hsl(350 10% 95%);
+
+  --color-card: hsl(350 20% 10%);
+  --color-card-foreground: hsl(350 10% 95%);
+
+  --color-popover: hsl(350 20% 10%);
+  --color-popover-foreground: hsl(350 10% 95%);
+
+  --color-primary: hsl(350 35% 42%);
+  --color-primary-foreground: hsl(0 0% 100%);
+
+  --color-secondary: hsl(350 15% 18%);
+  --color-secondary-foreground: hsl(350 10% 95%);
+
+  --color-muted: hsl(350 15% 15%);
+  --color-muted-foreground: hsl(350 10% 65%);
+
+  --color-accent: hsl(348 26% 54%);
+  --color-accent-foreground: hsl(0 0% 100%);
+
+  --color-destructive: hsl(0 62% 50%);
+  --color-destructive-foreground: hsl(0 0% 100%);
+
+  --color-border: hsl(350 15% 20%);
+  --color-input: hsl(350 15% 20%);
+  --color-ring: hsl(350 35% 42%);
 }
 
 @layer base {
   * {
-    border-color: var(--border);
+    border-color: var(--color-border);
   }
+
   body {
-    background-color: var(--background);
-    color: var(--foreground);
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: ui-sans-serif, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-weight: 600;
+    letter-spacing: -0.025em;
+  }
+
+  h1 {
+    font-size: 2.25rem;
+    line-height: 2.5rem;
+  }
+
+  @media (min-width: 768px) {
+    h1 {
+      font-size: 3rem;
+      line-height: 1;
+    }
+  }
+
+  h2 {
+    font-size: 1.875rem;
+    line-height: 2.25rem;
+  }
+
+  @media (min-width: 768px) {
+    h2 {
+      font-size: 2.25rem;
+      line-height: 2.5rem;
+    }
+  }
+
+  h3 {
+    font-size: 1.5rem;
+    line-height: 2rem;
+  }
+
+  @media (min-width: 768px) {
+    h3 {
+      font-size: 1.875rem;
+      line-height: 2.25rem;
+    }
   }
 }
 
-/* Styles CSS natifs pour les boutons - SOLUTION TEMPORAIRE */
-.bg-primary {
-  background-color: var(--primary) !important;
+@layer utilities {
+  .medical-card {
+    background-color: var(--color-card);
+    border-radius: 20px;
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    border: 1px solid var(--color-border);
+  }
+
+  .medical-gradient {
+    background-image: linear-gradient(
+      to bottom right,
+      hsl(350 35% 42% / 0.05),
+      hsl(350 30% 85% / 0.3),
+      hsl(350 30% 91%)
+    );
+  }
+
+  .glass-effect {
+    background-color: rgb(255 255 255 / 0.6);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgb(255 255 255 / 0.4);
+  }
+
+  /* Additional utility classes for the new colors */
+  .bg-primary-hover {
+    background-color: var(--color-primary-hover);
+  }
+
+  .bg-accent-light {
+    background-color: var(--color-accent-light);
+  }
+
+  .bg-sidebar {
+    background-color: var(--color-sidebar-background);
+  }
+
+  .text-sidebar-foreground {
+    color: var(--color-sidebar-foreground);
+  }
+
+  .border-sidebar {
+    border-color: var(--color-sidebar-border);
+  }
 }
 
-.text-primary-foreground {
-  color: var(--primary-foreground) !important;
-}
-
-.bg-secondary {
-  background-color: var(--secondary) !important;
-}
-
-.text-secondary-foreground {
-  color: var(--secondary-foreground) !important;
-}
-
-.bg-destructive {
-  background-color: var(--destructive) !important;
-}
-
-.text-destructive-foreground {
-  color: var(--destructive-foreground) !important;
-}
-
-.hover\:bg-primary\/90:hover {
-  background-color: color-mix(in srgb, var(--primary) 90%, transparent) !important;
-}
-
-.hover\:bg-destructive\/90:hover {
-  background-color: color-mix(in srgb, var(--destructive) 90%, transparent) !important;
-}
-
-.hover\:bg-secondary\/80:hover {
-  background-color: color-mix(in srgb, var(--secondary) 80%, transparent) !important;
+/* Custom radius utility */
+.rounded-custom {
+  border-radius: 1.25rem;
 }
