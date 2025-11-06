@@ -10,6 +10,6 @@ export class Medecin extends User {
   specialite: string;
 
   @Field({ nullable: true })
-  @Column({ nullable: true })
-  disponibilite: string;
+  @Column()
+  disponibilite: boolean;
 }

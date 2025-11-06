@@ -9,9 +9,17 @@ type AuthResponse {
   refresh_token: String!
 }
 
+input ExtraDataInput {
+  disponibilite: Boolean
+  historiqueMedical: String
+  horaires: String
+  poste: String
+  specialite: String
+}
+
 type Mutation {
   login(password: String!, username: String!): AuthResponse!
-  register(dateNaissance: String!, email: String!, firstName: String!, lastName: String!, password: String!, role: String!, username: String!): String!
+  register(dateNaissance: String!, email: String!, extraData: ExtraDataInput, firstName: String!, lastName: String!, password: String!, role: String!, username: String!): String!
 }
 
 type Query {

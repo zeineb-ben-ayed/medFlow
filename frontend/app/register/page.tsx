@@ -1,0 +1,187 @@
+'use client';
+
+import { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+// import { Activity } from "lucide-react";
+import { toast } from "sonner";
+import { DatePicker } from "@/components/ui/date-picker";
+
+const Register = () => {
+  const router = useRouter();
+  const [formData, setFormData] = useState({
+    username: "",
+    firstName: "",
+    lastName: "",
+    dateOfBirth: new Date(),
+    email: "",
+    phone: "",
+    password: "",
+    confirmPassword: "",
+  });
+
+  const handleChange = (field: string, value: string | Date) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleRegister = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (formData.password !== formData.confirmPassword) {
+      toast.error("Passwords don't match");
+      return;
+    }
+
+    toast.success("Account created successfully!");
+    router.push("/dashboard");
+  };
+
+  return (
+    <div className="min-h-screen flex items-center justify-center medical-gradient p-4">
+      <div className="w-full max-w-2xl">
+        <div className="medical-card p-8 space-y-6">
+          {/* Logo */}
+          {/* <div className="flex items-center justify-center space-x-2 mb-6">
+            <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center">
+              <Activity className="w-6 h-6 text-primary-foreground" />
+            </div>
+            <h1 className="text-2xl font-bold text-foreground">MedFlow</h1>
+          </div> */}
+
+          {/* Logo */}
+          <div className="flex items-center justify-center mb-8">
+            <div className="w-57 h-auto flex items-center justify-center">
+              <img
+                src="logo\mediumlightlogo.png"
+                alt="MedFlow Logo"
+                className="object-contain"
+              />
+            </div>
+          </div>
+
+          <div className="text-center space-y-2">
+            <h2 className="text-2xl font-semibold">Create your account</h2>
+            <p className="text-muted-foreground">Join MedFlow to streamline your healthcare management</p>
+          </div>
+
+          <form onSubmit={handleRegister} className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="username">Username</Label>
+                <Input
+                  id="username"
+                  placeholder="John"
+                  value={formData.username}
+                  onChange={(e) => handleChange("username", e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="firstName">First Name</Label>
+                <Input
+                  id="firstName"
+                  placeholder="John"
+                  value={formData.firstName}
+                  onChange={(e) => handleChange("firstName", e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="lastName">Last Name</Label>
+                <Input
+                  id="lastName"
+                  placeholder="Doe"
+                  value={formData.lastName}
+                  onChange={(e) => handleChange("lastName", e.target.value)}
+                  required
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="john.doe@clinic.com"
+                  value={formData.email}
+                  onChange={(e) => handleChange("email", e.target.value)}
+                  required
+                />
+              </div>
+
+            <div className="space-y-2">
+              <Label>Date of Birth</Label>
+              <DatePicker
+                value={formData.dateOfBirth}
+                onChange={(date) => handleChange("dateOfBirth", date!)}
+                minDate={new Date()}
+                maxDate={new Date("2099-12-31")}
+                />
+            </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="phone">Phone Number</Label>
+                <Input
+                  id="phone"
+                  type="tel"
+                  placeholder="+1 234 567 8900"
+                  value={formData.phone}
+                  onChange={(e) => handleChange("phone", e.target.value)}
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="password">Password</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  placeholder="••••••••"
+                  value={formData.password}
+                  onChange={(e) => handleChange("password", e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="confirmPassword">Confirm Password</Label>
+                <Input
+                  id="confirmPassword"
+                  type="password"
+                  placeholder="••••••••"
+                  value={formData.confirmPassword}
+                  onChange={(e) => handleChange("confirmPassword", e.target.value)}
+                  required
+                />
+              </div>
+            </div>
+
+            <Button type="submit" className="w-full">
+              Create Account
+            </Button>
+          </form>
+
+          <div className="text-center text-sm text-muted-foreground">
+            Already have an account?{" "}
+            <Link href="/login" className="text-primary hover:underline font-medium">
+              Sign in
+            </Link>
+          </div>
+        </div>
+
+        <p className="text-center text-sm text-muted-foreground mt-6">
+          By creating an account, you agree to our Terms of Service and Privacy Policy
+        </p>
+      </div>
+    </div>
+  );
+};
+
+export default Register;
