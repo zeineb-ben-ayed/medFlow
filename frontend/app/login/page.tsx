@@ -8,30 +8,42 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 // import { Activity } from "lucide-react";
 import { toast } from "sonner";
+import { useMutation } from "@apollo/client/react";
+import { LOGIN_MUTATION } from "@/graphql/mutations";
+import { LoginResponse, LoginVariables } from "@/interfaces/login";
 
 const Login = () => {
   const router = useRouter();
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [loginUser] = useMutation<LoginResponse, LoginVariables>(LOGIN_MUTATION);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Demo login - router based on role
-    toast.success(`Welcome back!`);
-    router.push("/dashboard");
+
+    try {
+      const { data } = await loginUser({
+        variables: { username, password },
+      });
+
+      if (!data?.login?.access_token) {
+        toast.error("Invalid server response");
+        return;
+      }
+
+      localStorage.setItem("access_token", data.login.access_token);
+      toast.success("Logged in successfully!");
+      router.push("/dashboard");
+    } catch (error: any) {
+      console.error(error);
+      toast.error("Login failed");
+    }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center medical-gradient p-4">
       <div className="w-full max-w-md">
         <div className="medical-card p-8 space-y-6">
-          {/* Logo */}
-          {/* <div className="flex items-center justify-center space-x-2 mb-8">
-            <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center">
-              <Activity className="w-6 h-6 text-primary-foreground" />
-            </div>
-            <h1 className="text-2xl font-bold text-foreground">MedFlow</h1>
-          </div> */}
 
           {/* Logo */}
           <div className="flex items-center justify-center mb-8">
@@ -51,13 +63,13 @@ const Login = () => {
 
           <form onSubmit={handleLogin} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="username">Username</Label>
               <Input
-                id="email"
-                type="email"
+                id="username"
+                type="text"
                 placeholder="your.email@clinic.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
                 required
               />
             </div>

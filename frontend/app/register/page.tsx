@@ -9,9 +9,12 @@ import { Label } from "@/components/ui/label";
 // import { Activity } from "lucide-react";
 import { toast } from "sonner";
 import { DatePicker } from "@/components/ui/date-picker";
+import { useMutation } from "@apollo/client/react";
+import { REGISTER_MUTATION } from "@/graphql/mutations";
 
 const Register = () => {
   const router = useRouter();
+  const [registerUser] = useMutation(REGISTER_MUTATION);
   const [formData, setFormData] = useState({
     username: "",
     firstName: "",
@@ -27,30 +30,39 @@ const Register = () => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleRegister = (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (formData.password !== formData.confirmPassword) {
-      toast.error("Passwords don't match");
-      return;
+        toast.error("Passwords don't match");
+        return;
     }
 
-    toast.success("Account created successfully!");
-    router.push("/dashboard");
-  };
+    try {
+        await registerUser({
+        variables: {
+            username: formData.username,
+            email: formData.email,
+            password: formData.password,
+            role: "patient",
+            dateNaissance: formData.dateOfBirth,
+            firstName: formData.firstName,
+            lastName: formData.lastName,
+        },
+        });
+
+        toast.success("Account created successfully!");
+        router.push("/login");
+    } catch (error: any) {
+        console.error(error);
+        toast.error("Registration failed");
+    }
+    };
 
   return (
     <div className="min-h-screen flex items-center justify-center medical-gradient p-4">
       <div className="w-full max-w-2xl">
         <div className="medical-card p-8 space-y-6">
-          {/* Logo */}
-          {/* <div className="flex items-center justify-center space-x-2 mb-6">
-            <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center">
-              <Activity className="w-6 h-6 text-primary-foreground" />
-            </div>
-            <h1 className="text-2xl font-bold text-foreground">MedFlow</h1>
-          </div> */}
-
           {/* Logo */}
           <div className="flex items-center justify-center mb-8">
             <div className="w-57 h-auto flex items-center justify-center">
