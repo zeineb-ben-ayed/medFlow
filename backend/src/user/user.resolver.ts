@@ -1,4 +1,4 @@
-import { Resolver, Query } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 import { User } from './user.entity';
 import { UserService } from './user.service';
 import { AuthGuard, Public, Resource, RoleGuard, Roles } from 'nest-keycloak-connect';
@@ -27,5 +27,12 @@ export class UserResolver {
         return Receptionniste;
         }
         return null;
+    }
+
+    @Mutation(() => Boolean)
+    @Roles({ roles: ['realm:admin'] })
+    async deleteUser(@Args('id', { type: () => Int }) id: number): Promise<boolean> {
+        await this.userService.deleteUserById(id);
+        return true;
     }
 }

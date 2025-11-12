@@ -1,15 +1,17 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from 'src/user/user.entity';
 import { Receptionniste } from 'src/receptionniste/receptionniste.entity';
 import { Medecin } from 'src/medecin/medecin.entity';
+import { KeycloakAdminService } from 'src/keycloak/keycloak-admin.service';
 
 @Injectable()
 export class UserService {
     constructor(
         @InjectRepository(User)
         private readonly userRepository: Repository<User>,
+        private readonly keycloakAdmin: KeycloakAdminService,
     ) {}
 
     async findAllMedecinsAndReceptionnistes(): Promise<User[]> {
@@ -20,20 +22,47 @@ export class UserService {
             ],
         });
 
-        return users.map(user => {
-            if (user.role === 'medecin') {
+        const fulluser = await Promise.all(
+            users.map(async (p) => {
+                try {
+                const kcUser = await this.keycloakAdmin.getUserById(p.keycloak_id);
+                return {
+                    ...p,
+                    firstName: kcUser.firstName,
+                    lastName: kcUser.lastName,
+                    email: kcUser.email,
+                };
+                } catch (err) {
+                console.error(`Could not fetch user ${p.keycloak_id}:, err.message`);
+                return p;
+                }
+            }),
+        );
+
+        return fulluser.map(fulluser => {
+            if (fulluser.role === 'medecin') {
                 const med = new Medecin();
-                Object.assign(med, user);
+                Object.assign(med, fulluser);
                 return med;
             }
 
-            if (user.role === 'receptionniste') {
+            if (fulluser.role === 'receptionniste') {
                 const rec = new Receptionniste();
-                Object.assign(rec, user);
+                Object.assign(rec, fulluser);
                 return rec;
             }
-            
-            return user;
+            return fulluser;
         });
     }
+
+    async deleteUserById(id: number): Promise<void> {
+    const user = await this.userRepository.findOne({ where: { id } });
+
+    if (!user) {
+      throw new NotFoundException(`User with id ${id} not found`);
+    }
+
+    await this.keycloakAdmin.deleteUser(user.keycloak_id);
+    await this.userRepository.delete(id);
+  }
 }

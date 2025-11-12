@@ -18,14 +18,19 @@ input ExtraDataInput {
 }
 
 type Medecin implements User {
+  dateNaissance: String
   disponibilite: Boolean
+  email: String
+  firstName: String
   id: Float!
   keycloak_id: String!
+  lastName: String
   role: String!
   specialite: String!
 }
 
 type Mutation {
+  deleteUser(id: Int!): Boolean!
   login(password: String!, username: String!): AuthResponse!
   register(dateNaissance: String!, email: String!, extraData: ExtraDataInput, firstName: String!, lastName: String!, password: String!, role: String!, username: String!): String!
 }
@@ -36,15 +41,23 @@ type Query {
 }
 
 type Receptionniste implements User {
+  dateNaissance: String
+  email: String
+  firstName: String
   horaires: String
   id: Float!
   keycloak_id: String!
+  lastName: String
   poste: String!
   role: String!
 }
 
 interface User {
+  dateNaissance: String
+  email: String
+  firstName: String
   id: Float!
   keycloak_id: String!
+  lastName: String
   role: String!
 }
