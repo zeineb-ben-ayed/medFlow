@@ -9,6 +9,8 @@ export const REGISTER_MUTATION = gql`
     $dateNaissance: String!
     $firstName: String!
     $lastName: String!
+    $phoneNumber: String!
+    $extraData: ExtraDataInput
   ) {
     register(
       username: $username
@@ -18,6 +20,8 @@ export const REGISTER_MUTATION = gql`
       dateNaissance: $dateNaissance
       firstName: $firstName
       lastName: $lastName
+      phoneNumber: $phoneNumber
+      extraData: $extraData
     )
   }
 `;

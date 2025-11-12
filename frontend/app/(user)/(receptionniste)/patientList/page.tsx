@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
@@ -13,58 +13,67 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Plus, Eye, Edit, Phone, Mail, Trash } from "lucide-react";
-import { Column, ReusableTable } from "@/components/table/reusableTable";
+import { ReusableTable } from "@/components/table/reusableTable";
 import { useRouter } from "next/navigation";
 import { Search } from "@/components/Input/Search";
+import { useQuery } from "@apollo/client/react";
+import { FIND_ALL_PATIENTS } from "@/graphql/query";
+import { client } from "@/lib/apollo-client";
+import { FindAllPatientsData, Patient } from "@/interfaces/patient";
+import { Column } from "@/interfaces/column";
 
 const PatientList = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  // Mock data
-  const patients = [
-    {
-      id: "1",
-      name: "Sarah Johnson",
-      age: 34,
-      gender: "Female",
-      phone: "+1 234-567-8901",
-      email: "sarah.j@email.com",
-      lastVisit: "2024-03-15",
-      status: "Active",
-    },
-    {
-      id: "2",
-      name: "Michael Chen",
-      age: 45,
-      gender: "Male",
-      phone: "+1 234-567-8902",
-      email: "m.chen@email.com",
-      lastVisit: "2024-03-10",
-      status: "Active",
-    },
-    {
-      id: "3",
-      name: "Emma Williams",
-      age: 28,
-      gender: "Female",
-      phone: "+1 234-567-8903",
-      email: "emma.w@email.com",
-      lastVisit: "2024-02-28",
-      status: "Inactive",
-    },
-  ];
-
-  const filteredPatients = patients.filter(
-    (patient) =>
-      patient.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      patient.email.toLowerCase().includes(searchQuery.toLowerCase())
+  const router = useRouter();
+  const { data, loading, error } = useQuery<FindAllPatientsData>(
+    FIND_ALL_PATIENTS,
+    { client }
   );
 
-  const router = useRouter();
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error.message}</p>;
 
-  const columns: Column<(typeof patients)[0]>[] = [
-    { key: "name", label: "Patient Name" },
-    { key: "age", label: "Age", align: "center" },
-    { key: "gender", label: "Gender", align: "center" },
+  const patients = data?.findAllPatients || [];
+
+  // const filteredPatients = patients.filter(
+  //   (patient) =>
+  //     patient.firstName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  //     patient.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  //     patient.lastName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  //     patient.dateNaissance.toLowerCase().includes(searchQuery.toLowerCase())
+  // );
+  const filteredPatients = useMemo(() => {
+    const query = searchQuery.toLowerCase().trim();
+    if (!query) return patients;
+
+    return patients.filter((p) => {
+      const dateString = p.dateNaissance
+        ? new Date(p.dateNaissance)
+            .toLocaleDateString("en-GB", {
+              day: "2-digit",
+              month: "long", //  "November"
+              year: "numeric",
+            })
+            .toLowerCase()
+        : "";
+
+      return [p.firstName, p.lastName, p.email, dateString]
+        .filter(Boolean)
+        .some((field) => field.toLowerCase().includes(query));
+    });
+  }, [searchQuery, patients]);
+
+  const columns: Column<Patient>[] = [
+    {
+      key: "name",
+      label: "Patient Name",
+      render: (_, row) => `${row.firstName} ${row.lastName}`,
+    },
+    {
+      key: "email",
+      label: "Email",
+      render: (_, row) => row.email,
+    },
     {
       key: "contact",
       label: "Contact",
@@ -72,24 +81,47 @@ const PatientList = () => {
         <div className="flex flex-col gap-1 text-sm">
           <div className="flex items-center gap-1 text-muted-foreground">
             <Phone className="h-3 w-3" />
-            {row.phone}
+            {row.phoneNumber}
           </div>
-          <div className="flex items-center gap-1 text-muted-foreground">
-            <Mail className="h-3 w-3" />
-            {row.email}
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <Mail className="h-4 w-4 shrink-0" />
+            <span className="truncate">{row.email}</span>
           </div>
         </div>
       ),
     },
-    { key: "lastVisit", label: "Last Visit" },
     {
-      key: "status",
-      label: "Status",
-      render: (value) => (
-        <Badge variant={value === "Active" ? "default" : "secondary"}>
-          {value}
-        </Badge>
-      ),
+      key: "dateNaissance",
+      label: "Date of Birth",
+      align: "center",
+      render: (value, row) => {
+        const date = value || row.dateNaissance;
+        if (!date) return "—";
+        try {
+          // Format to readable date (e.g., 12 Nov 2025)
+          return new Date(date).toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+          });
+        } catch {
+          return date; // fallback if not parseable
+        }
+      },
+    },
+    {
+      key: "gender",
+      label: "Gender",
+      align: "center",
+      render: (value) => {
+        const gender = value?.toLowerCase?.() || "unknown";
+        const isFemale = gender === "female";
+        return (
+          <Badge variant={isFemale ? "default" : "secondary"}>
+            {value || "N/A"}
+          </Badge>
+        );
+      },
     },
     {
       key: "actions",
@@ -117,6 +149,7 @@ const PatientList = () => {
       ),
     },
   ];
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-secondary/30 to-white p-6 sm:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto space-y-6">
@@ -152,7 +185,7 @@ const PatientList = () => {
         </div>
 
         {/* Patient Table */}
-        <ReusableTable columns={columns} data={patients} />
+        <ReusableTable columns={columns} data={filteredPatients} />
       </div>
     </div>
   );

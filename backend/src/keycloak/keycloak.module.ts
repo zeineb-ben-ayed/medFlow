@@ -4,6 +4,7 @@ import {
   PolicyEnforcementMode,
   TokenValidation,
 } from 'nest-keycloak-connect';
+import { KeycloakAdminService } from './keycloak-admin.service';
 @Global()
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import {
       tokenValidation: TokenValidation.ONLINE,
     }),
   ],
-  exports: [KeycloakConnectModule],
+  providers: [KeycloakAdminService],
+  exports: [KeycloakConnectModule, KeycloakAdminService],
 })
 export class KeycloakModule {}

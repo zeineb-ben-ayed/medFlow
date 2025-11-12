@@ -21,4 +21,19 @@ export abstract class User {
   @Field()
   @Column()
   role: string;
+
+  @Field({ nullable: true })
+  firstName?: string;
+
+  @Field({ nullable: true })
+  lastName?: string;
+
+  @Field({ nullable: true })
+  email?: string;
+
+  @Field({ nullable: true })
+  dateNaissance?: string;
+
+  @Field({ nullable: true })
+  phoneNumber?: string;
 }

@@ -11,6 +11,7 @@ type AuthResponse {
 
 input ExtraDataInput {
   disponibilite: Boolean
+  gender: String
   historiqueMedical: String
   horaires: String
   poste: String
@@ -19,13 +20,19 @@ input ExtraDataInput {
 
 type Mutation {
   login(password: String!, username: String!): AuthResponse!
-  register(dateNaissance: String!, email: String!, extraData: ExtraDataInput, firstName: String!, lastName: String!, password: String!, role: String!, username: String!): String!
+  register(dateNaissance: String!, email: String!, extraData: ExtraDataInput, firstName: String!, lastName: String!, password: String!, phoneNumber: String!, role: String!, username: String!): String!
 }
 
 type Patient {
+  dateNaissance: String
+  email: String
+  firstName: String
+  gender: String
   historiqueMedical: String
   id: Float!
   keycloak_id: String!
+  lastName: String
+  phoneNumber: String
   role: String!
 }
 
