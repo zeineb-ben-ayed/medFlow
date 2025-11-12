@@ -1,4 +1,4 @@
-import { ObjectType, Field, ID } from '@nestjs/graphql';
+import { Field, InterfaceType } from '@nestjs/graphql';
 import {
   Column,
   Entity,
@@ -6,7 +6,7 @@ import {
   TableInheritance,
 } from 'typeorm';
 
-@ObjectType()
+@InterfaceType()
 @Entity('users')
 @TableInheritance({ column: { type: 'varchar', name: 'type' } })
 export abstract class User {

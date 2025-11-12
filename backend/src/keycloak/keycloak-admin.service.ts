@@ -47,4 +47,12 @@ export class KeycloakAdminService {
 
     return res.data;
   }
+
+  async deleteUser(keycloakId: string): Promise<void> {
+    const token = await this.getAdminToken();
+    await axios.delete(
+      `${this.baseUrl}/admin/realms/${this.realm}/users/${keycloakId}`,
+      { headers: { Authorization: `Bearer ${token}` } },
+    );
+  }
 }

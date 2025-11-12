@@ -2,7 +2,7 @@ import { ObjectType, Field } from '@nestjs/graphql';
 import { User } from 'src/user/user.entity';
 import { Column, ChildEntity } from 'typeorm';
 
-@ObjectType()
+@ObjectType({ implements: () => User })
 @ChildEntity()
 export class Receptionniste extends User {
   @Field()
