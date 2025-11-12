@@ -1,5 +1,6 @@
 import { Global, Module } from '@nestjs/common';
 import { KeycloakConnectModule, TokenValidation } from 'nest-keycloak-connect';
+import { KeycloakAdminService } from './keycloak-admin.service';
 
 @Global()
 @Module({
@@ -12,6 +13,7 @@ import { KeycloakConnectModule, TokenValidation } from 'nest-keycloak-connect';
       tokenValidation: TokenValidation.ONLINE,
     }),
   ],
-  exports: [KeycloakConnectModule],
+  providers: [KeycloakAdminService],
+  exports: [KeycloakConnectModule, KeycloakAdminService],
 })
 export class KeycloakModule {}
