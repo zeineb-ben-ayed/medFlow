@@ -1,10 +1,16 @@
 import { ObjectType, Field, ID } from '@nestjs/graphql';
-import { Column, Entity, PrimaryGeneratedColumn, TableInheritance } from 'typeorm';
+import {
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
+  TableInheritance,
+} from 'typeorm';
 
 @ObjectType()
 @Entity('users')
 @TableInheritance({ column: { type: 'varchar', name: 'type' } })
 export abstract class User {
+  @Field()
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -14,5 +20,5 @@ export abstract class User {
 
   @Field()
   @Column()
-  role: string; 
+  role: string;
 }
