@@ -15,6 +15,8 @@ import { AuthResolver } from './auth/auth.resolver';
 import { join } from 'path';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
+import { Receptionniste } from './receptionniste/receptionniste.entity';
+import { Medecin } from './medecin/medecin.entity';
 
 @Module({
   imports: [GraphQLModule.forRoot<ApolloDriverConfig>({
@@ -23,7 +25,9 @@ import { ConfigModule } from '@nestjs/config';
       playground:true,
       sortSchema: true,
       context: ({ req, res }) => ({ req, res }),
-
+      buildSchemaOptions: {
+        orphanedTypes: [Medecin, Receptionniste],
+  },
     }),
     ConfigModule.forRoot({
       isGlobal: true, 

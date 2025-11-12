@@ -1,10 +1,11 @@
-import { ObjectType, Field, ID } from '@nestjs/graphql';
+import { ObjectType, Field, ID, InterfaceType } from '@nestjs/graphql';
 import { Column, Entity, PrimaryGeneratedColumn, TableInheritance } from 'typeorm';
 
-@ObjectType()
+@InterfaceType()
 @Entity('users')
 @TableInheritance({ column: { type: 'varchar', name: 'type' } })
 export abstract class User {
+  @Field()
   @PrimaryGeneratedColumn()
   id: number;
 
