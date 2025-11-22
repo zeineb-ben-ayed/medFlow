@@ -11,13 +11,14 @@ export class AuthResolver {
   private keycloakUrl = 'http://localhost:8080';
   private realm = 'medFlow';
   private clientId = 'nest-api';
-  private clientSecret = process.env.KEYCLOAK_CLIENT_SECRET || '';
+  private clientSecret ='IoT1qYcMnF01OAHnWxn1gVu3JSIQiShT';
     @Public()
     @Mutation(() => AuthResponse)
   async login(
     @Args('username') username: string,
     @Args('password') password: string,
   ): Promise<AuthResponse> {
+    try{
     const params = new URLSearchParams();
     params.append('client_id', this.clientId);
     params.append(
@@ -37,6 +38,10 @@ export class AuthResolver {
     );
 
     return data;
+  } catch (error) {
+    console.error('KEYCLOAK ERROR:', error.response?.data);
+    throw error;
+  }
   }
 
   @Public()

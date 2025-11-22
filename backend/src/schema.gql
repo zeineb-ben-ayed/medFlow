@@ -35,8 +35,26 @@ type Mutation {
   register(dateNaissance: String!, email: String!, extraData: ExtraDataInput, firstName: String!, lastName: String!, password: String!, role: String!, username: String!): String!
 }
 
+type Patient {
+  address: String
+  allergies: String
+  bloodType: String
+  dateNaissance: String
+  email: String
+  emergencyName: String
+  emergencyPhone: String
+  firstName: String
+  gender: String
+  historiqueMedical: String
+  id: Float!
+  keycloak_id: String!
+  lastName: String
+  role: String!
+}
+
 type Query {
   getAllStaff: [User!]!
+  getPatientProfile(id: Int!): Patient!
   hello: String!
 }
 
