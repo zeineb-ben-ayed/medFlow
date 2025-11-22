@@ -35,3 +35,24 @@ export const LOGIN_MUTATION = gql`
     }
   }
 `;
+
+export const ADD_PATIENT_MUTATION = gql`
+  mutation AddPatient($input: CreatePatientInput!) {
+    addPatient(input: $input) {
+      id
+      firstName
+      lastName
+      email
+      phoneNumber
+      dateNaissance
+      historiqueMedical
+      gender
+      bloodType
+      address
+      emergencyName
+      emergencyPhone
+      allergies
+      keycloak_id
+    }
+  }
+`;

@@ -30,18 +30,8 @@ const PatientList = () => {
     { client }
   );
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error.message}</p>;
-
   const patients = data?.findAllPatients || [];
 
-  // const filteredPatients = patients.filter(
-  //   (patient) =>
-  //     patient.firstName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-  //     patient.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-  //     patient.lastName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-  //     patient.dateNaissance.toLowerCase().includes(searchQuery.toLowerCase())
-  // );
   const filteredPatients = useMemo(() => {
     const query = searchQuery.toLowerCase().trim();
     if (!query) return patients;
@@ -62,6 +52,17 @@ const PatientList = () => {
         .some((field) => field.toLowerCase().includes(query));
     });
   }, [searchQuery, patients]);
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error.message}</p>;
+
+  // const filteredPatients = patients.filter(
+  //   (patient) =>
+  //     patient.firstName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  //     patient.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  //     patient.lastName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  //     patient.dateNaissance.toLowerCase().includes(searchQuery.toLowerCase())
+  // );
 
   const columns: Column<Patient>[] = [
     {
@@ -143,7 +144,7 @@ const PatientList = () => {
             size="sm"
             onClick={() => router.push(`/patients/${row.id}/edit`)}
           >
-            <Trash className="h-4 w-4" />
+            <Edit className="h-4 w-4" />
           </Button>
         </div>
       ),
@@ -177,7 +178,10 @@ const PatientList = () => {
             </div>
 
             {/* Add button */}
-            <Button className="w-full md:w-auto gap-2">
+            <Button
+              className="w-full md:w-auto gap-2"
+              onClick={() => router.push("/patientAdd")}
+            >
               <Plus className="h-4 w-4" />
               Add New Patient
             </Button>

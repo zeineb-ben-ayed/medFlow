@@ -1,7 +1,8 @@
-import { Query, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { PatientService } from './patient.service';
 import { Patient } from './patient.entity';
 import { Roles } from 'nest-keycloak-connect';
+import { CreatePatientInput } from './dto/patient.input';
 @Resolver()
 export class PatientResolver {
   constructor(private readonly patientService: PatientService) {}
@@ -10,5 +11,11 @@ export class PatientResolver {
   @Roles({ roles: ['realm:receptionniste'] })
   async findAllPatients(): Promise<Patient[]> {
     return this.patientService.findAll();
+  }
+
+  @Mutation(() => Patient)
+  @Roles({ roles: ['realm:receptionniste'] })
+  async addPatient(@Args('input') input: CreatePatientInput): Promise<Patient> {
+    return this.patientService.create(input);
   }
 }
