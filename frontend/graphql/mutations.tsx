@@ -9,6 +9,8 @@ export const REGISTER_MUTATION = gql`
     $dateNaissance: String!
     $firstName: String!
     $lastName: String!
+    $phoneNumber: String!
+    $extraData: ExtraDataInput
   ) {
     register(
       username: $username
@@ -18,6 +20,8 @@ export const REGISTER_MUTATION = gql`
       dateNaissance: $dateNaissance
       firstName: $firstName
       lastName: $lastName
+      phoneNumber: $phoneNumber
+      extraData: $extraData
     )
   }
 `;
@@ -28,6 +32,27 @@ export const LOGIN_MUTATION = gql`
       access_token
       refresh_token
       expires_in
+    }
+  }
+`;
+
+export const ADD_PATIENT_MUTATION = gql`
+  mutation AddPatient($input: CreatePatientInput!) {
+    addPatient(input: $input) {
+      id
+      firstName
+      lastName
+      email
+      phoneNumber
+      dateNaissance
+      historiqueMedical
+      gender
+      bloodType
+      address
+      emergencyName
+      emergencyPhone
+      allergies
+      keycloak_id
     }
   }
 `;

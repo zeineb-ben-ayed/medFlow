@@ -6,6 +6,9 @@ export class ExtraDataInput {
   historiqueMedical?: string;
 
   @Field({ nullable: true })
+  gender?: string;
+
+  @Field({ nullable: true })
   specialite?: string;
 
   @Field({ nullable: true })

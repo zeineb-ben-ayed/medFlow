@@ -12,31 +12,35 @@ export class AuthResolver {
   private realm = 'medFlow';
   private clientId = 'nest-api';
   private clientSecret = process.env.KEYCLOAK_CLIENT_SECRET || '';
-    @Public()
-    @Mutation(() => AuthResponse)
+  @Public()
+  @Mutation(() => AuthResponse)
   async login(
     @Args('username') username: string,
     @Args('password') password: string,
   ): Promise<AuthResponse> {
     const params = new URLSearchParams();
     params.append('client_id', this.clientId);
-    params.append(
-      'client_secret',this.clientSecret
-    );
+    params.append('client_secret', this.clientSecret);
     params.append('grant_type', 'password');
     params.append('username', username);
     params.append('password', password);
 
-    const { data } = await axios.post(
-      'http://localhost:8080/realms/medFlow/protocol/openid-connect/token',
-      
-      params.toString(),
-      {
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      },
-    );
-
-    return data;
+    try {
+      const { data } = await axios.post(
+        `${this.keycloakUrl}/realms/${this.realm}/protocol/openid-connect/token`,
+        params,
+        {
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        },
+      );
+      return data;
+    } catch (error) {
+      console.error(
+        '❌ Keycloak login failed:',
+        error.response?.data || error.message,
+      );
+      throw new Error('Login failed');
+    }
   }
 
   @Public()
@@ -49,9 +53,19 @@ export class AuthResolver {
     @Args('dateNaissance') dateNaissance: string,
     @Args('firstName') firstName: string,
     @Args('lastName') lastName: string,
+    @Args('phoneNumber') phoneNumber: string,
     @Args('extraData', { nullable: true }) extraData?: ExtraDataInput,
   ): Promise<string> {
-    return this.authService.register(username, email, password, role, dateNaissance, firstName, lastName, extraData);
+    return this.authService.register(
+      username,
+      email,
+      password,
+      role,
+      dateNaissance,
+      firstName,
+      lastName,
+      phoneNumber,
+      extraData,
+    );
   }
-
 }

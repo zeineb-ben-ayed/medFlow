@@ -9,8 +9,26 @@ type AuthResponse {
   refresh_token: String!
 }
 
+input CreatePatientInput {
+  address: String
+  allergies: String
+  bloodType: String
+  dateNaissance: String
+  email: String!
+  emergencyName: String
+  emergencyPhone: String
+  firstName: String!
+  gender: String
+  historiqueMedical: String
+  lastName: String!
+  password: String!
+  phoneNumber: String
+  username: String!
+}
+
 input ExtraDataInput {
   disponibilite: Boolean
+  gender: String
   historiqueMedical: String
   horaires: String
   poste: String
@@ -25,17 +43,38 @@ type Medecin implements User {
   id: Float!
   keycloak_id: String!
   lastName: String
+  phoneNumber: String
   role: String!
   specialite: String!
 }
 
 type Mutation {
+  addPatient(input: CreatePatientInput!): Patient!
   deleteUser(id: Int!): Boolean!
   login(password: String!, username: String!): AuthResponse!
-  register(dateNaissance: String!, email: String!, extraData: ExtraDataInput, firstName: String!, lastName: String!, password: String!, role: String!, username: String!): String!
+  register(dateNaissance: String!, email: String!, extraData: ExtraDataInput, firstName: String!, lastName: String!, password: String!, phoneNumber: String!, role: String!, username: String!): String!
+}
+
+type Patient {
+  address: String
+  allergies: String
+  bloodType: String
+  dateNaissance: String
+  email: String
+  emergencyName: String
+  emergencyPhone: String
+  firstName: String
+  gender: String
+  historiqueMedical: String
+  id: Float!
+  keycloak_id: String!
+  lastName: String
+  phoneNumber: String
+  role: String!
 }
 
 type Query {
+  findAllPatients: [Patient!]!
   getAllStaff: [User!]!
   hello: String!
 }
@@ -48,6 +87,7 @@ type Receptionniste implements User {
   id: Float!
   keycloak_id: String!
   lastName: String
+  phoneNumber: String
   poste: String!
   role: String!
 }
@@ -59,5 +99,6 @@ interface User {
   id: Float!
   keycloak_id: String!
   lastName: String
+  phoneNumber: String
   role: String!
 }
