@@ -41,11 +41,11 @@ export class PatientService {
   async create(input: CreatePatientInput): Promise<Patient> {
     // Create user in Keycloak
     const kcUser = await this.keycloakAdmin.createUser({
-      username: input.username,
-      firstName: input.firstName,
-      lastName: input.lastName,
-      email: input.email,
-      password: input.password,
+      username: input.username!,
+      firstName: input.firstName!,
+      lastName: input.lastName!,
+      email: input.email!,
+      password: input.password!,
       role: 'patient',
       attributes: {
         phoneNumber: [input.phoneNumber],
@@ -75,5 +75,75 @@ export class PatientService {
     });
 
     return this.patientRepository.save(patient);
+  }
+
+  async update(input: CreatePatientInput): Promise<Patient> {
+    const patient = await this.patientRepository.findOne({
+      where: { id: input.id },
+    });
+
+    if (!patient) throw new Error('Patient not found');
+    const kcUser = await this.keycloakAdmin.getUserById(patient.keycloak_id);
+
+    const currentKeycloakData = {
+      firstName: kcUser.firstName,
+      lastName: kcUser.lastName,
+      email: kcUser.email,
+      phoneNumber: kcUser.attributes?.phoneNumber?.[0],
+      dateNaissance: kcUser.attributes?.dateNaissance?.[0],
+    };
+    // Sync Keycloak profile
+    await this.keycloakAdmin.updateUser(patient.keycloak_id, {
+      firstName: input.firstName ?? currentKeycloakData.firstName,
+      lastName: input.lastName ?? currentKeycloakData.lastName,
+      email: input.email ?? currentKeycloakData.email,
+      attributes: {
+        phoneNumber: input.phoneNumber ?? currentKeycloakData.phoneNumber,
+        dateNaissance: input.dateNaissance ?? currentKeycloakData.dateNaissance,
+      },
+    });
+
+    // Update DB fields
+    Object.assign(patient, {
+      historiqueMedical: input.historiqueMedical,
+      gender: input.gender,
+      bloodType: input.bloodType,
+      address: input.address,
+      emergencyName: input.emergencyName,
+      emergencyPhone: input.emergencyPhone,
+      allergies: input.allergies,
+    });
+
+    return this.patientRepository.save(patient);
+  }
+
+  async findById(id: number): Promise<any> {
+    const patient = await this.patientRepository.findOne({ where: { id } });
+
+    if (!patient) {
+      throw new Error('Patient not found');
+    }
+
+    // Fetch user from Keycloak
+    const keycloakUser = await this.keycloakAdmin.getUserById(
+      patient.keycloak_id,
+    );
+
+    const attributes = keycloakUser.attributes || {};
+
+    // Merge DB + Keycloak fields
+    return {
+      ...patient,
+
+      // Keycloak
+      username: keycloakUser.username,
+      firstName: keycloakUser.firstName,
+      lastName: keycloakUser.lastName,
+      email: keycloakUser.email,
+
+      // Custom attributes
+      phoneNumber: attributes.phoneNumber?.[0] ?? patient.phoneNumber,
+      dateNaissance: attributes.dateNaissance?.[0] ?? patient.dateNaissance,
+    };
   }
 }

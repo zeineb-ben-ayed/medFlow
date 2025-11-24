@@ -14,16 +14,17 @@ input CreatePatientInput {
   allergies: String
   bloodType: String
   dateNaissance: String
-  email: String!
+  email: String
   emergencyName: String
   emergencyPhone: String
-  firstName: String!
+  firstName: String
   gender: String
   historiqueMedical: String
-  lastName: String!
-  password: String!
+  id: Float
+  lastName: String
+  password: String
   phoneNumber: String
-  username: String!
+  username: String
 }
 
 input ExtraDataInput {
@@ -46,11 +47,13 @@ type Medecin implements User {
   phoneNumber: String
   role: String!
   specialite: String!
+  username: String
 }
 
 type Mutation {
   addPatient(input: CreatePatientInput!): Patient!
   deleteUser(id: Int!): Boolean!
+  editPatient(input: CreatePatientInput!): Patient!
   login(password: String!, username: String!): AuthResponse!
   register(dateNaissance: String!, email: String!, extraData: ExtraDataInput, firstName: String!, lastName: String!, password: String!, phoneNumber: String!, role: String!, username: String!): String!
 }
@@ -71,11 +74,13 @@ type Patient {
   lastName: String
   phoneNumber: String
   role: String!
+  username: String
 }
 
 type Query {
   findAllPatients: [Patient!]!
   getAllStaff: [User!]!
+  getPatientById(id: Int!): Patient!
   hello: String!
 }
 
@@ -90,6 +95,7 @@ type Receptionniste implements User {
   phoneNumber: String
   poste: String!
   role: String!
+  username: String
 }
 
 interface User {
@@ -101,4 +107,5 @@ interface User {
   lastName: String
   phoneNumber: String
   role: String!
+  username: String
 }

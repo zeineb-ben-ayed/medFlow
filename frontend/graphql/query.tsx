@@ -16,3 +16,23 @@ export const FIND_ALL_PATIENTS = gql`
     }
   }
 `;
+export const GET_PATIENT_BY_ID = gql`
+  query GetPatientById($id: Int!) {
+    getPatientById(id: $id) {
+      id
+      username
+      firstName
+      lastName
+      email
+      phoneNumber
+      dateNaissance
+      historiqueMedical
+      gender
+      bloodType
+      address
+      emergencyName
+      emergencyPhone
+      allergies
+    }
+  }
+`;

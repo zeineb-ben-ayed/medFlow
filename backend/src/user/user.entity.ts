@@ -23,6 +23,9 @@ export abstract class User {
   role: string;
 
   @Field({ nullable: true })
+  username?: string;
+
+  @Field({ nullable: true })
   firstName?: string;
 
   @Field({ nullable: true })
