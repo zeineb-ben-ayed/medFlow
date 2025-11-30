@@ -2,6 +2,15 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type Appointment {
+  date: String!
+  id: Float!
+  medecin: Medecin!
+  patient: Patient!
+  status: String!
+  time: String!
+}
+
 type AuthResponse {
   access_token: String!
   expires_in: Float!
@@ -9,8 +18,26 @@ type AuthResponse {
   refresh_token: String!
 }
 
+input CreatePatientInput {
+  address: String
+  allergies: String
+  bloodType: String
+  dateNaissance: String
+  email: String!
+  emergencyName: String
+  emergencyPhone: String
+  firstName: String!
+  gender: String
+  historiqueMedical: String
+  lastName: String!
+  password: String!
+  phoneNumber: String
+  username: String!
+}
+
 input ExtraDataInput {
   disponibilite: Boolean
+  gender: String
   historiqueMedical: String
   horaires: String
   poste: String
@@ -25,14 +52,16 @@ type Medecin implements User {
   id: Float!
   keycloak_id: String!
   lastName: String
+  phoneNumber: String
   role: String!
   specialite: String!
 }
 
 type Mutation {
+  addPatient(input: CreatePatientInput!): Patient!
   deleteUser(id: Int!): Boolean!
   login(password: String!, username: String!): AuthResponse!
-  register(dateNaissance: String!, email: String!, extraData: ExtraDataInput, firstName: String!, lastName: String!, password: String!, role: String!, username: String!): String!
+  register(dateNaissance: String!, email: String!, extraData: ExtraDataInput, firstName: String!, lastName: String!, password: String!, phoneNumber: String!, role: String!, username: String!): String!
 }
 
 type Patient {
@@ -49,11 +78,16 @@ type Patient {
   id: Float!
   keycloak_id: String!
   lastName: String
+  phoneNumber: String
   role: String!
 }
 
 type Query {
+  findAllPatients: [Patient!]!
   getAllStaff: [User!]!
+  getMyAppointments: [Appointment!]!
+  getMyMedecinAppointments: [Appointment!]!
+  getPatientAppointmentsForMe(patientId: Float!): [Appointment!]!
   getPatientProfile(id: Int!): Patient!
   hello: String!
 }
@@ -66,6 +100,7 @@ type Receptionniste implements User {
   id: Float!
   keycloak_id: String!
   lastName: String
+  phoneNumber: String
   poste: String!
   role: String!
 }
@@ -77,5 +112,6 @@ interface User {
   id: Float!
   keycloak_id: String!
   lastName: String
+  phoneNumber: String
   role: String!
 }

@@ -1,5 +1,10 @@
-import { ObjectType, Field, ID, InterfaceType } from '@nestjs/graphql';
-import { Column, Entity, PrimaryGeneratedColumn, TableInheritance } from 'typeorm';
+import { Field, InterfaceType } from '@nestjs/graphql';
+import {
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
+  TableInheritance,
+} from 'typeorm';
 
 @InterfaceType()
 @Entity('users')
@@ -15,7 +20,7 @@ export abstract class User {
 
   @Field()
   @Column()
-  role: string; 
+  role: string;
 
   @Field({ nullable: true })
   firstName?: string;
@@ -28,4 +33,7 @@ export abstract class User {
 
   @Field({ nullable: true })
   dateNaissance?: string;
+
+  @Field({ nullable: true })
+  phoneNumber?: string;
 }
