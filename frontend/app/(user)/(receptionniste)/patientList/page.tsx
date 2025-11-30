@@ -134,7 +134,7 @@ const PatientList = () => {
             className="cursor-pointer"
             variant="ghost"
             size="sm"
-            onClick={() => router.push(`/patients/${row.id}`)}
+            onClick={() => router.push(`/test/${row.id}`)}
           >
             <Eye className="h-4 w-4" />
           </Button>

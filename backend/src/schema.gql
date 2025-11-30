@@ -2,6 +2,15 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type Appointment {
+  date: String!
+  id: Float!
+  medecin: Medecin!
+  patient: Patient!
+  status: String!
+  time: String!
+}
+
 type AuthResponse {
   access_token: String!
   expires_in: Float!
@@ -76,6 +85,10 @@ type Patient {
 type Query {
   findAllPatients: [Patient!]!
   getAllStaff: [User!]!
+  getMyAppointments: [Appointment!]!
+  getMyMedecinAppointments: [Appointment!]!
+  getPatientAppointmentsForMe(patientId: Float!): [Appointment!]!
+  getPatientProfile(id: Int!): Patient!
   hello: String!
 }
 
