@@ -15,8 +15,10 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 export default function TopNav() {
-  const { state, isMobile } = useSidebar();
-  const isExpanded = state === "expanded";
+  const { state, isMobile: shadcnMobile } = useSidebar();
+  const isTabletOrMobile =
+    typeof window !== "undefined" && window.innerWidth < 1024;
+  const isMobile = isTabletOrMobile || shadcnMobile;
 
   return (
     <header
@@ -28,14 +30,12 @@ export default function TopNav() {
       {/* LEFT SECTION */}
       <div className="flex items-center gap-3">
         {/* Mobile sidebar toggle */}
-        <div className="md:hidden">
-          {isMobile && isExpanded && (
-            <SidebarTrigger>
-              <Button variant="ghost" size="icon">
-                <Menu className="w-5 h-5" />
-              </Button>
-            </SidebarTrigger>
-          )}
+        <div className="">
+          <SidebarTrigger>
+            <Button variant="ghost" size="icon">
+              <Menu className="w-5 h-5" />
+            </Button>
+          </SidebarTrigger>
         </div>
 
         {/* Search Bar */}

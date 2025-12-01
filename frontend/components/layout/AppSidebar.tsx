@@ -20,16 +20,29 @@ import {
   SidebarMenuButton,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { useEffect, useState } from "react";
 
 const menuItems = [
   { title: "Dashboard", url: "/dashboard", icon: Home },
-  { title: "Patients", url: "/patients", icon: Users },
+  { title: "Patients", url: "/patientList", icon: Users },
   { title: "Appointments", url: "/appointments", icon: Calendar },
   { title: "Billing", url: "/billing", icon: DollarSign },
   { title: "Admin", url: "/admin", icon: Settings },
 ];
 
 export default function AppSidebar() {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 1024); // tablet + mobile
+    };
+
+    handleResize(); // set initially
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
   const { open } = useSidebar();
   const pathname = usePathname();
 
@@ -42,6 +55,7 @@ export default function AppSidebar() {
   ${open ? "w-64" : "w-20"}
   h-screen fixed top-0 left-0 z-40
 `}
+      variant={isMobile ? "floating" : "sidebar"}
     >
       {/* Logo Section */}
       <div className="h-16 flex items-center justify-center border-b border-border/40 px-4">

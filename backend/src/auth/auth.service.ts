@@ -36,7 +36,7 @@ export class AuthService {
     extraData?: ExtraDataInput,
   ): Promise<string> {
     try {
-      // 1️⃣ Obtenir un token admin depuis Keycloak
+      // Obtenir un token admin depuis Keycloak
       const tokenParams = new URLSearchParams();
       tokenParams.append('client_id', 'nest-api');
       tokenParams.append(
@@ -53,7 +53,7 @@ export class AuthService {
 
       const adminToken = tokenRes.data.access_token;
 
-      // 2️⃣ Créer l'utilisateur dans Keycloak
+      // Créer l'utilisateur dans Keycloak
       await axios.post(
         'http://localhost:8080/admin/realms/medFlow/users',
         {
@@ -70,7 +70,7 @@ export class AuthService {
         { headers: { Authorization: `Bearer ${adminToken}` } },
       );
 
-      // 3️⃣ Récupérer l’utilisateur Keycloak
+      // Récupérer l’utilisateur Keycloak
       const usersRes = await axios.get(
         `http://localhost:8080/admin/realms/medFlow/users?username=${username}`,
         { headers: { Authorization: `Bearer ${adminToken}` } },
@@ -78,7 +78,7 @@ export class AuthService {
       const userKeycloak = usersRes.data[0];
       const keycloakId = userKeycloak.id;
 
-      // 4️⃣ Attribuer le rôle Keycloak
+      // Attribuer le rôle Keycloak
       const roleRes = await axios.get(
         `http://localhost:8080/admin/realms/medFlow/roles/${role}`,
         { headers: { Authorization: `Bearer ${adminToken}` } },
@@ -90,7 +90,7 @@ export class AuthService {
         { headers: { Authorization: `Bearer ${adminToken}` } },
       );
 
-      // 5️⃣ Sauvegarde en base locale
+      // Sauvegarde en base locale
       if (role === 'medecin') {
         await this.medecinRepository.save({
           keycloak_id: keycloakId,

@@ -46,3 +46,25 @@ export type AddPatientVariables = {
   historiqueMedical?: string;
   gender: string;
 };
+export interface PatientProfileType {
+  id: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phoneNumber?: string | null;
+  dateNaissance?: string;
+  gender?: string;
+  bloodType?: string;
+  address?: string;
+  emergencyName?: string;
+  emergencyPhone?: string;
+  allergies?: string;
+  historiqueMedical?: string;
+}
+export interface GetPatientData {
+  getPatientProfile: PatientProfileType;
+}
+
+export interface GetPatientVars {
+  id: number;
+}

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Patient } from './patient.entity';
 import { Repository } from 'typeorm';
@@ -75,6 +75,31 @@ export class PatientService {
     });
 
     return this.patientRepository.save(patient);
+  }
+  async getPatientProfile(id: number): Promise<Patient> {
+    const patient = await this.patientRepository.findOne({ where: { id } });
+
+    if (!patient) {
+      throw new NotFoundException(`Patient with id ${id} not found`);
+    }
+
+    try {
+      const kcUser = await this.keycloakAdmin.getUserById(patient.keycloak_id);
+      return {
+        ...patient,
+        firstName: kcUser.firstName,
+        lastName: kcUser.lastName,
+        email: kcUser.email,
+        phoneNumber: kcUser.attributes?.phoneNumber?.[0],
+        dateNaissance: kcUser.attributes?.dateNaissance?.[0],
+      };
+    } catch (err) {
+      console.error(
+        `Could not fetch Keycloak user ${patient.keycloak_id}:`,
+        err.message,
+      );
+      return patient;
+    }
   }
 
   async update(input: CreatePatientInput): Promise<Patient> {

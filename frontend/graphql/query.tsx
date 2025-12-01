@@ -36,3 +36,23 @@ export const GET_PATIENT_BY_ID = gql`
     }
   }
 `;
+
+export const GET_PATIENT = gql`
+  query GetPatient($id: Int!) {
+    getPatientProfile(id: $id) {
+      id
+      firstName
+      lastName
+      email
+      phoneNumber
+      dateNaissance
+      gender
+      bloodType
+      address
+      emergencyName
+      emergencyPhone
+      allergies
+      historiqueMedical
+    }
+  }
+`;

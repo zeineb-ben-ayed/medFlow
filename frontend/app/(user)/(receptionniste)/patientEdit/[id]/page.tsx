@@ -17,7 +17,7 @@ import {
   CardDescription,
   CardContent,
 } from "@/components/ui/card";
-import { GET_PATIENT_BY_ID } from "@/graphql/query";
+import { GET_PATIENT } from "@/graphql/query";
 
 export default function EditPatientPage() {
   const router = useRouter();
@@ -28,7 +28,7 @@ export default function EditPatientPage() {
   const { data, loading: fetching } = useQuery<
     { getPatientById: Patient },
     { id: number }
-  >(GET_PATIENT_BY_ID, {
+  >(GET_PATIENT, {
     variables: { id: Number(id) },
     skip: !id,
     fetchPolicy: "network-only",

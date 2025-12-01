@@ -8,7 +8,7 @@ export class PatientResolver {
   constructor(private readonly patientService: PatientService) {}
 
   @Query(() => [Patient])
-  @Roles({ roles: ['realm:receptionniste'] })
+  @Roles({ roles: ['realm:receptionniste', 'realm:medecin'] })
   async findAllPatients(): Promise<Patient[]> {
     return this.patientService.findAll();
   }
@@ -31,5 +31,12 @@ export class PatientResolver {
   @Roles({ roles: ['realm:receptionniste'] })
   async getPatientById(@Args('id', { type: () => Int }) id: number) {
     return this.patientService.findById(id);
+  }
+  @Query(() => Patient)
+  @Roles({ roles: ['realm:medecin'] })
+  async getPatientProfile(
+    @Args('id', { type: () => Int }) id: number,
+  ): Promise<Patient> {
+    return this.patientService.getPatientProfile(id);
   }
 }
