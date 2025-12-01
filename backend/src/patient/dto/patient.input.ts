@@ -2,20 +2,23 @@ import { InputType, Field } from '@nestjs/graphql';
 
 @InputType()
 export class CreatePatientInput {
-  @Field()
-  username: string;
+  @Field({ nullable: true })
+  id?: number;
 
-  @Field()
-  firstName: string;
+  @Field({ nullable: true })
+  username?: string;
 
-  @Field()
-  lastName: string;
+  @Field({ nullable: true })
+  firstName?: string;
 
-  @Field()
-  email: string;
+  @Field({ nullable: true })
+  lastName?: string;
 
-  @Field()
-  password: string;
+  @Field({ nullable: true })
+  email?: string;
+
+  @Field({ nullable: true })
+  password?: string;
 
   @Field({ nullable: true })
   phoneNumber?: string;

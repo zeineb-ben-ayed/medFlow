@@ -11,35 +11,35 @@ export class AuthResolver {
   private keycloakUrl = 'http://localhost:8080';
   private realm = 'medFlow';
   private clientId = 'nest-api';
-  private clientSecret ='IoT1qYcMnF01OAHnWxn1gVu3JSIQiShT';
-    @Public()
-    @Mutation(() => AuthResponse)
+  private clientSecret = 'lesqS4bzVgytRxd4UU0bAStzcYRmN2Z8';
+  @Public()
+  @Mutation(() => AuthResponse)
   async login(
     @Args('username') username: string,
     @Args('password') password: string,
   ): Promise<AuthResponse> {
-    try{
-    const params = new URLSearchParams();
-    params.append('client_id', this.clientId);
-    params.append('client_secret', this.clientSecret);
-    params.append('grant_type', 'password');
-    params.append('username', username);
-    params.append('password', password);
+    try {
+      const params = new URLSearchParams();
+      params.append('client_id', this.clientId);
+      params.append('client_secret', this.clientSecret);
+      params.append('grant_type', 'password');
+      params.append('username', username);
+      params.append('password', password);
 
-    const { data } = await axios.post(
-      'http://localhost:8080/realms/medFlow/protocol/openid-connect/token',
-      
-      params.toString(),
-      {
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      },
-    );
+      const { data } = await axios.post(
+        'http://localhost:8080/realms/medFlow/protocol/openid-connect/token',
 
-    return data;
-  } catch (error) {
-    console.error('KEYCLOAK ERROR:', error.response?.data);
-    throw error;
-  }
+        params.toString(),
+        {
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        },
+      );
+
+      return data;
+    } catch (error) {
+      console.error('KEYCLOAK ERROR:', error.response?.data);
+      throw error;
+    }
   }
 
   @Public()

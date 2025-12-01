@@ -21,6 +21,8 @@ import { FIND_ALL_PATIENTS } from "@/graphql/query";
 import { client } from "@/lib/apollo-client";
 import { FindAllPatientsData, Patient } from "@/interfaces/patient";
 import { Column } from "@/interfaces/column";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
+import PageBreadcrumb from "@/components/layout/PageBreadcrumb";
 
 const PatientList = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -152,46 +154,51 @@ const PatientList = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-secondary/30 to-white p-6 sm:p-6 lg:p-8">
-      <div className="max-w-7xl mx-auto space-y-6">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          {/* Left title and  description */}
-          <div className="flex flex-col">
-            <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
-              Patient Management
-            </h1>
-            <p className="text-muted-foreground text-sm sm:text-base mt-1">
-              Manage patient records and information
-            </p>
-          </div>
+    <>
+      <PageBreadcrumb pageTitle="Patients" />
 
-          {/* Right search and  button */}
-          <div className="flex flex-col md:flex-row md:items-center md:justify-end gap-4 w-full md:w-auto">
-            {/* Search bar */}
-            <div className="w-full md:w-64 lg:w-80">
-              <Search
-                value={searchQuery}
-                onChange={setSearchQuery}
-                placeholder="Search patients by name or email..."
-                className="w-full"
-              />
+      <div className="w-full p-4 sm:p-6 lg:p-8 bg-white rounded-xl shadow-sm border border-gray-100">
+        <div className="w-full space-y-6">
+          {/* Header Section */}
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            {/* Left: Title + Description */}
+            <div className="space-y-1">
+              <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
+                Patient Management
+              </h1>
+              <p className="text-muted-foreground text-sm sm:text-base">
+                Manage patient records and information
+              </p>
             </div>
 
-            {/* Add button */}
-            <Button
-              className="w-full md:w-auto gap-2"
-              onClick={() => router.push("/patientAdd")}
-            >
-              <Plus className="h-4 w-4" />
-              Add New Patient
-            </Button>
-          </div>
-        </div>
+            {/* Right: Search + Button */}
+            <div className="w-full md:w-auto flex flex-col sm:flex-row gap-3 sm:items-center">
+              {/* Search bar */}
+              <div className="w-full sm:w-64 lg:w-80">
+                <Search
+                  value={searchQuery}
+                  onChange={setSearchQuery}
+                  placeholder="Search patients by name or email..."
+                  className="w-full"
+                />
+              </div>
 
-        {/* Patient Table */}
-        <ReusableTable columns={columns} data={filteredPatients} />
+              {/* Add Patient button */}
+              <Button
+                className="w-full sm:w-auto gap-2"
+                onClick={() => router.push("/patientAdd")}
+              >
+                <Plus className="h-4 w-4" />
+                Add New Patient
+              </Button>
+            </div>
+          </div>
+
+          {/* Patient Table */}
+          <ReusableTable columns={columns} data={filteredPatients} />
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

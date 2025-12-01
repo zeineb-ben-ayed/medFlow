@@ -18,11 +18,25 @@ export class PatientResolver {
   async addPatient(@Args('input') input: CreatePatientInput): Promise<Patient> {
     return this.patientService.create(input);
   }
-@Query(() => Patient)
-@Roles({ roles: ['realm:medecin'] })
-async getPatientProfile(
-  @Args('id', { type: () => Int }) id: number,
-): Promise<Patient> {
-  return this.patientService.getPatientProfile(id);
-}
+
+  @Mutation(() => Patient)
+  @Roles({ roles: ['realm:receptionniste'] })
+  async editPatient(
+    @Args('input') input: CreatePatientInput,
+  ): Promise<Patient> {
+    return this.patientService.update(input);
+  }
+
+  @Query(() => Patient)
+  @Roles({ roles: ['realm:receptionniste'] })
+  async getPatientById(@Args('id', { type: () => Int }) id: number) {
+    return this.patientService.findById(id);
+  }
+  @Query(() => Patient)
+  @Roles({ roles: ['realm:medecin'] })
+  async getPatientProfile(
+    @Args('id', { type: () => Int }) id: number,
+  ): Promise<Patient> {
+    return this.patientService.getPatientProfile(id);
+  }
 }
