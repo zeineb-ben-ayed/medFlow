@@ -26,7 +26,7 @@ type Medecin implements User {
   keycloak_id: String!
   lastName: String
   role: String!
-  specialite: String!
+  specialite: String
 }
 
 type Mutation {

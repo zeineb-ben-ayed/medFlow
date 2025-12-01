@@ -16,4 +16,4 @@ import { KeycloakAdminService } from './keycloak-admin.service';
   providers: [KeycloakAdminService],
   exports: [KeycloakConnectModule, KeycloakAdminService],
 })
-export class KeycloakModule {}
+export class KeycloakModule { }

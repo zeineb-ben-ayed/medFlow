@@ -34,30 +34,30 @@ const Register = () => {
     e.preventDefault();
 
     if (formData.password !== formData.confirmPassword) {
-        toast.error("Passwords don't match");
-        return;
+      toast.error("Passwords don't match");
+      return;
     }
 
     try {
-        await registerUser({
+      await registerUser({
         variables: {
-            username: formData.username,
-            email: formData.email,
-            password: formData.password,
-            role: "patient",
-            dateNaissance: formData.dateOfBirth,
-            firstName: formData.firstName,
-            lastName: formData.lastName,
+          username: formData.username,
+          email: formData.email,
+          password: formData.password,
+          role: "patient",
+          dateNaissance: formData.dateOfBirth,
+          firstName: formData.firstName,
+          lastName: formData.lastName,
         },
-        });
+      });
 
-        toast.success("Account created successfully!");
-        router.push("/login");
+      toast.success("Account created successfully!");
+      router.push("/login");
     } catch (error: any) {
-        console.error(error);
-        toast.error("Registration failed");
+      console.error(error);
+      toast.error("Registration failed");
     }
-    };
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center medical-gradient p-4">
@@ -113,7 +113,7 @@ const Register = () => {
                   required
                 />
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
                 <Input
@@ -126,15 +126,15 @@ const Register = () => {
                 />
               </div>
 
-            <div className="space-y-2">
-              <Label>Date of Birth</Label>
-              <DatePicker
-                value={formData.dateOfBirth}
-                onChange={(date) => handleChange("dateOfBirth", date!)}
-                minDate={new Date()}
-                maxDate={new Date("2099-12-31")}
+              <div className="space-y-2">
+                <Label>Date of Birth</Label>
+                <DatePicker
+                  value={formData.dateOfBirth}
+                  onChange={(date) => handleChange("dateOfBirth", date!)}
+                  minDate={new Date()}
+                  maxDate={new Date("2099-12-31")}
                 />
-            </div>
+              </div>
 
               <div className="space-y-2">
                 <Label htmlFor="phone">Phone Number</Label>
