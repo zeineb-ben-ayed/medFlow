@@ -37,11 +37,11 @@ export default function AppSidebar() {
     <Sidebar
       collapsible="icon"
       className={`
-    border-r border-border/40
-    transition-all duration-300 ease-in-out  
-    md:${open ? "w-64" : "w-20"} 
-    h-screen fixed top-0 left-0 z-40
-  `}
+  border-r border-border/40
+  transition-all duration-300 ease-in-out  
+  ${open ? "w-64" : "w-20"}
+  h-screen fixed top-0 left-0 z-40
+`}
     >
       {/* Logo Section */}
       <div className="h-16 flex items-center justify-center border-b border-border/40 px-4">

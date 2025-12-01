@@ -1,7 +1,7 @@
 "use client";
 
 import { Bell, Menu } from "lucide-react";
-import { SidebarTrigger } from "@/components/ui/sidebar";
+import { SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -12,25 +12,36 @@ import {
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 export default function TopNav() {
+  const { state, isMobile } = useSidebar();
+  const isExpanded = state === "expanded";
+
   return (
-    <header className="h-16 border-b bg-background flex items-center justify-between px-6 fixed top-0 right-0 left-64 z-50">
+    <header
+      className={cn(
+        "h-16 border-b bg-background flex items-center justify-between px-6 fixed top-0 right-0 z-50 transition-all duration-300",
+        isMobile ? "left-0" : state === "expanded" ? "left-64" : "left-20"
+      )}
+    >
       {/* LEFT SECTION */}
       <div className="flex items-center gap-3">
         {/* Mobile sidebar toggle */}
         <div className="md:hidden">
-          <SidebarTrigger>
-            <Button variant="ghost" size="icon">
-              <Menu className="w-5 h-5" />
-            </Button>
-          </SidebarTrigger>
+          {isMobile && isExpanded && (
+            <SidebarTrigger>
+              <Button variant="ghost" size="icon">
+                <Menu className="w-5 h-5" />
+              </Button>
+            </SidebarTrigger>
+          )}
         </div>
 
         {/* Search Bar */}
-        <div className="hidden md:block">
+        {/* <div className="hidden md:block">
           <Input className="w-64" placeholder="Search..." />
-        </div>
+        </div> */}
       </div>
 
       {/* RIGHT SECTION */}

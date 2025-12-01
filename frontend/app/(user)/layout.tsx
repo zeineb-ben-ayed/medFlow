@@ -3,7 +3,34 @@ import "../globals.css";
 import AppSidebar from "@/components/layout/AppSidebar";
 import { ContentArea } from "@/components/layout/ContentArea";
 import TopNav from "@/components/layout/TopNav";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import {
+  SidebarProvider,
+  SidebarTrigger,
+  useSidebar,
+} from "@/components/ui/sidebar";
+import { cn } from "@/lib/utils";
+
+function MainWrapper({ children }: { children: React.ReactNode }) {
+  const { state, isMobile } = useSidebar();
+  const isExpanded = state === "expanded";
+  const isCollapsed = state === "collapsed";
+  return (
+    <div
+      className={cn(
+        "flex flex-col flex-1 transition-all duration-300",
+        isMobile ? "ml-0" : state === "expanded" ? "ml-64" : "ml-20"
+      )}
+    >
+      <TopNav />
+      <main
+        className="flex-1 overflow-y-auto bg-background px-4 sm:px-6 py-6
+ hide-scrollbar mt-16"
+      >
+        {children}
+      </main>
+    </div>
+  );
+}
 
 export default function DashboardLayout({
   children,
@@ -11,26 +38,10 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    // <SidebarProvider>
-    //   <div className="flex h-screen">
-    //     <AppSidebar />
-
-    //     <div className="flex-1 flex flex-col">
-    //       <TopNav />
-    //       <ContentArea>{children}</ContentArea>
-    //     </div>
-    //   </div>
-    // </SidebarProvider>
     <SidebarProvider>
-      <div className="flex h-screen">
+      <div className="flex min-h-screen w-full">
         <AppSidebar />
-
-        <div className="flex-1 flex flex-col ml-64">
-          <TopNav />
-          <main className="flex-1 overflow-y-auto bg-background pt-20 pb-20 px-8 hide-scrollbar">
-            {children}
-          </main>
-        </div>
+        <MainWrapper>{children}</MainWrapper>
       </div>
     </SidebarProvider>
   );
