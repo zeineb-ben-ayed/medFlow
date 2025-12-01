@@ -10,21 +10,21 @@ import { ExtraDataInput } from './dto/extra-data-input.dto';
 
 @Injectable()
 export class AuthService {
-    constructor(
-        @InjectRepository(User)
-        private readonly userRepository: Repository<Patient>,
+  constructor(
+    @InjectRepository(User)
+    private readonly userRepository: Repository<Patient>,
 
-        @InjectRepository(Patient)
-        private readonly patientRepository: Repository<Patient>,
+    @InjectRepository(Patient)
+    private readonly patientRepository: Repository<Patient>,
 
-        @InjectRepository(Medecin)
-        private readonly medecinRepository: Repository<Medecin>,
+    @InjectRepository(Medecin)
+    private readonly medecinRepository: Repository<Medecin>,
 
-        @InjectRepository(Receptionniste)
-        private readonly receptionnisteRepository: Repository<Receptionniste>,
-    ) {}
+    @InjectRepository(Receptionniste)
+    private readonly receptionnisteRepository: Repository<Receptionniste>,
+  ) {}
 
-    async register(
+  async register(
     username: string,
     email: string,
     password: string,
@@ -32,13 +32,17 @@ export class AuthService {
     dateNaissance: string,
     firstName: string,
     lastName: string,
+    phoneNumber: string,
     extraData?: ExtraDataInput,
   ): Promise<string> {
     try {
-      // 1️⃣ Obtenir un token admin depuis Keycloak
+      // Obtenir un token admin depuis Keycloak
       const tokenParams = new URLSearchParams();
       tokenParams.append('client_id', 'nest-api');
-      tokenParams.append('client_secret', process.env.KEYCLOAK_CLIENT_SECRET || '');
+      tokenParams.append(
+        'client_secret',
+        process.env.KEYCLOAK_CLIENT_SECRET || '',
+      );
       tokenParams.append('grant_type', 'client_credentials');
 
       const tokenRes = await axios.post(
@@ -49,7 +53,7 @@ export class AuthService {
 
       const adminToken = tokenRes.data.access_token;
 
-      // 2️⃣ Créer l'utilisateur dans Keycloak
+      // Créer l'utilisateur dans Keycloak
       await axios.post(
         'http://localhost:8080/admin/realms/medFlow/users',
         {
@@ -58,13 +62,15 @@ export class AuthService {
           firstName,
           lastName,
           enabled: true,
-          credentials: [{ type: 'password', value: password, temporary: false }],
-          attributes: { dateNaissance },
+          credentials: [
+            { type: 'password', value: password, temporary: false },
+          ],
+          attributes: { dateNaissance, phoneNumber },
         },
         { headers: { Authorization: `Bearer ${adminToken}` } },
       );
 
-      // 3️⃣ Récupérer l’utilisateur Keycloak
+      // Récupérer l’utilisateur Keycloak
       const usersRes = await axios.get(
         `http://localhost:8080/admin/realms/medFlow/users?username=${username}`,
         { headers: { Authorization: `Bearer ${adminToken}` } },
@@ -72,7 +78,7 @@ export class AuthService {
       const userKeycloak = usersRes.data[0];
       const keycloakId = userKeycloak.id;
 
-      // 4️⃣ Attribuer le rôle Keycloak
+      // Attribuer le rôle Keycloak
       const roleRes = await axios.get(
         `http://localhost:8080/admin/realms/medFlow/roles/${role}`,
         { headers: { Authorization: `Bearer ${adminToken}` } },
@@ -84,29 +90,31 @@ export class AuthService {
         { headers: { Authorization: `Bearer ${adminToken}` } },
       );
 
-      // 5️⃣ Sauvegarde en base locale
+      // Sauvegarde en base locale
       if (role === 'medecin') {
         await this.medecinRepository.save({
-            keycloak_id: keycloakId,
-            role,
-            specialite: extraData?.specialite || '',
-            disponibilite: extraData?.disponibilite ?? true,
+          keycloak_id: keycloakId,
+          role,
+          specialite: extraData?.specialite || '',
+          disponibilite: extraData?.disponibilite ?? true,
         });
-        } else if (role === 'patient') {
+      } else if (role === 'patient') {
         await this.patientRepository.save({
-            keycloak_id: keycloakId,
-            role,
-            dateNaissance,
-            historiqueMedical: extraData?.historiqueMedical || '',
+          keycloak_id: keycloakId,
+          role,
+          dateNaissance,
+          phoneNumber,
+          historiqueMedical: extraData?.historiqueMedical || '',
+          gender: extraData?.gender || '',
         });
-        } else if (role === 'receptionniste') {
+      } else if (role === 'receptionniste') {
         await this.receptionnisteRepository.save({
-            keycloak_id: keycloakId,
-            role,
-            poste: extraData?.poste || '',
-            horaires: extraData?.horaires || '',
+          keycloak_id: keycloakId,
+          role,
+          poste: extraData?.poste || '',
+          horaires: extraData?.horaires || '',
         });
-        }
+      }
 
       return `✅ Utilisateur ${username} créé avec succès et rôle ${role} assigné`;
     } catch (error) {

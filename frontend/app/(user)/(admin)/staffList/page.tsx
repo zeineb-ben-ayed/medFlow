@@ -15,6 +15,10 @@ import { DELETE_USER, REGISTER_MUTATION } from "@/graphql/mutations";
 import AddDialog from "@/components/ui/addDialog";
 import { Input } from "@/components/ui/input";
 import { DatePicker } from "@/components/ui/date-picker";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+import PageBreadcrumb from "@/components/layout/PageBreadcrumb";
+import { toast } from "sonner";
 
 
 interface GetAllStaffResponse {
@@ -168,6 +172,7 @@ const StaffList = () => {
       },
     }).then(() => {
       setAddDialogOpen(false);
+      toast.success("Staff member added successfully!");
       setFormData({
         username: "",
         email: "",
@@ -181,225 +186,243 @@ const StaffList = () => {
         poste: "",
         horaires: "",
       });
+    }).catch((err) => {
+      console.error(err);
+      toast.error("Failed to add staff member"); // ✅ show error toast
     });
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-secondary/30 to-white p-6 sm:p-6 lg:p-8">
-      <div className="max-w-7xl mx-auto space-y-6">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <div className="flex flex-col">
-            <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
-              Staff Management
-            </h1>
-            <p className="text-muted-foreground text-sm sm:text-base mt-1">
-              Manage doctors and receptionists
-            </p>
-          </div>
+    <>
+      <PageBreadcrumb pageTitle="Staff" />
 
-          <div className="flex flex-col md:flex-row md:items-center md:justify-end gap-4 w-full md:w-auto">
-            <div className="w-full md:w-64 lg:w-80">
-              <Search
-                value={searchQuery}
-                onChange={setSearchQuery}
-                placeholder="Search staff by name or email..."
-              />
+      <div className="w-full p-4 sm:p-6 lg:p-8 bg-white rounded-xl shadow-sm border border-gray-100">
+        <div className="w-full space-y-6">
+          {/* Header Section */}
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            {/* Left: Title + Description */}
+            <div className="space-y-1">
+              <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
+                Staff Management
+              </h1>
+              <p className="text-muted-foreground text-sm sm:text-base mt-1">
+                Manage doctors and receptionists
+              </p>
             </div>
 
-            <AddDialog
-              open={addDialogOpen}
-              onOpenChange={setAddDialogOpen}
-              title="Add New Staff"
-              description="Fill out the form to create a new staff member"
-              onSubmit={handleSubmit}
-              triggerButton={
-                <Button className="w-full md:w-auto gap-2">
-                  <Plus className="h-4 w-4" /> Add New Staff
-                </Button>
-              }
-            >
-              <div className="grid gap-4">
-
-                {/* Username */}
-                <Input
-                  type="text"
-                  name="username"
-                  placeholder="Username"
-                  value={formData.username}
-                  onChange={handleInputChange}
-                  required
+            <div className="flex flex-col md:flex-row md:items-center md:justify-end gap-4 w-full md:w-auto">
+              <div className="w-full md:w-64 lg:w-80">
+                <Search
+                  value={searchQuery}
+                  onChange={setSearchQuery}
+                  placeholder="Search staff by name or email..."
                 />
-
-                {/* First Name */}
-                <Input
-                  type="text"
-                  name="firstName"
-                  placeholder="First Name"
-                  value={formData.firstName}
-                  onChange={handleInputChange}
-                  required
-                />
-
-                {/* Last Name */}
-                <Input
-                  type="text"
-                  name="lastName"
-                  placeholder="Last Name"
-                  value={formData.lastName}
-                  onChange={handleInputChange}
-                  required
-                />
-
-                {/* Email */}
-                <Input
-                  type="email"
-                  name="email"
-                  placeholder="Email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  required
-                />
-
-                {/* Password */}
-                <Input
-                  type="password"
-                  name="password"
-                  placeholder="Password"
-                  value={formData.password}
-                  onChange={handleInputChange}
-                  required
-                />
-
-                {/* Date of Birth */}
-                <DatePicker
-                  value={formData.dateNaissance}
-                  onChange={handleDateChange}
-                  minDate={new Date()}
-                  maxDate={new Date("2099-12-31")}
-                />
-
-                {/* Role Selector */}
-                <select
-                  name="role"
-                  value={role}
-                  onChange={(e) => setRole(e.target.value as any)}
-                  required
-                >
-                  <option value="medecin">Médecin</option>
-                  <option value="receptionniste">Réceptionniste</option>
-                </select>
-
-                {/* CONDITIONAL FIELDS depending on role */}
-
-                {role === "medecin" && (
-                  <>
-                    <Input
-                      type="text"
-                      name="specialite"
-                      placeholder="Spécialité"
-
-                      value={formData.specialite}
-                      onChange={handleInputChange}
-                    />
-
-                    <select
-                      name="disponibilite"
-
-                      value={formData.disponibilite ? "true" : "false"}
-                      onChange={(e) =>
-                        setFormData((prev) => ({
-                          ...prev,
-                          disponibilite: e.target.value === "true",
-                        }))
-                      }
-                    >
-                      <option value="true">Disponible</option>
-                      <option value="false">Non disponible</option>
-                    </select>
-                  </>
-                )}
-
-                {role === "receptionniste" && (
-                  <>
-                    <Input
-                      type="text"
-                      name="poste"
-                      placeholder="Poste"
-
-                      value={formData.poste}
-                      onChange={handleInputChange}
-                    />
-
-                    <Input
-                      type="text"
-                      name="horaires"
-                      placeholder="Horaires"
-
-                      value={formData.horaires}
-                      onChange={handleInputChange}
-                    />
-                  </>
-                )}
               </div>
-            </AddDialog>
 
+              <AddDialog
+                open={addDialogOpen}
+                onOpenChange={setAddDialogOpen}
+                title="Add New Staff"
+                description="Fill out the form to create a new staff member"
+                onSubmit={handleSubmit}
+                triggerButton={
+                  <Button className="w-full md:w-auto gap-2">
+                    <Plus className="h-4 w-4" />Add New Staff
+                  </Button>
+                }
+              >
+                <div className="grid gap-4">
+
+                  <Label>Username</Label>
+                  <Input
+                    type="text"
+                    name="username"
+                    placeholder="JhonDeo"
+                    value={formData.username}
+                    onChange={handleInputChange}
+                    required
+                  />
+
+                  <Label>First Name</Label>
+                  <Input
+                    type="text"
+                    name="firstName"
+                    placeholder="John"
+                    value={formData.firstName}
+                    onChange={handleInputChange}
+                    required
+                  />
+
+                  <Label>Last Name</Label>
+                  <Input
+                    type="text"
+                    name="lastName"
+                    placeholder="Deo"
+                    value={formData.lastName}
+                    onChange={handleInputChange}
+                    required
+                  />
+
+                  <Label>Email</Label>
+                  <Input
+                    type="email"
+                    name="email"
+                    placeholder="example@gmail.com"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    required
+                  />
+
+                  <Label>Password</Label>
+                  <Input
+                    type="password"
+                    name="password"
+                    placeholder="*******"
+                    value={formData.password}
+                    onChange={handleInputChange}
+                    required
+                  />
+
+                  <Label>Date Of Birth</Label>
+                  <DatePicker
+                    value={formData.dateNaissance}
+                    onChange={handleDateChange}
+                    maxDate={new Date()}
+                  />
+
+                  <Label>Role</Label>
+                  <Select
+                    value={role}
+                    onValueChange={(value) => setRole(value as any)}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Sélectionner un rôle" />
+                    </SelectTrigger>
+
+                    <SelectContent>
+                      <SelectItem value="medecin">Médecin</SelectItem>
+                      <SelectItem value="receptionniste">Réceptionniste</SelectItem>
+                    </SelectContent>
+                  </Select>
+
+                  {role === "medecin" && (
+                    <>
+                      <Label>Speciality</Label>
+                      <Input
+                        type="text"
+                        name="specialite"
+                        placeholder="Speciality"
+
+                        value={formData.specialite}
+                        onChange={handleInputChange}
+                      />
+
+                      <Label>Disponibility</Label>
+                      <Select
+                        value={formData.disponibilite ? "true" : "false"}
+                        onValueChange={(value) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            disponibilite: value === "true",
+                          }))
+                        }
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Disponibilité" />
+                        </SelectTrigger>
+
+                        <SelectContent>
+                          <SelectItem value="true">Disponible</SelectItem>
+                          <SelectItem value="false">Non disponible</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </>
+                  )}
+
+                  {role === "receptionniste" && (
+                    <>
+                      <Label>Poste</Label>
+                      <Input
+                        type="text"
+                        name="poste"
+                        placeholder="Poste"
+
+                        value={formData.poste}
+                        onChange={handleInputChange}
+                      />
+
+                      <Label>Schedules</Label>
+                      <Input
+                        type="text"
+                        name="horaires"
+                        placeholder="schedules"
+
+                        value={formData.horaires}
+                        onChange={handleInputChange}
+                      />
+                    </>
+                  )}
+                </div>
+              </AddDialog>
+
+            </div>
           </div>
+
+          <ReusableTable columns={columns} data={filteredStaff} />
+
+          <Dialog open={open} onOpenChange={setOpen}>
+            <DialogContent className="max-w-lg">
+              <DialogHeader>
+                <DialogTitle>
+                  {selectedStaff?.firstName} {selectedStaff?.lastName}
+                  <Badge className="ml-2">{selectedStaff?.role}</Badge>
+                </DialogTitle>
+              </DialogHeader>
+
+              {selectedStaff && (
+                <div className="space-y-3 mt-4">
+                  <p><strong>Email:</strong> {selectedStaff.email}</p>
+                  <p><strong>Phone:</strong> {selectedStaff.phone}</p>
+
+                  {/* Doctor special fields */}
+                  {selectedStaff.role === "medecin" && (
+                    <>
+                      <p><strong>Speciality:</strong> {selectedStaff.specialite || "—"}</p>
+                      <p><strong>Disponibility:</strong> {selectedStaff.disponibilite || "—"}</p>
+                    </>
+                  )}
+
+                  {/* Receptionist special fields */}
+                  {selectedStaff.role === "receptionniste" && (
+                    <>
+                      <p><strong>Position:</strong> {selectedStaff.poste || "—"}</p>
+                      <p><strong>Working Hours:</strong> {selectedStaff.horaires || "—"}</p>
+                    </>
+                  )}
+                </div>
+              )}
+
+              <DialogFooter>
+                <Button onClick={() => setOpen(false)}>Close</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
+          <DeleteDialog
+            open={deleteDialogOpen}
+            onOpenChange={setDeleteDialogOpen}
+            onConfirm={() => {
+              if (staffToDelete) {
+                deleteUser({ variables: { id: staffToDelete.id } });
+                setStaffToDelete(null);
+              }
+            }}
+            title="Delete Staff"
+            description={`Are you sure you want to delete ${staffToDelete?.firstName} ${staffToDelete?.lastName}?`}
+          />
         </div>
-
-        <ReusableTable columns={columns} data={filteredStaff} />
-
-        <Dialog open={open} onOpenChange={setOpen}>
-          <DialogContent className="max-w-lg">
-            <DialogHeader>
-              <DialogTitle>
-                {selectedStaff?.firstName} {selectedStaff?.lastName}
-                <Badge className="ml-2">{selectedStaff?.role}</Badge>
-              </DialogTitle>
-            </DialogHeader>
-
-            {selectedStaff && (
-              <div className="space-y-3 mt-4">
-                <p><strong>Email:</strong> {selectedStaff.email}</p>
-                <p><strong>Phone:</strong> {selectedStaff.phone}</p>
-
-                {/* Doctor special fields */}
-                {selectedStaff.role === "medecin" && (
-                  <>
-                    <p><strong>Speciality:</strong> {selectedStaff.specialite || "—"}</p>
-                    <p><strong>Disponibility:</strong> {selectedStaff.disponibilite || "—"}</p>
-                  </>
-                )}
-
-                {/* Receptionist special fields */}
-                {selectedStaff.role === "receptionniste" && (
-                  <>
-                    <p><strong>Position:</strong> {selectedStaff.poste || "—"}</p>
-                    <p><strong>Working Hours:</strong> {selectedStaff.horaires || "—"}</p>
-                  </>
-                )}
-              </div>
-            )}
-
-            <DialogFooter>
-              <Button onClick={() => setOpen(false)}>Close</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-
-        <DeleteDialog
-          open={deleteDialogOpen}
-          onOpenChange={setDeleteDialogOpen}
-          onConfirm={() => {
-            if (staffToDelete) {
-              deleteUser({ variables: { id: staffToDelete.id } });
-              setStaffToDelete(null);
-            }
-          }}
-          title="Delete Staff"
-          description={`Are you sure you want to delete ${staffToDelete?.firstName} ${staffToDelete?.lastName}?`}
-        />
       </div>
-    </div>
+    </>
   );
 };
 

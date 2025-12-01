@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useState } from "react";
 import Link from "next/link";
@@ -11,6 +11,13 @@ import { toast } from "sonner";
 import { DatePicker } from "@/components/ui/date-picker";
 import { useMutation } from "@apollo/client/react";
 import { REGISTER_MUTATION } from "@/graphql/mutations";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const Register = () => {
   const router = useRouter();
@@ -21,13 +28,14 @@ const Register = () => {
     lastName: "",
     dateOfBirth: new Date(),
     email: "",
-    phone: "",
+    phoneNumber: "",
     password: "",
     confirmPassword: "",
+    gender: "",
   });
 
   const handleChange = (field: string, value: string | Date) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleRegister = async (e: React.FormEvent) => {
@@ -48,9 +56,13 @@ const Register = () => {
           dateNaissance: formData.dateOfBirth,
           firstName: formData.firstName,
           lastName: formData.lastName,
+          phoneNumber: formData.phoneNumber,
+          extraData: {
+            gender: formData.gender,
+          },
         },
       });
-
+      console.log("register", formData.phoneNumber);
       toast.success("Account created successfully!");
       router.push("/login");
     } catch (error: any) {
@@ -76,7 +88,9 @@ const Register = () => {
 
           <div className="text-center space-y-2">
             <h2 className="text-2xl font-semibold">Create your account</h2>
-            <p className="text-muted-foreground">Join MedFlow to streamline your healthcare management</p>
+            <p className="text-muted-foreground">
+              Join MedFlow to streamline your healthcare management
+            </p>
           </div>
 
           <form onSubmit={handleRegister} className="space-y-4">
@@ -131,19 +145,18 @@ const Register = () => {
                 <DatePicker
                   value={formData.dateOfBirth}
                   onChange={(date) => handleChange("dateOfBirth", date!)}
-                  minDate={new Date()}
-                  maxDate={new Date("2099-12-31")}
+                  maxDate={new Date()}
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="phone">Phone Number</Label>
+                <Label htmlFor="phoneNumber">Phone Number</Label>
                 <Input
-                  id="phone"
+                  id="phoneNumber"
                   type="tel"
                   placeholder="+1 234 567 8900"
-                  value={formData.phone}
-                  onChange={(e) => handleChange("phone", e.target.value)}
+                  value={formData.phoneNumber}
+                  onChange={(e) => handleChange("phoneNumber", e.target.value)}
                   required
                 />
               </div>
@@ -169,9 +182,31 @@ const Register = () => {
                   type="password"
                   placeholder="••••••••"
                   value={formData.confirmPassword}
-                  onChange={(e) => handleChange("confirmPassword", e.target.value)}
+                  onChange={(e) =>
+                    handleChange("confirmPassword", e.target.value)
+                  }
                   required
                 />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="gender">Gender</Label>
+                <Select
+                  value={formData.gender}
+                  onValueChange={(value: any) => handleChange("gender", value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select gender" />
+                  </SelectTrigger>
+
+                  <SelectContent>
+                    <SelectItem value="Male">Male</SelectItem>
+                    <SelectItem value="Female">Female</SelectItem>
+                    <SelectItem value="Other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
 
@@ -182,14 +217,18 @@ const Register = () => {
 
           <div className="text-center text-sm text-muted-foreground">
             Already have an account?{" "}
-            <Link href="/login" className="text-primary hover:underline font-medium">
+            <Link
+              href="/login"
+              className="text-primary hover:underline font-medium"
+            >
               Sign in
             </Link>
           </div>
         </div>
 
         <p className="text-center text-sm text-muted-foreground mt-6">
-          By creating an account, you agree to our Terms of Service and Privacy Policy
+          By creating an account, you agree to our Terms of Service and Privacy
+          Policy
         </p>
       </div>
     </div>

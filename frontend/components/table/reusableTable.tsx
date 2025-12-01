@@ -26,10 +26,6 @@ interface ReusableTableProps<T = any> {
   emptyMessage?: string;
 }
 
-/**
- * A generic, reusable table component for displaying any list of data.
- * Example usage: list of patients, doctors, appointments, etc.
- */
 export function ReusableTable<T>({
   columns,
   data,

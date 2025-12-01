@@ -11,9 +11,7 @@ export class KeycloakAdminService {
   private readonly clientId = 'nest-api';
   private readonly clientSecret = process.env.KEYCLOAK_CLIENT_SECRET || '';
 
-  /**
-   * Get (and cache) an admin token from Keycloak
-   */
+  // Get  an admin token from Keycloak
   async getAdminToken(): Promise<string> {
     // Reuse cached token if still valid
     if (this.token && this.tokenExpiry && Date.now() < this.tokenExpiry) {
@@ -38,9 +36,7 @@ export class KeycloakAdminService {
     return this.token!;
   }
 
-  /**
-   * Get user info by Keycloak ID
-   */
+  // Get user info by Keycloak ID
   async getUserById(userId: string): Promise<any> {
     const token = await this.getAdminToken();
 
@@ -57,6 +53,115 @@ export class KeycloakAdminService {
     await axios.delete(
       `${this.baseUrl}/admin/realms/${this.realm}/users/${keycloakId}`,
       { headers: { Authorization: `Bearer ${token}` } },
+    );
+  }
+
+  async createUser(data: {
+    username: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    password: string;
+    attributes?: Record<string, any>;
+    role?: string; // optional
+  }): Promise<{ id: string }> {
+    const token = await this.getAdminToken();
+
+    // Create user without password
+    const userPayload = {
+      firstName: data.firstName,
+      lastName: data.lastName,
+      email: data.email,
+      username: data.username,
+      enabled: true,
+      emailVerified: true,
+      attributes: data.attributes || {},
+    };
+
+    const res = await axios.post(
+      `${this.baseUrl}/admin/realms/${this.realm}/users`,
+      userPayload,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      },
+    );
+
+    // Keycloak returns the created user's URL inside headers.location
+    const location = res.headers.location;
+    const id = location.substring(location.lastIndexOf('/') + 1);
+
+    // Set password
+    await axios.put(
+      `${this.baseUrl}/admin/realms/${this.realm}/users/${id}/reset-password`,
+      {
+        type: 'password',
+        temporary: false,
+        value: data.password,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      },
+    );
+
+    // Step 3: Assign role
+    if (data.role) {
+      const roleRes = await axios.get(
+        `${this.baseUrl}/admin/realms/${this.realm}/roles/${data.role}`,
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
+
+      await axios.post(
+        `${this.baseUrl}/admin/realms/${this.realm}/users/${id}/role-mappings/realm`,
+        [roleRes.data],
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        },
+      );
+    }
+
+    return { id };
+  }
+
+  async updateUser(
+    keycloakId: string,
+    data: {
+      firstName: string;
+      lastName: string;
+      email: string;
+      attributes?: Record<string, any>;
+      role?: string;
+    },
+  ): Promise<void> {
+    const token = await this.getAdminToken();
+
+    const payload = {
+      firstName: data.firstName,
+      lastName: data.lastName,
+      email: data.email,
+      attributes: {
+        phoneNumber: [data.attributes?.phoneNumber],
+        dateNaissance: [data.attributes?.dateNaissance],
+      },
+    };
+
+    await axios.put(
+      `${this.baseUrl}/admin/realms/${this.realm}/users/${keycloakId}`,
+      payload,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      },
     );
   }
 }
