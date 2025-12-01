@@ -11,14 +11,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import clsx from "clsx";
-import { Column } from "@/interfaces/column";
 
-// export interface Column<T = any> {
-//   key: keyof T | string;
-//   label: string;
-//   align?: "start" | "center" | "end";
-//   render?: (value: any, row: T) => React.ReactNode;
-// }
+export interface Column<T = any> {
+  key: keyof T | string;
+  label: string;
+  align?: "start" | "center" | "end";
+  render?: (value: any, row: T) => React.ReactNode;
+}
 
 interface ReusableTableProps<T = any> {
   columns: Column<T>[];

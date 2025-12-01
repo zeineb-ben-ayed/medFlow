@@ -5,7 +5,7 @@ import { Column, ChildEntity } from 'typeorm';
 @ObjectType({ implements: () => User })
 @ChildEntity()
 export class Medecin extends User {
-  @Field()
+  @Field({ nullable: true })
   @Column()
   specialite: string;
 

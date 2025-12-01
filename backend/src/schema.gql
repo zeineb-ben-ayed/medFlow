@@ -55,7 +55,7 @@ type Medecin implements User {
   lastName: String
   phoneNumber: String
   role: String!
-  specialite: String!
+  specialite: String
   username: String
 }
 

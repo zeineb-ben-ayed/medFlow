@@ -195,7 +195,7 @@ const Register = () => {
                 <Label htmlFor="gender">Gender</Label>
                 <Select
                   value={formData.gender}
-                  onValueChange={(value) => handleChange("gender", value)}
+                  onValueChange={(value: any) => handleChange("gender", value)}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select gender" />
