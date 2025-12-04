@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Plus, Eye, Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Search } from "@/components/Input/Search";
-import { Column, ReusableTable } from "@/components/table/reusableTable";
+import { ReusableTable } from "@/components/table/reusableTable";
 import { GET_ALL_STAFF } from "@/graphql/queries";
 import { useMutation, useQuery } from "@apollo/client/react";
 import { Staff } from "@/interfaces/staff";
@@ -19,6 +19,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Label } from "@/components/ui/label";
 import PageBreadcrumb from "@/components/layout/PageBreadcrumb";
 import { toast } from "sonner";
+import { Column } from "@/interfaces/column";
 
 
 interface GetAllStaffResponse {
@@ -188,7 +189,7 @@ const StaffList = () => {
       });
     }).catch((err) => {
       console.error(err);
-      toast.error("Failed to add staff member"); // ✅ show error toast
+      toast.error("Failed to add staff member");
     });
   };
 
