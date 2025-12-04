@@ -36,6 +36,11 @@ export const LOGIN_MUTATION = gql`
   }
 `;
 
+export const DELETE_USER = gql`
+  mutation DeleteUser($id: Int!) {
+    deleteUser(id: $id)
+  }
+`;
 export const ADD_PATIENT_MUTATION = gql`
   mutation AddPatient($input: CreatePatientInput!) {
     addPatient(input: $input) {

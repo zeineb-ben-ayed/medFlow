@@ -165,12 +165,10 @@
   }
 
   .medical-gradient {
-    background-image: linear-gradient(
-      to bottom right,
-      hsl(350 35% 42% / 0.05),
-      hsl(350 30% 85% / 0.3),
-      hsl(350 30% 91%)
-    );
+    background-image: linear-gradient(to bottom right,
+        hsl(350 35% 42% / 0.05),
+        hsl(350 30% 85% / 0.3),
+        hsl(350 30% 91%));
   }
 
   .glass-effect {
@@ -232,15 +230,21 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
 }
+
 /* Hide scrollbar */
 .hide-scrollbar {
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
 }
+
 .hide-scrollbar::-webkit-scrollbar {
-  display: none; /* Chrome, Safari, Opera */
+  display: none;
+  /* Chrome, Safari, Opera */
 }

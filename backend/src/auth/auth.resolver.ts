@@ -7,11 +7,11 @@ import { ExtraDataInput } from './dto/extra-data-input.dto';
 
 @Resolver()
 export class AuthResolver {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) { }
   private keycloakUrl = 'http://localhost:8080';
   private realm = 'medFlow';
   private clientId = 'nest-api';
-  private clientSecret = 'lesqS4bzVgytRxd4UU0bAStzcYRmN2Z8';
+  private clientSecret = 'eg9sUSqP6w6WW9WwJB9yEvQDKWRCUoVi';
   @Public()
   @Mutation(() => AuthResponse)
   async login(
