@@ -1,16 +1,6 @@
 "use client";
 import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card } from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Plus, Eye, Edit, Phone, Mail, Trash } from "lucide-react";
 import { ReusableTable } from "@/components/table/reusableTable";
@@ -21,7 +11,6 @@ import { FIND_ALL_PATIENTS } from "@/graphql/query";
 import { client } from "@/lib/apollo-client";
 import { FindAllPatientsData, Patient } from "@/interfaces/patient";
 import { Column } from "@/interfaces/column";
-import { Breadcrumb } from "@/components/ui/breadcrumb";
 import PageBreadcrumb from "@/components/layout/PageBreadcrumb";
 
 const PatientList = () => {
@@ -57,14 +46,6 @@ const PatientList = () => {
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
-
-  // const filteredPatients = patients.filter(
-  //   (patient) =>
-  //     patient.firstName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-  //     patient.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-  //     patient.lastName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-  //     patient.dateNaissance.toLowerCase().includes(searchQuery.toLowerCase())
-  // );
 
   const columns: Column<Patient>[] = [
     {
