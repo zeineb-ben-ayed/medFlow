@@ -5,8 +5,8 @@ export interface Staff {
   lastName?: string;
   email?: string;
   dateNaissance?: string;
-  phone?: string;
-  disponibilite?: string;
+  phoneNumber?: string;
+  disponibilite?: boolean;
   poste?: string;
   horaires?: string;
   specialite?: string;

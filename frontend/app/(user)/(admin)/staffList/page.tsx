@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Plus, Eye, Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Search } from "@/components/Input/Search";
-import { Column, ReusableTable } from "@/components/table/reusableTable";
+import { ReusableTable } from "@/components/table/reusableTable";
 import { GET_ALL_STAFF } from "@/graphql/queries";
 import { useMutation, useQuery } from "@apollo/client/react";
 import { Staff } from "@/interfaces/staff";
@@ -19,6 +19,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Label } from "@/components/ui/label";
 import PageBreadcrumb from "@/components/layout/PageBreadcrumb";
 import { toast } from "sonner";
+import { Column } from "@/interfaces/column";
 
 
 interface GetAllStaffResponse {
@@ -63,7 +64,6 @@ const StaffList = () => {
   const staff: Staff[] =
     data?.getAllStaff?.map((user: any) => ({
       ...user,
-      phone: "+216 50 000 000",
     })) || [];
 
   const filteredStaff = staff.filter(
@@ -74,13 +74,30 @@ const StaffList = () => {
       s.email?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const formatDate = (date: string | Date | undefined): string => {
+    if (!date) return "—"; // handles undefined safely
+
+    try {
+      return new Date(date).toLocaleDateString("en-GB", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+      });
+    } catch {
+      return String(date);
+    }
+  };
+
   const columns: Column<Staff>[] = [
     {
       key: "fullName",
       label: "Full Name",
       render: (_, row) => `${row.firstName || ""} ${row.lastName || ""}`,
     },
-    { key: "email", label: "Email" },
+    {
+      key: "email",
+      label: "Email"
+    },
     {
       key: "role",
       label: "Role",
@@ -99,8 +116,15 @@ const StaffList = () => {
       ),
     },
     {
-      key: "phone",
+      key: "phoneNumber",
       label: "Phone",
+      render: (value, row) => value || row.phoneNumber || "—",
+    },
+    {
+      key: "dateNaissance",
+      label: "Date of Birth",
+      align: "center",
+      render: (value, row) => formatDate(value || row.dateNaissance),
     },
     {
       key: "actions",
@@ -188,7 +212,7 @@ const StaffList = () => {
       });
     }).catch((err) => {
       console.error(err);
-      toast.error("Failed to add staff member"); // ✅ show error toast
+      toast.error("Failed to add staff member");
     });
   };
 
@@ -269,6 +293,16 @@ const StaffList = () => {
                     name="email"
                     placeholder="example@gmail.com"
                     value={formData.email}
+                    onChange={handleInputChange}
+                    required
+                  />
+
+                  <Label>Phone Number</Label>
+                  <Input
+                    type="text"
+                    name="phoneNumber"
+                    placeholder="+216 00 000 000"
+                    value={formData.phoneNumber}
                     onChange={handleInputChange}
                     required
                   />
@@ -382,17 +416,23 @@ const StaffList = () => {
               {selectedStaff && (
                 <div className="space-y-3 mt-4">
                   <p><strong>Email:</strong> {selectedStaff.email}</p>
-                  <p><strong>Phone:</strong> {selectedStaff.phone}</p>
+                  <p><strong>Phone:</strong> {selectedStaff.phoneNumber}</p>
+                  <p><strong>Date of birth:</strong> {formatDate(selectedStaff.dateNaissance)}</p>
 
-                  {/* Doctor special fields */}
                   {selectedStaff.role === "medecin" && (
                     <>
                       <p><strong>Speciality:</strong> {selectedStaff.specialite || "—"}</p>
-                      <p><strong>Disponibility:</strong> {selectedStaff.disponibilite || "—"}</p>
+                      <p><strong>Disponibility:</strong> {" "}
+                        {
+                          selectedStaff.disponibilite !== undefined
+                            ? selectedStaff.disponibilite
+                              ? "Disponible"
+                              : "Non disponible"
+                            : "—"
+                        }</p>
                     </>
                   )}
 
-                  {/* Receptionist special fields */}
                   {selectedStaff.role === "receptionniste" && (
                     <>
                       <p><strong>Position:</strong> {selectedStaff.poste || "—"}</p>
