@@ -11,13 +11,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import clsx from "clsx";
-
-export interface Column<T = any> {
-  key: keyof T | string;
-  label: string;
-  align?: "start" | "center" | "end";
-  render?: (value: any, row: T) => React.ReactNode;
-}
+import { Column } from "@/interfaces/column";
 
 interface ReusableTableProps<T = any> {
   columns: Column<T>[];

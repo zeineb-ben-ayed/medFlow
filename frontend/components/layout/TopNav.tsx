@@ -10,16 +10,11 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 export default function TopNav() {
-  const { state, isMobile: shadcnMobile } = useSidebar();
-  const isTabletOrMobile =
-    typeof window !== "undefined" && window.innerWidth < 1024;
-  const isMobile = isTabletOrMobile || shadcnMobile;
-
+  const { state, isMobile } = useSidebar();
   return (
     <header
       className={cn(
