@@ -8,6 +8,7 @@ export const GET_ALL_STAFF = gql`
       firstName
       lastName
       email
+      phoneNumber
       dateNaissance
       ... on Medecin {
         specialite
