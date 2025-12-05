@@ -119,8 +119,8 @@ const StaffList = () => {
             value === "medecin"
               ? "default"
               : value === "receptionniste"
-              ? "secondary"
-              : "outline"
+                ? "secondary"
+                : "outline"
           }
         >
           {value}
@@ -192,9 +192,9 @@ const StaffList = () => {
     const extraData =
       role === "medecin"
         ? {
-            specialite: formData.specialite,
-            disponibilite: formData.disponibilite,
-          }
+          specialite: formData.specialite,
+          disponibilite: formData.disponibilite,
+        }
         : { poste: formData.poste, horaires: formData.horaires };
 
     registerUser({

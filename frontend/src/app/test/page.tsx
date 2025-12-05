@@ -15,7 +15,7 @@ import { Badge } from "@/components/ui/badge";
 import { Search, Plus, Eye, Edit, Phone, Mail } from "lucide-react";
 import { ReusableTable } from "@/components/table/reusableTable";
 import { useRouter } from "next/navigation";
-import { Column } from "@/interfaces/column";
+import { Column } from "@/src/interfaces/column";
 
 const PatientList = () => {
   const [searchQuery, setSearchQuery] = useState("");

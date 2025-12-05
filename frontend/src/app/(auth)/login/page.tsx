@@ -34,6 +34,8 @@ const Login = () => {
       }
 
       localStorage.setItem("access_token", data.login.access_token);
+      localStorage.setItem("refresh_token", data.login.refresh_token);
+      localStorage.setItem("expires_in", (Date.now() + data.login.expires_in * 1000).toString());
       toast.success("Logged in successfully!");
       router.push("/dashboard");
     } catch (error: any) {
