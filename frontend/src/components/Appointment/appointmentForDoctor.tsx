@@ -1,11 +1,23 @@
 "use client";
 
 import { useState } from "react";
-import { Calendar } from "@/components/ui/calendar";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Clock, Calendar as CalendarIcon, User, ChevronLeft, ChevronRight } from "lucide-react";
+import { Calendar } from "@/src/components/ui/calendar";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/src/components/ui/card";
+import { Button } from "@/src/components/ui/button";
+import { Badge } from "@/src/components/ui/badge";
+import {
+  Clock,
+  Calendar as CalendarIcon,
+  User,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/src/lib/utils";
 
@@ -33,7 +45,7 @@ const mockAppointments: Appointment[] = [
     duration: 30,
     reason: "Annual checkup",
     status: "scheduled",
-    type: "consultation"
+    type: "consultation",
   },
   {
     id: "2",
@@ -44,7 +56,7 @@ const mockAppointments: Appointment[] = [
     duration: 45,
     reason: "Follow-up consultation",
     status: "scheduled",
-    type: "follow-up"
+    type: "follow-up",
   },
   {
     id: "3",
@@ -55,14 +67,31 @@ const mockAppointments: Appointment[] = [
     duration: 30,
     reason: "Prescription renewal",
     status: "completed",
-    type: "consultation"
-  }
+    type: "consultation",
+  },
 ];
 
 const timeSlots = [
-  "08:00", "08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "11:30",
-  "12:00", "12:30", "13:00", "13:30", "14:00", "14:30", "15:00", "15:30",
-  "16:00", "16:30", "17:00", "17:30"
+  "08:00",
+  "08:30",
+  "09:00",
+  "09:30",
+  "10:00",
+  "10:30",
+  "11:00",
+  "11:30",
+  "12:00",
+  "12:30",
+  "13:00",
+  "13:30",
+  "14:00",
+  "14:30",
+  "15:00",
+  "15:30",
+  "16:00",
+  "16:30",
+  "17:00",
+  "17:30",
 ];
 
 const AppointmentsPage = () => {
@@ -85,14 +114,17 @@ const AppointmentsPage = () => {
     (apt) => apt.date === format(date, "yyyy-MM-dd")
   );
 
-  const scheduledCount = appointmentsForSelectedDate.filter((a) => a.status === "scheduled").length;
-  const completedCount = appointmentsForSelectedDate.filter((a) => a.status === "completed").length;
+  const scheduledCount = appointmentsForSelectedDate.filter(
+    (a) => a.status === "scheduled"
+  ).length;
+  const completedCount = appointmentsForSelectedDate.filter(
+    (a) => a.status === "completed"
+  ).length;
   const availableSlots = timeSlots.length - scheduledCount;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-secondary/30 via-background to-accent-light/20">
       <div className="container mx-auto p-6 space-y-6">
-
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
@@ -157,7 +189,6 @@ const AppointmentsPage = () => {
         </Card>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
           {/* Daily Schedule */}
           <Card className="lg:col-span-2 medical-card">
             <CardHeader>
@@ -193,7 +224,9 @@ const AppointmentsPage = () => {
                           <div className="space-y-1">
                             <div className="flex items-center gap-2">
                               <User className="h-4 w-4 text-primary" />
-                              <span className="font-semibold">{appointment.patientName}</span>
+                              <span className="font-semibold">
+                                {appointment.patientName}
+                              </span>
                             </div>
 
                             <div className="text-sm text-muted-foreground flex items-center gap-4">
@@ -204,7 +237,10 @@ const AppointmentsPage = () => {
                             </div>
                           </div>
 
-                          <Badge variant="outline" className={getStatusColor(appointment.status)}>
+                          <Badge
+                            variant="outline"
+                            className={getStatusColor(appointment.status)}
+                          >
                             {appointment.status}
                           </Badge>
                         </div>
@@ -222,7 +258,6 @@ const AppointmentsPage = () => {
 
           {/* Sidebar */}
           <div className="space-y-4">
-
             {/* Select Date */}
             <Card className="medical-card">
               <CardHeader className="pb-2">
@@ -247,7 +282,9 @@ const AppointmentsPage = () => {
             {/* Summary */}
             <Card className="medical-card">
               <CardHeader>
-                <CardTitle className="text-lg font-semibold">Today's Summary</CardTitle>
+                <CardTitle className="text-lg font-semibold">
+                  Today's Summary
+                </CardTitle>
                 <CardDescription className="text-sm text-muted-foreground">
                   Appointment statistics
                 </CardDescription>
@@ -256,21 +293,26 @@ const AppointmentsPage = () => {
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between p-3 rounded-xl bg-info/10 border border-info/20">
                   <span className="text-sm font-semibold">Scheduled</span>
-                  <span className="text-2xl font-bold text-info">{scheduledCount}</span>
+                  <span className="text-2xl font-bold text-info">
+                    {scheduledCount}
+                  </span>
                 </div>
 
                 <div className="flex items-center justify-between p-3 rounded-xl bg-success/10 border border-success/20">
                   <span className="text-sm font-semibold">Completed</span>
-                  <span className="text-2xl font-bold text-success">{completedCount}</span>
+                  <span className="text-2xl font-bold text-success">
+                    {completedCount}
+                  </span>
                 </div>
 
                 <div className="flex items-center justify-between p-3 rounded-xl bg-warning/10 border border-warning/20">
                   <span className="text-sm font-semibold">Available Slots</span>
-                  <span className="text-2xl font-bold text-warning">{availableSlots}</span>
+                  <span className="text-2xl font-bold text-warning">
+                    {availableSlots}
+                  </span>
                 </div>
               </CardContent>
             </Card>
-
           </div>
         </div>
       </div>

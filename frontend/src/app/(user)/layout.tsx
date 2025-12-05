@@ -1,14 +1,14 @@
 "use client";
 import "../globals.css";
-import AppSidebar from "@/components/layout/AppSidebar";
-import { ContentArea } from "@/components/layout/ContentArea";
-import TopNav from "@/components/layout/TopNav";
+import AppSidebar from "@/src/components/layout/AppSidebar";
+import { ContentArea } from "@/src/components/layout/ContentArea";
+import TopNav from "@/src/components/layout/TopNav";
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
   useSidebar,
-} from "@/components/ui/sidebar";
+} from "@/src/components/ui/sidebar";
 import { useIsTabletOrMobile } from "@/src/hooks/useIsTabletOrMobile";
 import { cn } from "@/src/lib/utils";
 import { useEffect, useState } from "react";

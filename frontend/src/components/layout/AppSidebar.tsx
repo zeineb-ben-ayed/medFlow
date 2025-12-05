@@ -19,7 +19,7 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
   useSidebar,
-} from "@/components/ui/sidebar";
+} from "@/src/components/ui/sidebar";
 
 const menuItems = [
   { title: "Dashboard", url: "/dashboard", icon: Home },

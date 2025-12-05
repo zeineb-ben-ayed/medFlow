@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Card } from "@/components/ui/card";
+import { Card } from "@/src/components/ui/card";
 import {
   Table,
   TableBody,
@@ -9,7 +9,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from "@/src/components/ui/table";
 import clsx from "clsx";
 import { Column } from "@/src/interfaces/column";
 

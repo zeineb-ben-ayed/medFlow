@@ -81,3 +81,24 @@ export const EDIT_PATIENT_MUTATION = gql`
     }
   }
 `;
+
+export const CREATE_CONSULTATION = gql`
+  mutation CreateConsultation($data: CreateConsultationInput!) {
+    createConsultation(data: $data) {
+      id
+      symptoms
+      diagnosis
+      additionalNotes
+      patient {
+        id
+      }
+      prescription {
+        id
+        name
+        dosage
+        frequency
+        duration
+      }
+    }
+  }
+`;

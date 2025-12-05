@@ -1,5 +1,5 @@
 "use client";
-import { useSidebar } from "@/components/ui/sidebar";
+import { useSidebar } from "@/src/components/ui/sidebar";
 import { ReactNode } from "react";
 
 export function ContentArea({ children }: { children: ReactNode }) {

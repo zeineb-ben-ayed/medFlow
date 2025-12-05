@@ -1,16 +1,20 @@
 "use client";
 
 import { Bell, Menu } from "lucide-react";
-import { SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
+import { SidebarTrigger, useSidebar } from "@/src/components/ui/sidebar";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
-} from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
+} from "@/src/components/ui/dropdown-menu";
+import {
+  Avatar,
+  AvatarImage,
+  AvatarFallback,
+} from "@/src/components/ui/avatar";
+import { Button } from "@/src/components/ui/button";
 import { cn } from "@/src/lib/utils";
 
 export default function TopNav() {

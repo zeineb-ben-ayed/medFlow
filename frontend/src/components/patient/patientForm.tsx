@@ -1,15 +1,15 @@
 "use client";
 import { useEffect, useState } from "react";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Input } from "@/src/components/ui/input";
+import { Label } from "@/src/components/ui/label";
 import {
   Select,
   SelectTrigger,
   SelectContent,
   SelectItem,
   SelectValue,
-} from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
+} from "@/src/components/ui/select";
+import { Button } from "@/src/components/ui/button";
 import { Textarea } from "../ui/textarea";
 import { Patient } from "@/src/interfaces/patient";
 import { Save, SquarePen } from "lucide-react";

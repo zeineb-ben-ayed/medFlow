@@ -1,26 +1,38 @@
 "use client";
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { Button } from "@/src/components/ui/button";
+import { Badge } from "@/src/components/ui/badge";
 import { Plus, Eye, Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { Search } from "@/components/Input/Search";
-import { ReusableTable } from "@/components/table/reusableTable";
+import { Search } from "@/src/components/Input/Search";
+import { ReusableTable } from "@/src/components/table/reusableTable";
 import { GET_ALL_STAFF } from "@/src/graphql/queries";
 import { useMutation, useQuery } from "@apollo/client/react";
 import { Staff } from "@/src/interfaces/staff";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import DeleteDialog from "@/components/ui/deleteDialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/src/components/ui/dialog";
+import DeleteDialog from "@/src/components/ui/deleteDialog";
 import { DELETE_USER, REGISTER_MUTATION } from "@/src/graphql/mutations";
-import AddDialog from "@/components/ui/addDialog";
-import { Input } from "@/components/ui/input";
-import { DatePicker } from "@/components/ui/date-picker";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Label } from "@/components/ui/label";
-import PageBreadcrumb from "@/components/layout/PageBreadcrumb";
+import AddDialog from "@/src/components/ui/addDialog";
+import { Input } from "@/src/components/ui/input";
+import { DatePicker } from "@/src/components/ui/date-picker";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/src/components/ui/select";
+import { Label } from "@/src/components/ui/label";
+import PageBreadcrumb from "@/src/components/layout/PageBreadcrumb";
 import { toast } from "sonner";
 import { Column } from "@/src/interfaces/column";
-
 
 interface GetAllStaffResponse {
   getAllStaff: Staff[];
@@ -96,7 +108,7 @@ const StaffList = () => {
     },
     {
       key: "email",
-      label: "Email"
+      label: "Email",
     },
     {
       key: "role",
@@ -165,19 +177,24 @@ const StaffList = () => {
       </p>
     );
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleDateChange = (date: Date | undefined) => {
-    setFormData(prev => ({ ...prev, dateNaissance: date || new Date() }));
+    setFormData((prev) => ({ ...prev, dateNaissance: date || new Date() }));
   };
 
   const handleSubmit = () => {
     const extraData =
       role === "medecin"
-        ? { specialite: formData.specialite, disponibilite: formData.disponibilite }
+        ? {
+          specialite: formData.specialite,
+          disponibilite: formData.disponibilite,
+        }
         : { poste: formData.poste, horaires: formData.horaires };
 
     registerUser({
@@ -194,26 +211,28 @@ const StaffList = () => {
         phoneNumber: formData.phoneNumber,
         extraData,
       },
-    }).then(() => {
-      setAddDialogOpen(false);
-      toast.success("Staff member added successfully!");
-      setFormData({
-        username: "",
-        email: "",
-        password: "",
-        firstName: "",
-        lastName: "",
-        dateNaissance: new Date(),
-        phoneNumber: "",
-        specialite: "",
-        disponibilite: true,
-        poste: "",
-        horaires: "",
+    })
+      .then(() => {
+        setAddDialogOpen(false);
+        toast.success("Staff member added successfully!");
+        setFormData({
+          username: "",
+          email: "",
+          password: "",
+          firstName: "",
+          lastName: "",
+          dateNaissance: new Date(),
+          phoneNumber: "",
+          specialite: "",
+          disponibilite: true,
+          poste: "",
+          horaires: "",
+        });
+      })
+      .catch((err) => {
+        console.error(err);
+        toast.error("Failed to add staff member");
       });
-    }).catch((err) => {
-      console.error(err);
-      toast.error("Failed to add staff member");
-    });
   };
 
   return (
@@ -251,12 +270,12 @@ const StaffList = () => {
                 onSubmit={handleSubmit}
                 triggerButton={
                   <Button className="w-full md:w-auto gap-2">
-                    <Plus className="h-4 w-4" />Add New Staff
+                    <Plus className="h-4 w-4" />
+                    Add New Staff
                   </Button>
                 }
               >
                 <div className="grid gap-4">
-
                   <Label>Username</Label>
                   <Input
                     type="text"
@@ -335,7 +354,9 @@ const StaffList = () => {
 
                     <SelectContent>
                       <SelectItem value="medecin">Médecin</SelectItem>
-                      <SelectItem value="receptionniste">Réceptionniste</SelectItem>
+                      <SelectItem value="receptionniste">
+                        Réceptionniste
+                      </SelectItem>
                     </SelectContent>
                   </Select>
 
@@ -346,7 +367,6 @@ const StaffList = () => {
                         type="text"
                         name="specialite"
                         placeholder="Speciality"
-
                         value={formData.specialite}
                         onChange={handleInputChange}
                       />
@@ -380,7 +400,6 @@ const StaffList = () => {
                         type="text"
                         name="poste"
                         placeholder="Poste"
-
                         value={formData.poste}
                         onChange={handleInputChange}
                       />
@@ -390,7 +409,6 @@ const StaffList = () => {
                         type="text"
                         name="horaires"
                         placeholder="schedules"
-
                         value={formData.horaires}
                         onChange={handleInputChange}
                       />
@@ -398,7 +416,6 @@ const StaffList = () => {
                   )}
                 </div>
               </AddDialog>
-
             </div>
           </div>
 
@@ -415,28 +432,43 @@ const StaffList = () => {
 
               {selectedStaff && (
                 <div className="space-y-3 mt-4">
-                  <p><strong>Email:</strong> {selectedStaff.email}</p>
-                  <p><strong>Phone:</strong> {selectedStaff.phoneNumber}</p>
-                  <p><strong>Date of birth:</strong> {formatDate(selectedStaff.dateNaissance)}</p>
+                  <p>
+                    <strong>Email:</strong> {selectedStaff.email}
+                  </p>
+                  <p>
+                    <strong>Phone:</strong> {selectedStaff.phoneNumber}
+                  </p>
+                  <p>
+                    <strong>Date of birth:</strong>{" "}
+                    {formatDate(selectedStaff.dateNaissance)}
+                  </p>
 
                   {selectedStaff.role === "medecin" && (
                     <>
-                      <p><strong>Speciality:</strong> {selectedStaff.specialite || "—"}</p>
-                      <p><strong>Disponibility:</strong> {" "}
-                        {
-                          selectedStaff.disponibilite !== undefined
-                            ? selectedStaff.disponibilite
-                              ? "Disponible"
-                              : "Non disponible"
-                            : "—"
-                        }</p>
+                      <p>
+                        <strong>Speciality:</strong>{" "}
+                        {selectedStaff.specialite || "—"}
+                      </p>
+                      <p>
+                        <strong>Disponibility:</strong>{" "}
+                        {selectedStaff.disponibilite !== undefined
+                          ? selectedStaff.disponibilite
+                            ? "Disponible"
+                            : "Non disponible"
+                          : "—"}
+                      </p>
                     </>
                   )}
 
                   {selectedStaff.role === "receptionniste" && (
                     <>
-                      <p><strong>Position:</strong> {selectedStaff.poste || "—"}</p>
-                      <p><strong>Working Hours:</strong> {selectedStaff.horaires || "—"}</p>
+                      <p>
+                        <strong>Position:</strong> {selectedStaff.poste || "—"}
+                      </p>
+                      <p>
+                        <strong>Working Hours:</strong>{" "}
+                        {selectedStaff.horaires || "—"}
+                      </p>
                     </>
                   )}
                 </div>

@@ -1,22 +1,24 @@
-'use client';
+"use client";
 
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 // import { Activity } from "lucide-react";
 import { toast } from "sonner";
 import { useMutation } from "@apollo/client/react";
-import { LOGIN_MUTATION } from "@/src/graphql/mutations";
 import { LoginResponse, LoginVariables } from "@/src/interfaces/login";
+import { LOGIN_MUTATION } from "@/src/graphql/mutations";
+import { Label } from "@/src/components/ui/label";
+import { Input } from "@/src/components/ui/input";
+import { Button } from "@/src/components/ui/button";
 
 const Login = () => {
   const router = useRouter();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [loginUser] = useMutation<LoginResponse, LoginVariables>(LOGIN_MUTATION);
+  const [loginUser] = useMutation<LoginResponse, LoginVariables>(
+    LOGIN_MUTATION
+  );
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,7 +48,6 @@ const Login = () => {
     <div className="min-h-screen flex items-center justify-center medical-gradient p-4">
       <div className="w-full max-w-md">
         <div className="medical-card p-8 space-y-6">
-
           {/* Logo */}
           <div className="flex items-center justify-center mb-8">
             <div className="w-57 h-auto flex items-center justify-center">
@@ -60,7 +61,9 @@ const Login = () => {
 
           <div className="text-center space-y-2">
             <h2 className="text-2xl font-semibold">Welcome back</h2>
-            <p className="text-muted-foreground">Sign in to your account to continue</p>
+            <p className="text-muted-foreground">
+              Sign in to your account to continue
+            </p>
           </div>
 
           <form onSubmit={handleLogin} className="space-y-4">
@@ -79,7 +82,10 @@ const Login = () => {
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <Label htmlFor="password">Password</Label>
-                <Link href="/forgot-password" className="text-sm text-primary hover:underline">
+                <Link
+                  href="/forgot-password"
+                  className="text-sm text-primary hover:underline"
+                >
                   Forgot password?
                 </Link>
               </div>
@@ -100,7 +106,10 @@ const Login = () => {
 
           <div className="text-center text-sm text-muted-foreground">
             Don't have an account?{" "}
-            <Link href="/register" className="text-primary hover:underline font-medium">
+            <Link
+              href="/register"
+              className="text-primary hover:underline font-medium"
+            >
               Register here
             </Link>
           </div>
