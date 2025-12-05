@@ -1,46 +1,57 @@
 "use client";
-import { useState } from "react";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { useEffect, useState } from "react";
+import { Input } from "@/src/components/ui/input";
+import { Label } from "@/src/components/ui/label";
 import {
   Select,
   SelectTrigger,
   SelectContent,
   SelectItem,
   SelectValue,
-} from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
+} from "@/src/components/ui/select";
+import { Button } from "@/src/components/ui/button";
 import { Textarea } from "../ui/textarea";
 import { Patient } from "@/src/interfaces/patient";
 import { Save, SquarePen } from "lucide-react";
 
 type PatientFormProps = {
   mode: "create" | "edit";
+  initialData?: Patient;
   onSubmit: (data: Patient) => void;
   defaultValues?: Partial<Patient>;
 };
 
 export default function PatientForm({
   mode,
+  initialData,
   onSubmit,
   defaultValues = {},
 }: PatientFormProps) {
-  const [formData, setFormData] = useState<Patient>({
-    username: defaultValues.username || "",
-    firstName: defaultValues.firstName || "",
-    lastName: defaultValues.lastName || "",
-    email: defaultValues.email || "",
-    password: defaultValues.password || "Patient@123",
-    phoneNumber: defaultValues.phoneNumber || "",
-    dateNaissance: defaultValues.dateNaissance || "",
-    historiqueMedical: defaultValues.historiqueMedical || "",
-    gender: defaultValues.gender || "",
-    bloodType: defaultValues.bloodType || "",
-    address: defaultValues.address || "",
-    emergencyName: defaultValues.emergencyName || "",
-    emergencyPhone: defaultValues.emergencyPhone || "",
-    allergies: defaultValues.allergies || "",
-  });
+  const getInitialFormData = (): Patient => {
+    return {
+      username: initialData?.username ?? "",
+      firstName: initialData?.firstName ?? "",
+      lastName: initialData?.lastName ?? "",
+      email: initialData?.email ?? "",
+      password: initialData?.password ?? "Patient@123",
+      phoneNumber: initialData?.phoneNumber ?? "",
+      dateNaissance: initialData?.dateNaissance ?? "",
+      historiqueMedical: initialData?.historiqueMedical ?? "",
+      gender: initialData?.gender ?? "",
+      bloodType: initialData?.bloodType ?? "",
+      address: initialData?.address ?? "",
+      emergencyName: initialData?.emergencyName ?? "",
+      emergencyPhone: initialData?.emergencyPhone ?? "",
+      allergies: initialData?.allergies ?? "",
+    };
+  };
+  const [formData, setFormData] = useState<Patient>(getInitialFormData());
+
+  useEffect(() => {
+    if (initialData) {
+      setFormData(getInitialFormData());
+    }
+  }, [initialData]);
 
   const update = (key: string, value: string) =>
     setFormData((prev) => ({ ...prev, [key]: value }));
@@ -60,16 +71,17 @@ export default function PatientForm({
             <Label>Username *</Label>
             <Input
               name="username"
-              value={formData.username}
+              value={formData.username ?? ""}
               onChange={(e) => update("username", e.target.value)}
               placeholder="JohnDoe"
+              disabled={mode === "edit" ? true : false}
             />
           </div>
           <div className="flex flex-col space-y-3">
             <Label>First Name *</Label>
             <Input
               name="firstName"
-              value={formData.firstName}
+              value={formData?.firstName ?? ""}
               onChange={(e) => update("firstName", e.target.value)}
               placeholder="John"
             />
@@ -78,7 +90,7 @@ export default function PatientForm({
             <Label>Last Name *</Label>
             <Input
               name="lastName"
-              value={formData.lastName}
+              value={formData.lastName ?? ""}
               onChange={(e) => update("lastName", e.target.value)}
               placeholder="Doe"
             />
@@ -88,14 +100,14 @@ export default function PatientForm({
             <Input
               type="date"
               name="dateNaissance"
-              value={formData.dateNaissance}
+              value={formData.dateNaissance ?? ""}
               onChange={(e) => update("dateNaissance", e.target.value)}
             />
           </div>
           <div className="flex flex-col space-y-3">
             <Label>Gender *</Label>
             <Select
-              value={formData.gender}
+              value={formData.gender ?? ""}
               onValueChange={(v) => update("gender", v)}
             >
               <SelectTrigger>
@@ -111,7 +123,7 @@ export default function PatientForm({
           <div className="flex flex-col space-y-3">
             <Label>Blood Type</Label>
             <Select
-              value={formData.bloodType}
+              value={formData.bloodType ?? ""}
               onValueChange={(v) => update("bloodType", v)}
             >
               <SelectTrigger>
@@ -138,7 +150,7 @@ export default function PatientForm({
             <Label>Phone Number *</Label>
             <Input
               name="phoneNumber"
-              value={formData.phoneNumber}
+              value={formData.phoneNumber ?? ""}
               onChange={(e) => update("phoneNumber", e.target.value)}
               placeholder="+1 234-567-8900"
             />
@@ -148,7 +160,7 @@ export default function PatientForm({
             <Input
               type="email"
               name="email"
-              value={formData.email}
+              value={formData.email ?? ""}
               onChange={(e) => update("email", e.target.value)}
               placeholder="patient@email.com"
             />
@@ -158,7 +170,7 @@ export default function PatientForm({
           <Label>Address</Label>
           <Textarea
             name="address"
-            value={formData.address}
+            value={formData.address ?? ""}
             onChange={(e) => update("address", e.target.value)}
             placeholder="123 Main Street, City, State, ZIP"
             rows={2}
@@ -175,7 +187,7 @@ export default function PatientForm({
             <Label>Emergency Contact Name</Label>
             <Input
               name="emergencyName"
-              value={formData.emergencyName}
+              value={formData.emergencyName ?? ""}
               onChange={(e) => update("emergencyName", e.target.value)}
               placeholder="Jane Doe"
             />
@@ -199,7 +211,7 @@ export default function PatientForm({
           <Label>Medical History</Label>
           <Textarea
             name="historiqueMedical"
-            value={formData.historiqueMedical}
+            value={formData.historiqueMedical ?? ""}
             onChange={(e) => update("historiqueMedical", e.target.value)}
             placeholder="Enter any relevant medical history..."
             rows={4}
@@ -209,7 +221,7 @@ export default function PatientForm({
           <Label>Allergies</Label>
           <Textarea
             name="allergies"
-            value={formData.allergies}
+            value={formData.allergies ?? ""}
             onChange={(e) => update("allergies", e.target.value)}
             placeholder="List any known allergies"
             rows={3}
@@ -228,7 +240,7 @@ export default function PatientForm({
           ) : (
             <Save className="h-4 w-4" />
           )}
-          {mode === "edit" ? "Edit Patient" : "Save Patient"}
+          {mode === "edit" ? "Update Patient" : "Save Patient"}
         </Button>
       </div>
     </form>

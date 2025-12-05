@@ -36,6 +36,11 @@ export const LOGIN_MUTATION = gql`
   }
 `;
 
+export const DELETE_USER = gql`
+  mutation DeleteUser($id: Int!) {
+    deleteUser(id: $id)
+  }
+`;
 export const ADD_PATIENT_MUTATION = gql`
   mutation AddPatient($input: CreatePatientInput!) {
     addPatient(input: $input) {
@@ -53,6 +58,47 @@ export const ADD_PATIENT_MUTATION = gql`
       emergencyPhone
       allergies
       keycloak_id
+    }
+  }
+`;
+export const EDIT_PATIENT_MUTATION = gql`
+  mutation EditPatient($input: CreatePatientInput!) {
+    editPatient(input: $input) {
+      id
+      keycloak_id
+      firstName
+      lastName
+      email
+      phoneNumber
+      dateNaissance
+      historiqueMedical
+      gender
+      bloodType
+      address
+      emergencyName
+      emergencyPhone
+      allergies
+    }
+  }
+`;
+
+export const CREATE_CONSULTATION = gql`
+  mutation CreateConsultation($data: CreateConsultationInput!) {
+    createConsultation(data: $data) {
+      id
+      symptoms
+      diagnosis
+      additionalNotes
+      patient {
+        id
+      }
+      prescription {
+        id
+        name
+        dosage
+        frequency
+        duration
+      }
     }
   }
 `;

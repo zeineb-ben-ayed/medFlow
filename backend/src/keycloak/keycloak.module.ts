@@ -9,7 +9,9 @@ import { KeycloakAdminService } from './keycloak-admin.service';
       authServerUrl: 'http://localhost:8080/',
       realm: 'medFlow',
       clientId: 'nest-api',
-      secret: 'IoT1qYcMnF01OAHnWxn1gVu3JSIQiShT',
+      secret:
+        process.env.KEYCLOAK_CLIENT_SECRET ||
+        'lesqS4bzVgytRxd4UU0bAStzcYRmN2Z8',
       tokenValidation: TokenValidation.ONLINE,
     }),
   ],

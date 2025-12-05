@@ -18,11 +18,21 @@ type AuthResponse {
   refresh_token: String!
 }
 
-input CreateAppointmentInput {
-  date: String!
-  medecinId: Int!
+type Consultation {
+  additionalNotes: String
+  diagnosis: String!
+  id: Float!
+  patient: Patient!
+  prescription: [Medication!]
+  symptoms: String!
+}
+
+input CreateConsultationInput {
+  additionalNotes: String
+  diagnosis: String!
+  medications: [MedicationInput!]
   patientId: Int!
-  time: String!
+  symptoms: String!
 }
 
 input CreatePatientInput {
@@ -30,16 +40,17 @@ input CreatePatientInput {
   allergies: String
   bloodType: String
   dateNaissance: String
-  email: String!
+  email: String
   emergencyName: String
   emergencyPhone: String
-  firstName: String!
+  firstName: String
   gender: String
   historiqueMedical: String
-  lastName: String!
-  password: String!
+  id: Float
+  lastName: String
+  password: String
   phoneNumber: String
-  username: String!
+  username: String
 }
 
 input ExtraDataInput {
@@ -61,14 +72,36 @@ type Medecin implements User {
   lastName: String
   phoneNumber: String
   role: String!
-  specialite: String!
+  specialite: String
+  username: String
+}
+
+type Medication {
+  dosage: String!
+  duration: String!
+  frequency: String!
+  id: Float!
+  name: String!
+}
+
+input MedicationInput {
+  dosage: String!
+  duration: String!
+  frequency: String!
+  name: String!
 }
 
 type Mutation {
   addPatient(input: CreatePatientInput!): Patient!
+<<<<<<< HEAD
   createAppointment(data: CreateAppointmentInput!): Appointment!
+=======
+  createConsultation(data: CreateConsultationInput!): Consultation!
+>>>>>>> a23e035820c5b81a223ebe19afbb460fe228e5aa
   deleteUser(id: Int!): Boolean!
+  editPatient(input: CreatePatientInput!): Patient!
   login(password: String!, username: String!): AuthResponse!
+  refreshToken(refreshToken: String!): AuthResponse!
   register(dateNaissance: String!, email: String!, extraData: ExtraDataInput, firstName: String!, lastName: String!, password: String!, phoneNumber: String!, role: String!, username: String!): String!
 }
 
@@ -88,6 +121,7 @@ type Patient {
   lastName: String
   phoneNumber: String
   role: String!
+  username: String
 }
 
 type Query {
@@ -95,7 +129,12 @@ type Query {
   getAllStaff: [User!]!
   getMyAppointments: [Appointment!]!
   getMyMedecinAppointments: [Appointment!]!
+<<<<<<< HEAD
   getPatientAppointmentsForMe(patientId: Int!): [Appointment!]!
+=======
+  getPatientAppointmentsForMe(patientId: Float!): [Appointment!]!
+  getPatientById(id: Int!): Patient!
+>>>>>>> a23e035820c5b81a223ebe19afbb460fe228e5aa
   getPatientProfile(id: Int!): Patient!
   hello: String!
 }
@@ -111,6 +150,7 @@ type Receptionniste implements User {
   phoneNumber: String
   poste: String!
   role: String!
+  username: String
 }
 
 interface User {
@@ -122,4 +162,5 @@ interface User {
   lastName: String
   phoneNumber: String
   role: String!
+  username: String
 }

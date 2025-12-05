@@ -130,4 +130,38 @@ export class KeycloakAdminService {
 
     return { id };
   }
+
+  async updateUser(
+    keycloakId: string,
+    data: {
+      firstName: string;
+      lastName: string;
+      email: string;
+      attributes?: Record<string, any>;
+      role?: string;
+    },
+  ): Promise<void> {
+    const token = await this.getAdminToken();
+
+    const payload = {
+      firstName: data.firstName,
+      lastName: data.lastName,
+      email: data.email,
+      attributes: {
+        phoneNumber: [data.attributes?.phoneNumber],
+        dateNaissance: [data.attributes?.dateNaissance],
+      },
+    };
+
+    await axios.put(
+      `${this.baseUrl}/admin/realms/${this.realm}/users/${keycloakId}`,
+      payload,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      },
+    );
+  }
 }

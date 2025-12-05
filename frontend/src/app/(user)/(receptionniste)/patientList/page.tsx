@@ -1,26 +1,24 @@
 "use client";
 import { useMemo, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card } from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
+import { Button } from "@/src/components/ui/button";
+import { Badge } from "@/src/components/ui/badge";
 import { Plus, Eye, Edit, Phone, Mail, Trash } from "lucide-react";
-import { ReusableTable } from "@/components/table/reusableTable";
+import { ReusableTable } from "@/src/components/table/reusableTable";
 import { useRouter } from "next/navigation";
-import { Search } from "@/components/Input/Search";
+import { Search } from "@/src/components/Input/Search";
 import { useQuery } from "@apollo/client/react";
 import { FIND_ALL_PATIENTS } from "@/src/graphql/query";
 import { client } from "@/src/lib/apollo-client";
 import { FindAllPatientsData, Patient } from "@/src/interfaces/patient";
 import { Column } from "@/src/interfaces/column";
+<<<<<<< HEAD
+=======
+<<<<<<<< HEAD:frontend/src/app/(user)/(receptionniste)/patientList/page.tsx
+import PageBreadcrumb from "@/components/layout/PageBreadcrumb";
+========
+import PageBreadcrumb from "@/src/components/layout/PageBreadcrumb";
+>>>>>>>> debca883138e8d7c5948a0ebc1e1fb71cd76c81d:frontend/src/app/(user)/(patient)/(manage-patients)/patientList/page.tsx
+>>>>>>> a23e035820c5b81a223ebe19afbb460fe228e5aa
 
 const PatientList = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -39,12 +37,12 @@ const PatientList = () => {
     return patients.filter((p) => {
       const dateString = p.dateNaissance
         ? new Date(p.dateNaissance)
-            .toLocaleDateString("en-GB", {
-              day: "2-digit",
-              month: "long", //  "November"
-              year: "numeric",
-            })
-            .toLowerCase()
+          .toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "long", //  "November"
+            year: "numeric",
+          })
+          .toLowerCase()
         : "";
 
       return [p.firstName, p.lastName, p.email, dateString]
@@ -55,14 +53,6 @@ const PatientList = () => {
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
-
-  // const filteredPatients = patients.filter(
-  //   (patient) =>
-  //     patient.firstName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-  //     patient.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-  //     patient.lastName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-  //     patient.dateNaissance.toLowerCase().includes(searchQuery.toLowerCase())
-  // );
 
   const columns: Column<Patient>[] = [
     {
@@ -134,7 +124,7 @@ const PatientList = () => {
             className="cursor-pointer"
             variant="ghost"
             size="sm"
-            onClick={() => router.push(`/test/${row.id}`)}
+            onClick={() => router.push(`/profile/${row.id}`)}
           >
             <Eye className="h-4 w-4" />
           </Button>
@@ -152,46 +142,51 @@ const PatientList = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-secondary/30 to-white p-6 sm:p-6 lg:p-8">
-      <div className="max-w-7xl mx-auto space-y-6">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          {/* Left title and  description */}
-          <div className="flex flex-col">
-            <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
-              Patient Management
-            </h1>
-            <p className="text-muted-foreground text-sm sm:text-base mt-1">
-              Manage patient records and information
-            </p>
-          </div>
+    <>
+      <PageBreadcrumb pageTitle="Patients" />
 
-          {/* Right search and  button */}
-          <div className="flex flex-col md:flex-row md:items-center md:justify-end gap-4 w-full md:w-auto">
-            {/* Search bar */}
-            <div className="w-full md:w-64 lg:w-80">
-              <Search
-                value={searchQuery}
-                onChange={setSearchQuery}
-                placeholder="Search patients by name or email..."
-                className="w-full"
-              />
+      <div className="w-full p-4 sm:p-6 lg:p-8 bg-white rounded-xl shadow-sm border border-gray-100">
+        <div className="w-full space-y-6">
+          {/* Header Section */}
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            {/* Left: Title + Description */}
+            <div className="space-y-1">
+              <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
+                Patient Management
+              </h1>
+              <p className="text-muted-foreground text-sm sm:text-base">
+                Manage patient records and information
+              </p>
             </div>
 
-            {/* Add button */}
-            <Button
-              className="w-full md:w-auto gap-2"
-              onClick={() => router.push("/patientAdd")}
-            >
-              <Plus className="h-4 w-4" />
-              Add New Patient
-            </Button>
-          </div>
-        </div>
+            {/* Right: Search + Button */}
+            <div className="w-full md:w-auto flex flex-col sm:flex-row gap-3 sm:items-center">
+              {/* Search bar */}
+              <div className="w-full sm:w-64 lg:w-80">
+                <Search
+                  value={searchQuery}
+                  onChange={setSearchQuery}
+                  placeholder="Search patients by name or email..."
+                  className="w-full"
+                />
+              </div>
 
-        {/* Patient Table */}
-        <ReusableTable columns={columns} data={filteredPatients} />
+              {/* Add Patient button */}
+              <Button
+                className="w-full sm:w-auto gap-2"
+                onClick={() => router.push("/patientAdd")}
+              >
+                <Plus className="h-4 w-4" />
+                Add New Patient
+              </Button>
+            </div>
+          </div>
+
+          {/* Patient Table */}
+          <ReusableTable columns={columns} data={filteredPatients} />
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

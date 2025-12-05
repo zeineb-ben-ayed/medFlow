@@ -3,12 +3,12 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Label } from "@/src/components/ui/label";
+import { Input } from "@/src/components/ui/input";
+import { Button } from "@/src/components/ui/button";
 // import { Activity } from "lucide-react";
 import { toast } from "sonner";
-import { DatePicker } from "@/components/ui/date-picker";
+import { DatePicker } from "@/src/components/ui/date-picker";
 import { useMutation } from "@apollo/client/react";
 import { REGISTER_MUTATION } from "@/src/graphql/mutations";
 import {
@@ -17,7 +17,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/src/components/ui/select";
 
 const Register = () => {
   const router = useRouter();
@@ -195,7 +195,7 @@ const Register = () => {
                 <Label htmlFor="gender">Gender</Label>
                 <Select
                   value={formData.gender}
-                  onValueChange={(value) => handleChange("gender", value)}
+                  onValueChange={(value: any) => handleChange("gender", value)}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select gender" />

@@ -11,35 +11,53 @@ export class AuthResolver {
   private keycloakUrl = 'http://localhost:8080';
   private realm = 'medFlow';
   private clientId = 'nest-api';
-  private clientSecret ='IoT1qYcMnF01OAHnWxn1gVu3JSIQiShT';
-    @Public()
-    @Mutation(() => AuthResponse)
+  private clientSecret = 'lesqS4bzVgytRxd4UU0bAStzcYRmN2Z8';
+  @Public()
+  @Mutation(() => AuthResponse)
   async login(
     @Args('username') username: string,
     @Args('password') password: string,
   ): Promise<AuthResponse> {
-    try{
+    try {
+      const params = new URLSearchParams();
+      params.append('client_id', this.clientId);
+      params.append('client_secret', this.clientSecret);
+      params.append('grant_type', 'password');
+      params.append('username', username);
+      params.append('password', password);
+
+      const { data } = await axios.post(
+        'http://localhost:8080/realms/medFlow/protocol/openid-connect/token',
+
+        params.toString(),
+        {
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        },
+      );
+
+      return data;
+    } catch (error) {
+      console.error('KEYCLOAK ERROR:', error.response?.data);
+      throw error;
+    }
+  }
+
+  @Public()
+  @Mutation(() => AuthResponse)
+  async refreshToken(@Args('refreshToken') refreshToken: string): Promise<AuthResponse> {
     const params = new URLSearchParams();
+    params.append('grant_type', 'refresh_token');
     params.append('client_id', this.clientId);
     params.append('client_secret', this.clientSecret);
-    params.append('grant_type', 'password');
-    params.append('username', username);
-    params.append('password', password);
+    params.append('refresh_token', refreshToken);
 
     const { data } = await axios.post(
-      'http://localhost:8080/realms/medFlow/protocol/openid-connect/token',
-      
+      `${this.keycloakUrl}/realms/${this.realm}/protocol/openid-connect/token`,
       params.toString(),
-      {
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      },
+      { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
     );
 
     return data;
-  } catch (error) {
-    console.error('KEYCLOAK ERROR:', error.response?.data);
-    throw error;
-  }
   }
 
   @Public()

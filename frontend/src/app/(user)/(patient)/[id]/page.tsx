@@ -13,7 +13,7 @@ export default function PatientDetailsPage() {
     variables: { id: Number(id) }
   });
 
-  const appointments: any[] = []; 
+  const appointments: any[] = [];
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error loading patient.</p>;
@@ -22,7 +22,7 @@ export default function PatientDetailsPage() {
 
   return (
     <div className="p-6">
-      <PatientProfile   patient={data.getPatientProfile} appointments={appointments} />
+      <PatientProfile patient={data.getPatientProfile} appointments={appointments} />
     </div>
   );
 }

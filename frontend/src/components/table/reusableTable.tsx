@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Card } from "@/components/ui/card";
+import { Card } from "@/src/components/ui/card";
 import {
   Table,
   TableBody,
@@ -9,9 +9,10 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from "@/src/components/ui/table";
 import clsx from "clsx";
 import { Column } from "@/src/interfaces/column";
+<<<<<<< HEAD
 
 // export interface Column<T = any> {
 //   key: keyof T | string;
@@ -19,6 +20,8 @@ import { Column } from "@/src/interfaces/column";
 //   align?: "start" | "center" | "end";
 //   render?: (value: any, row: T) => React.ReactNode;
 // }
+=======
+>>>>>>> a23e035820c5b81a223ebe19afbb460fe228e5aa
 
 interface ReusableTableProps<T = any> {
   columns: Column<T>[];
