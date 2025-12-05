@@ -1,22 +1,20 @@
 "use client";
 
+import { getValidToken } from "@/utils/auth";
 import { ApolloClient, InMemoryCache, createHttpLink } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
 
 const httpLink = createHttpLink({
-  uri: "http://localhost:3000/graphql", 
+  uri: "http://localhost:3000/graphql",
 });
 
-const authLink = setContext((_, { headers }) => {
-  let token: string | null = null;
-  if (typeof window !== "undefined") {
-    token = localStorage.getItem("access_token");
-  }
+const authLink = setContext(async (_, { headers }) => {
+  const token = await getValidToken();
 
   return {
     headers: {
       ...headers,
-      authorization: token ? `Bearer ${token}` : "",
+      Authorization: token ? `Bearer ${token}` : "",
     },
   };
 });

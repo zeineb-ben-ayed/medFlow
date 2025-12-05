@@ -43,6 +43,24 @@ export class AuthResolver {
   }
 
   @Public()
+  @Mutation(() => AuthResponse)
+  async refreshToken(@Args('refreshToken') refreshToken: string): Promise<AuthResponse> {
+    const params = new URLSearchParams();
+    params.append('grant_type', 'refresh_token');
+    params.append('client_id', this.clientId);
+    params.append('client_secret', this.clientSecret);
+    params.append('refresh_token', refreshToken);
+
+    const { data } = await axios.post(
+      `${this.keycloakUrl}/realms/${this.realm}/protocol/openid-connect/token`,
+      params.toString(),
+      { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
+    );
+
+    return data;
+  }
+
+  @Public()
   @Mutation(() => String)
   async register(
     @Args('username') username: string,
