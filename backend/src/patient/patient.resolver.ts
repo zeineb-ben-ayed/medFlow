@@ -8,7 +8,7 @@ export class PatientResolver {
   constructor(private readonly patientService: PatientService) {}
 
   @Query(() => [Patient])
-  @Roles({ roles: ['realm:receptionniste', 'realm:medecin'] })
+  @Roles({ roles: ['realm:receptionniste', 'realm:medecin', 'realm:admin'] })
   async findAllPatients(): Promise<Patient[]> {
     return this.patientService.findAll();
   }

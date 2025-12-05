@@ -18,6 +18,23 @@ type AuthResponse {
   refresh_token: String!
 }
 
+type Consultation {
+  additionalNotes: String
+  diagnosis: String!
+  id: Float!
+  patient: Patient!
+  prescription: [Medication!]
+  symptoms: String!
+}
+
+input CreateConsultationInput {
+  additionalNotes: String
+  diagnosis: String!
+  medications: [MedicationInput!]
+  patientId: Int!
+  symptoms: String!
+}
+
 input CreatePatientInput {
   address: String
   allergies: String
@@ -59,8 +76,24 @@ type Medecin implements User {
   username: String
 }
 
+type Medication {
+  dosage: String!
+  duration: String!
+  frequency: String!
+  id: Float!
+  name: String!
+}
+
+input MedicationInput {
+  dosage: String!
+  duration: String!
+  frequency: String!
+  name: String!
+}
+
 type Mutation {
   addPatient(input: CreatePatientInput!): Patient!
+  createConsultation(data: CreateConsultationInput!): Consultation!
   deleteUser(id: Int!): Boolean!
   editPatient(input: CreatePatientInput!): Patient!
   login(password: String!, username: String!): AuthResponse!
