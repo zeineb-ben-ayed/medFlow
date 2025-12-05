@@ -18,6 +18,8 @@ import { ConfigModule } from '@nestjs/config';
 import { Receptionniste } from './receptionniste/receptionniste.entity';
 import { Medecin } from './medecin/medecin.entity';
 import { AppointmentModule } from './appointment/appointment.module';
+import { ConsultationModule } from './consultation/consultation.module';
+import { MedicationModule } from './medication/medication.module';
 
 @Module({
   imports: [GraphQLModule.forRoot<ApolloDriverConfig>({
@@ -57,6 +59,10 @@ import { AppointmentModule } from './appointment/appointment.module';
     AuthModule,
 
     AppointmentModule,
+
+    ConsultationModule,
+
+    MedicationModule,
   ],
   controllers: [AppController],
   providers: [AppService, { provide: APP_GUARD, useClass: AuthGuard },
