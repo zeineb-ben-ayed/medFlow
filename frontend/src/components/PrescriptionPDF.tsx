@@ -10,6 +10,7 @@ import {
   Path,
   Circle,
   Line,
+  Image,
 } from "@react-pdf/renderer";
 
 // Optional: Use a nice font
@@ -21,7 +22,7 @@ Font.register({
 const styles = StyleSheet.create({
   page: {
     padding: 40,
-    fontFamily: "Roboto",
+    fontFamily: "Helvetica",
     fontSize: 14,
     color: "#333",
     backgroundColor: "#ffffff",
@@ -30,20 +31,20 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     paddingBottom: 30,
-    borderBottomWidth: 3,
+    borderBottomWidth: 2,
     borderColor: "#944455",
-    marginBottom: 30,
+    marginBottom: 20,
   },
   logo: {
-    width: 200,
-    height: 50,
+    width: 100,
+    height: 25,
   },
   title: {
-    fontSize: 32,
+    fontSize: 25,
     fontWeight: 600,
     color: "#944455",
-    marginBottom: 30,
-    letterSpacing: 0.5,
+    marginBottom: 24,
+    letterSpacing: 0.65,
   },
 
   infoSection: {
@@ -62,16 +63,17 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   infoLabel: {
-    fontSize: 12,
+    fontSize: 10,
     color: "#944455",
-    fontWeight: 600,
+    fontWeight: 500,
     textTransform: "uppercase",
-    letterSpacing: 0.5,
+    letterSpacing: 0.65,
     marginBottom: 5,
   },
   infoValue: {
-    fontSize: 14,
+    fontSize: 10,
     color: "#333",
+    fontWeight: 100,
     paddingTop: 8,
     paddingBottom: 8,
     borderBottomWidth: 1,
@@ -79,12 +81,12 @@ const styles = StyleSheet.create({
   },
 
   sectionTitle: {
-    fontSize: 20,
-    fontWeight: 600,
+    fontSize: 18,
+    fontWeight: 500,
     color: "#944455",
     marginBottom: 25,
     paddingBottom: 10,
-    borderBottomWidth: 2,
+    borderBottomWidth: 1.5,
     borderColor: "#c497a2",
   },
 
@@ -96,13 +98,13 @@ const styles = StyleSheet.create({
     borderLeftWidth: 4,
     borderLeftColor: "#944455",
     padding: 20,
-    marginBottom: 15,
+    marginBottom: 13,
     borderRadius: 6,
   },
   medHeader: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 15,
+    marginBottom: 5,
   },
   medNumber: {
     backgroundColor: "#944455",
@@ -117,8 +119,8 @@ const styles = StyleSheet.create({
     marginRight: 15,
   },
   medName: {
-    fontSize: 18,
-    fontWeight: 600,
+    fontSize: 16,
+    fontWeight: 500,
     color: "#944455",
     flex: 1,
   },
@@ -131,15 +133,16 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   detailLabel: {
-    fontSize: 12,
+    fontSize: 10,
     color: "#a45e71",
-    fontWeight: 600,
+    fontWeight: 400,
     textTransform: "uppercase",
     letterSpacing: 0.3,
     marginBottom: 5,
   },
   detailValue: {
-    fontSize: 14,
+    fontSize: 10,
+    fontWeight: 100,
     color: "#333",
   },
 
@@ -220,51 +223,7 @@ const PrescriptionPDF = ({
     <Page size="A4" style={styles.page}>
       {/* Header with Logo */}
       <View style={styles.header}>
-        <Svg width="200" height="50" viewBox="0 0 400 100">
-          {/* Stethoscope Icon */}
-          <Path
-            d="M30,20 Q30,15 35,15 Q40,15 40,20 L40,35 Q40,50 50,50 Q60,50 60,35 L60,20 Q60,15 65,15 Q70,15 70,20 L70,35 Q70,55 55,60 L55,70 Q55,85 45,85 Q35,85 35,70 L35,60 Q20,55 20,35 L20,20"
-            fill="none"
-            stroke="#944455"
-            strokeWidth="3"
-          />
-          <Circle
-            cx="45"
-            cy="85"
-            r="8"
-            fill="none"
-            stroke="#944455"
-            strokeWidth="3"
-          />
-
-          {/* Plus Icon */}
-          <Circle cx="80" cy="30" r="12" fill="#944455" />
-          <Line
-            x1="80"
-            y1="24"
-            x2="80"
-            y2="36"
-            stroke="white"
-            strokeWidth="2.5"
-          />
-          <Line
-            x1="74"
-            y1="30"
-            x2="86"
-            y2="30"
-            stroke="white"
-            strokeWidth="2.5"
-          />
-
-          {/* MedFlow Text */}
-          <Text
-            x="120"
-            y="65"
-            style={{ fontSize: 48, fontWeight: "bold", fill: "#944455" }}
-          >
-            MedFlow
-          </Text>
-        </Svg>
+        <Image src="/logo/mediumlightlogo.png" style={styles.logo} />
       </View>
 
       <Text style={styles.title}>Prescription</Text>

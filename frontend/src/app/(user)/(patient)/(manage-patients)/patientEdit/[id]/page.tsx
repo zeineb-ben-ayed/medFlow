@@ -1,14 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams, useRouter, useSearchParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
 import PatientForm from "@/src/components/patient/patientForm";
 import { Patient } from "@/src/interfaces/patient";
-import {
-  ADD_PATIENT_MUTATION,
-  EDIT_PATIENT_MUTATION,
-} from "@/src/graphql/mutations";
+import { EDIT_PATIENT_MUTATION } from "@/src/graphql/mutations";
 import { useMutation, useQuery } from "@apollo/client/react";
 import {
   Card,
@@ -18,6 +15,7 @@ import {
   CardContent,
 } from "@/src/components/ui/card";
 import { GET_PATIENT } from "@/src/graphql/query";
+import PageBreadcrumb from "@/src/components/layout/PageBreadcrumb";
 
 export default function EditPatientPage() {
   const router = useRouter();
@@ -79,20 +77,31 @@ export default function EditPatientPage() {
   }
 
   return (
-    <Card className="max-w-3xl mx-auto p-6">
-      <CardHeader className="pb-4">
-        <CardTitle className="text-3xl font-semibold">Edit Patient</CardTitle>
-        <CardDescription>
-          Update the patient's information below to keep their record accurate.
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <PatientForm
-          mode="edit"
-          initialData={formData}
-          onSubmit={handleSubmit}
-        />
-      </CardContent>
-    </Card>
+    <>
+      <PageBreadcrumb pageTitle="Edit Patient" />
+      <div className="w-full p-4 sm:p-6 lg:p-8 bg-white rounded-xl shadow-sm border border-gray-100">
+        <div className="w-full space-y-6">
+          {/* Header Section */}
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            {/* Left: Title + Description */}
+            <div className="space-y-1">
+              <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
+                Edit Patient
+              </h1>
+              <p className="text-muted-foreground text-sm sm:text-base">
+                Update the patient's information below to keep their record
+                accurate.
+              </p>
+            </div>
+          </div>
+          <PatientForm
+            mode="edit"
+            initialData={formData}
+            onSubmit={handleSubmit}
+          />
+        </div>
+        {loading && <p className="mt-2 text-gray-500">Updating...</p>}
+      </div>
+    </>
   );
 }

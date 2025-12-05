@@ -1,8 +1,6 @@
 "use client";
-
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
-
 import { FileText, Plus, X, Download } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -30,19 +28,9 @@ import { FIND_ALL_PATIENTS } from "@/src/graphql/query";
 import { client } from "@/src/lib/apollo-client";
 import { useMutation, useQuery } from "@apollo/client/react";
 import { CREATE_CONSULTATION } from "@/src/graphql/mutations";
-import { generatePrescriptionPDF } from "@/src/utils/generatePrescriptionPdf";
 import { Medication } from "@/src/interfaces/medication";
-import PrescriptionTemplate from "@/src/components/PrescriptionPDF";
-import { pdf, PDFDownloadLink } from "@react-pdf/renderer";
+import { pdf } from "@react-pdf/renderer";
 import PrescriptionPDF from "@/src/components/PrescriptionPDF";
-interface PrescriptionData {
-  patientName: string;
-  patientId: string;
-  date: string;
-  physician: string;
-  medications: Medication[];
-  additionalInstructions: string;
-}
 
 export async function downloadPrescriptionPDF(prescriptionData: any) {
   const blob = await pdf(<PrescriptionPDF {...prescriptionData} />).toBlob();
@@ -127,43 +115,27 @@ export default function ConsultationsPage() {
       });
 
       toast.success("Consultation successfully recorded!");
-      // router.push(`/consultations/${data.createConsultation.id}`);
     } catch (err) {
       console.error(err);
       toast.error("Failed to save consultation.");
     }
   };
 
-  //   const handleGeneratePrescription = () => {
-  //     if (medications.length === 0) {
-  //       toast.error("Please add at least one medication");
-  //       return;
-  //     }
+  const buildPrescriptionData = () => {
+    const selectedPatient = patients.find((p) => p.id === patientId);
 
-  //     toast.success("Prescription generated and ready for download");
-  //   };
-  //   const handleGeneratePrescription = () => {
-  //     if (!patientId) {
-  //       toast.error("Select a patient first");
-  //       return;
-  //     }
-
-  //     const patient = patients.find((p) => p.id === patientId);
-  //     if (patient) {
-  //       generatePrescriptionPdf({
-  //         patient,
-  //         symptoms,
-  //         diagnosis,
-  //         notes,
-  //         medications,
-  //       });
-  //     }
-  //   };
-
-  const handleGeneratePrescription = async () => {
-    setIsGenerating(true);
-    setPdfReady(true); // Trigger PDF generation
+    return {
+      patientName: `${selectedPatient?.firstName} ${selectedPatient?.lastName}`,
+      patientId: `MF-${selectedPatient?.id}`,
+      date: new Date().toLocaleDateString(),
+      physician: "Dr. Sarah Mitchell, MD",
+      medications,
+      additionalInstructions: notes || "—",
+      symptoms,
+      diagnosis,
+    };
   };
+
   return (
     <>
       <PageBreadcrumb pageTitle="New Consultation" />
@@ -394,34 +366,24 @@ export default function ConsultationsPage() {
               {loading ? "Saving..." : "Save Consultation"}
             </Button>
 
-            {/* <Button
-              size="lg"
-              variant="outline"
-              className="flex-1 gap-2"
-              disabled={medications.length === 0}
-              onClick={handleGeneratePrescription}
-            >
-              <Download className="h-4 w-4" />
-              {isGenerating ? "Generating PDF..." : "Download PDF"}
-            </Button> */}
-
             <Button
               size="lg"
               variant="outline"
               className="flex-1 gap-2"
-              onClick={() =>
-                downloadPrescriptionPDF({
-                  patientName: "Salma Daadoucha",
-                  patientId: "MF-2025-XXXXXX",
-                  date: new Date().toLocaleDateString(),
-                  physician: "Dr. Sarah Mitchell, MD",
-                  medications,
-                  additionalInstructions: "...",
-                })
-              }
+              disabled={medications.length === 0}
+              onClick={() => {
+                if (!patientId) {
+                  toast.error("Please select a patient first");
+                  return;
+                }
+                setIsGenerating(true);
+                setPdfReady(true);
+                const pdfData = buildPrescriptionData();
+                downloadPrescriptionPDF(pdfData);
+              }}
             >
               <Download className="h-4 w-4" />
-              Download PDF
+              {isGenerating ? "Generating..." : "Download PDF"}
             </Button>
           </div>
         </div>
