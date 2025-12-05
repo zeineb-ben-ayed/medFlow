@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import axios from 'axios';
 import { Medecin } from 'src/medecin/medecin.entity';
@@ -22,7 +22,7 @@ export class AuthService {
 
     @InjectRepository(Receptionniste)
     private readonly receptionnisteRepository: Repository<Receptionniste>,
-  ) {}
+  ) { }
 
   async register(
     username: string,
@@ -119,7 +119,10 @@ export class AuthService {
       return `✅ Utilisateur ${username} créé avec succès et rôle ${role} assigné`;
     } catch (error) {
       console.error('Erreur register:', error.response?.data || error.message);
-      throw new Error('❌ Échec de la création de l’utilisateur');
+      throw new HttpException(
+        'Échec de la création de l’utilisateur',
+        HttpStatus.BAD_REQUEST,
+      );
     }
   }
 }
