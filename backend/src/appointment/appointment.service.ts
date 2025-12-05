@@ -3,6 +3,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Appointment } from './appointment.entity';
 import { User } from 'src/user/user.entity';
+import { KeycloakAdminService } from 'src/keycloak/keycloak-admin.service';
+import { CreateAppointmentInput } from './dto/inputAppointment';
+import { Patient } from 'src/patient/patient.entity';
+import { Medecin } from 'src/medecin/medecin.entity';
 
 @Injectable()
 export class AppointmentService {
@@ -10,7 +14,14 @@ export class AppointmentService {
     @InjectRepository(Appointment)
     private repo: Repository<Appointment>,
     @InjectRepository(User)
-    private userRepo:Repository<User>
+    private userRepo:Repository<User>,
+    private readonly keycloakAdmin: KeycloakAdminService,
+    @InjectRepository(Patient)
+    private patientRepo: Repository<Patient>,
+    @InjectRepository(Medecin)
+    private medecinRepo: Repository<Medecin>,
+
+    
   ) {}
 
     async getByPatient(keycloakId: string) {
@@ -41,13 +52,60 @@ export class AppointmentService {
   }
 
   async getMedecinAppointments(keycloakId: string) {
-    const medecin = await this.userRepo.findOne({ where: { keycloak_id: keycloakId } });
-    if (!medecin) throw new NotFoundException('Medecin not found');
+  const medecin = await this.userRepo.findOne({ where: { keycloak_id: keycloakId } });
+  if (!medecin) throw new NotFoundException('Medecin not found');
+  const appointments = await this.repo.find({
+    where: { medecin: { id: medecin.id } },
+    order: { date: 'ASC', time: 'ASC' },
+    relations: ['patient'],
+  });
+  const enrichedAppointments = await Promise.all(
+    appointments.map(async (apt) => {
+      let patientProfile = apt.patient;
 
-    return this.repo.find({
-      where: { medecin: { id: medecin.id } },
-      order: { date: 'ASC', time: 'ASC' },
-      relations: ['patient'],
-    });
-  }
+      if (apt.patient.keycloak_id) {
+        try {
+          const kcUser = await this.keycloakAdmin.getUserById(apt.patient.keycloak_id);
+          patientProfile = {
+            ...apt.patient,
+            firstName: kcUser.firstName,
+            lastName: kcUser.lastName,
+            email: kcUser.email,
+            phoneNumber: kcUser.attributes?.phoneNumber?.[0],
+          };
+        } catch (err) {
+          console.error(`Could not fetch Keycloak user ${apt.patient.keycloak_id}:`, err.message);
+        }
+      }
+
+      return {
+        ...apt,
+        patient: patientProfile,
+      };
+    })
+  );
+
+  return enrichedAppointments;
+}
+async createAppointment(data: CreateAppointmentInput) {
+  const { date, time, patientId, medecinId } = data;
+
+  const patient = await this.patientRepo.findOne({ where: { id: patientId } });
+  if (!patient) throw new Error("Patient not found");
+
+  const medecin = await this.medecinRepo.findOne({ where: { id: medecinId } });
+  if (!medecin) throw new Error("Medecin not found");
+
+  const appointment = this.repo.create({
+    date,
+    time,
+    patient,
+    medecin,
+    status: "PENDING"
+  });
+
+  return this.repo.save(appointment);
+}
+
+
 }

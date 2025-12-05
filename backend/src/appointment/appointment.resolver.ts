@@ -1,7 +1,8 @@
-import { Args, Context, Query, Resolver } from '@nestjs/graphql';
+import { Args, Context, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { AppointmentService } from './appointment.service';
 import { Roles } from 'nest-keycloak-connect';
 import { Appointment } from './appointment.entity';
+import { CreateAppointmentInput } from './dto/inputAppointment';
 
 @Resolver()
 export class AppointmentResolver {
@@ -24,10 +25,17 @@ export class AppointmentResolver {
   @Roles({ roles: ['realm:medecin'] })
   @Query(() => [Appointment])
   async getPatientAppointmentsForMe(
-    @Args('patientId') patientId: number,
+    @Args('patientId',{ type: () => Int }) patientId: number,
     @Context() context,
   ) {
     const keycloakId = context.req.user.sub; 
     return this.service.getByPatientForMedecin(patientId, keycloakId);
   }
+@Roles({ roles: ['realm:patient'] })
+@Mutation(() => Appointment)
+async createAppointment(
+  @Args('data') data: CreateAppointmentInput,
+) {
+  return this.service.createAppointment(data);
+}
 }

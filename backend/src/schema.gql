@@ -18,6 +18,13 @@ type AuthResponse {
   refresh_token: String!
 }
 
+input CreateAppointmentInput {
+  date: String!
+  medecinId: Int!
+  patientId: Int!
+  time: String!
+}
+
 input CreatePatientInput {
   address: String
   allergies: String
@@ -59,6 +66,7 @@ type Medecin implements User {
 
 type Mutation {
   addPatient(input: CreatePatientInput!): Patient!
+  createAppointment(data: CreateAppointmentInput!): Appointment!
   deleteUser(id: Int!): Boolean!
   login(password: String!, username: String!): AuthResponse!
   register(dateNaissance: String!, email: String!, extraData: ExtraDataInput, firstName: String!, lastName: String!, password: String!, phoneNumber: String!, role: String!, username: String!): String!
@@ -87,7 +95,7 @@ type Query {
   getAllStaff: [User!]!
   getMyAppointments: [Appointment!]!
   getMyMedecinAppointments: [Appointment!]!
-  getPatientAppointmentsForMe(patientId: Float!): [Appointment!]!
+  getPatientAppointmentsForMe(patientId: Int!): [Appointment!]!
   getPatientProfile(id: Int!): Patient!
   hello: String!
 }
