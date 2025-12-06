@@ -147,6 +147,7 @@ const StaffList = () => {
           <Button
             variant="ghost"
             size="sm"
+            className="cursor-pointer"
             onClick={() => {
               setSelectedStaff(row);
               setOpen(true);
@@ -157,6 +158,7 @@ const StaffList = () => {
           <Button
             variant="ghost"
             size="sm"
+            className="cursor-pointer"
             onClick={() => {
               setStaffToDelete(row);
               setDeleteDialogOpen(true);

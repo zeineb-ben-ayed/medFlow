@@ -76,9 +76,9 @@ export const PatientProfile = ({
   const splitByComma = (str?: string | null) =>
     str
       ? str
-          .split(",")
-          .map((s) => s.trim())
-          .filter(Boolean)
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean)
       : [];
 
   const patientId = generatePatientId(patient?.id);
