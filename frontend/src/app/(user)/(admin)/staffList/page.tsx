@@ -119,8 +119,8 @@ const StaffList = () => {
             value === "medecin"
               ? "default"
               : value === "receptionniste"
-                ? "secondary"
-                : "outline"
+              ? "secondary"
+              : "outline"
           }
         >
           {value}
@@ -147,6 +147,7 @@ const StaffList = () => {
           <Button
             variant="ghost"
             size="sm"
+            className="cursor-pointer"
             onClick={() => {
               setSelectedStaff(row);
               setOpen(true);
@@ -157,6 +158,7 @@ const StaffList = () => {
           <Button
             variant="ghost"
             size="sm"
+            className="cursor-pointer"
             onClick={() => {
               setStaffToDelete(row);
               setDeleteDialogOpen(true);
@@ -192,9 +194,9 @@ const StaffList = () => {
     const extraData =
       role === "medecin"
         ? {
-          specialite: formData.specialite,
-          disponibilite: formData.disponibilite,
-        }
+            specialite: formData.specialite,
+            disponibilite: formData.disponibilite,
+          }
         : { poste: formData.poste, horaires: formData.horaires };
 
     registerUser({

@@ -111,3 +111,9 @@ export const REFRESH_MUTATION = gql`
     }
   }
 `;
+
+export const DELETE_PATIENT = gql`
+  mutation DeletePatient($id: Int!) {
+    deletePatient(id: $id)
+  }
+`;

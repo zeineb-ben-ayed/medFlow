@@ -6,24 +6,28 @@ import { Plus, Eye, Edit, Phone, Mail, Trash } from "lucide-react";
 import { ReusableTable } from "@/src/components/table/reusableTable";
 import { useRouter } from "next/navigation";
 import { Search } from "@/src/components/Input/Search";
-import { useQuery } from "@apollo/client/react";
+import { useMutation, useQuery } from "@apollo/client/react";
 import { FIND_ALL_PATIENTS } from "@/src/graphql/query";
 import { client } from "@/src/lib/apollo-client";
 import { FindAllPatientsData, Patient } from "@/src/interfaces/patient";
 import { Column } from "@/src/interfaces/column";
-<<<<<<<< HEAD:frontend/src/app/(user)/(receptionniste)/patientList/page.tsx
-import PageBreadcrumb from "@/components/layout/PageBreadcrumb";
-========
 import PageBreadcrumb from "@/src/components/layout/PageBreadcrumb";
->>>>>>>> debca883138e8d7c5948a0ebc1e1fb71cd76c81d:frontend/src/app/(user)/(patient)/(manage-patients)/patientList/page.tsx
+import { DELETE_PATIENT } from "@/src/graphql/mutations";
+import DeleteDialog from "@/src/components/ui/deleteDialog";
 
 const PatientList = () => {
   const [searchQuery, setSearchQuery] = useState("");
+  const [patientToDelete, setPatientToDelete] = useState<Patient | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const router = useRouter();
   const { data, loading, error } = useQuery<FindAllPatientsData>(
     FIND_ALL_PATIENTS,
     { client }
   );
+  const [deletePatient] = useMutation(DELETE_PATIENT, {
+    refetchQueries: ["FindAllPatients"],
+    onError: (err) => console.error(err),
+  });
 
   const patients = data?.findAllPatients || [];
 
@@ -34,12 +38,12 @@ const PatientList = () => {
     return patients.filter((p) => {
       const dateString = p.dateNaissance
         ? new Date(p.dateNaissance)
-          .toLocaleDateString("en-GB", {
-            day: "2-digit",
-            month: "long", //  "November"
-            year: "numeric",
-          })
-          .toLowerCase()
+            .toLocaleDateString("en-GB", {
+              day: "2-digit",
+              month: "long", //  "November"
+              year: "numeric",
+            })
+            .toLowerCase()
         : "";
 
       return [p.firstName, p.lastName, p.email, dateString]
@@ -114,7 +118,7 @@ const PatientList = () => {
     {
       key: "actions",
       label: "Actions",
-      align: "end",
+      align: "center",
       render: (_, row) => (
         <div className="flex justify-end gap-2">
           <Button
@@ -132,6 +136,17 @@ const PatientList = () => {
             onClick={() => router.push(`/patients/${row.id}/edit`)}
           >
             <Edit className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="cursor-pointer"
+            onClick={() => {
+              setPatientToDelete(row);
+              setDeleteDialogOpen(true);
+            }}
+          >
+            <Trash className="h-4 w-4" />
           </Button>
         </div>
       ),
@@ -181,6 +196,19 @@ const PatientList = () => {
 
           {/* Patient Table */}
           <ReusableTable columns={columns} data={filteredPatients} />
+
+          <DeleteDialog
+            open={deleteDialogOpen}
+            onOpenChange={setDeleteDialogOpen}
+            onConfirm={() => {
+              if (patientToDelete) {
+                deletePatient({ variables: { id: patientToDelete.id } });
+                setPatientToDelete(null);
+              }
+            }}
+            title="Delete Patient"
+            description={`Are you sure you want to delete ${patientToDelete?.firstName} ${patientToDelete?.lastName}?`}
+          />
         </div>
       </div>
     </>
