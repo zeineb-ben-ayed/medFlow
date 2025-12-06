@@ -1,7 +1,5 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
-import axios from 'axios';
 import { Request, Response, NextFunction } from 'express';
-import jwt from 'jsonwebtoken';
 
 @Injectable()
 export class AuthMiddleware implements NestMiddleware {
