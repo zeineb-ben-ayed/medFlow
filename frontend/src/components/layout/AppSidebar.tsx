@@ -48,7 +48,7 @@ export default function AppSidebar() {
         {open ? (
           <div className="flex items-center gap-2">
             <img
-              src="logo\mediumlightlogo-withoutBG.png"
+              src="/logo/mediumlightlogo-withoutBG.png"
               alt="MedFlow Logo"
               className="h-10 w-auto object-contain"
             />
