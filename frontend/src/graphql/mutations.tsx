@@ -102,3 +102,9 @@ export const CREATE_CONSULTATION = gql`
     }
   }
 `;
+
+export const DELETE_PATIENT = gql`
+  mutation DeletePatient($id: Int!) {
+    deletePatient(id: $id)
+  }
+`;

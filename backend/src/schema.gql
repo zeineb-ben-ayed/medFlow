@@ -94,6 +94,7 @@ input MedicationInput {
 type Mutation {
   addPatient(input: CreatePatientInput!): Patient!
   createConsultation(data: CreateConsultationInput!): Consultation!
+  deletePatient(id: Int!): Boolean!
   deleteUser(id: Int!): Boolean!
   editPatient(input: CreatePatientInput!): Patient!
   login(password: String!, username: String!): AuthResponse!
