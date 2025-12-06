@@ -123,6 +123,7 @@ type Patient {
 type Query {
   findAllPatients: [Patient!]!
   getAllStaff: [User!]!
+  getCurrentUser: UserDto!
   getMyAppointments: [Appointment!]!
   getMyMedecinAppointments: [Appointment!]!
   getPatientAppointmentsForMe(patientId: Float!): [Appointment!]!
@@ -155,4 +156,12 @@ interface User {
   phoneNumber: String
   role: String!
   username: String
+}
+
+type UserDto {
+  email: String!
+  firstName: String!
+  id: String!
+  lastName: String!
+  username: String!
 }

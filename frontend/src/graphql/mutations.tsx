@@ -102,3 +102,12 @@ export const CREATE_CONSULTATION = gql`
     }
   }
 `;
+
+export const REFRESH_MUTATION = gql`
+  mutation RefreshToken($refreshToken: String!) {
+    refreshToken(refreshToken: $refreshToken) {
+      access_token
+      refresh_token
+    }
+  }
+`;

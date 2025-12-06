@@ -2,21 +2,23 @@ import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 import { User } from './user.entity';
 import { UserService } from './user.service';
 import {
+  AuthenticatedUser,
   AuthGuard,
   Public,
   Resource,
   RoleGuard,
   Roles,
 } from 'nest-keycloak-connect';
-import { UseGuards } from '@nestjs/common';
+import { Get, UseGuards } from '@nestjs/common';
 import { Medecin } from 'src/medecin/medecin.entity';
 import { Receptionniste } from 'src/receptionniste/receptionniste.entity';
+import { UserDto } from './dto/user.dto';
 
 @Resolver(() => User)
 @Resource('user')
 @UseGuards(AuthGuard, RoleGuard)
 export class UserResolver {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: UserService) { }
 
   @Query(() => [User])
   @Roles({ roles: ['realm:admin'] })
@@ -41,5 +43,17 @@ export class UserResolver {
   ): Promise<boolean> {
     await this.userService.deleteUserById(id);
     return true;
+  }
+
+  @Resource('user')
+  @Query(() => UserDto)
+  getCurrentUser(@AuthenticatedUser() user: any): UserDto {
+    return {
+      id: user.sub,
+      username: user.preferred_username,
+      firstName: user.given_name,
+      lastName: user.family_name,
+      email: user.email,
+    };
   }
 }
