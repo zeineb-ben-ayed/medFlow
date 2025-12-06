@@ -21,3 +21,15 @@ export const GET_ALL_STAFF = gql`
     }
   }
 `;
+
+export const GET_CURRENT_USER = gql`
+  query GetCurrentUser {
+    getCurrentUser {
+      id
+      username
+      firstName
+      lastName
+      email
+    }
+  }
+`;

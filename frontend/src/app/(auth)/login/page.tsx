@@ -3,7 +3,6 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-// import { Activity } from "lucide-react";
 import { toast } from "sonner";
 import { useMutation } from "@apollo/client/react";
 import { LoginResponse, LoginVariables } from "@/src/interfaces/login";
@@ -33,9 +32,6 @@ const Login = () => {
         return;
       }
 
-      localStorage.setItem("access_token", data.login.access_token);
-      localStorage.setItem("refresh_token", data.login.refresh_token);
-      localStorage.setItem("expires_in", (Date.now() + data.login.expires_in * 1000).toString());
       toast.success("Logged in successfully!");
       router.push("/dashboard");
     } catch (error: any) {
