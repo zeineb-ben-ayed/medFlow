@@ -11,3 +11,14 @@ export interface Staff {
   horaires?: string;
   specialite?: string;
 }
+export type GetAllMedecinsResponse = {
+  getAllMedecins: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    phoneNumber: string;
+    specialite: string;
+    disponibilite: string;
+  }[];
+};

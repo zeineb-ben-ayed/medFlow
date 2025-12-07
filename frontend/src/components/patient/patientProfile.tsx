@@ -30,9 +30,14 @@ import {
 import { InfoField } from "../Fields/infoFields";
 import { PatientProfileType } from "@/src/interfaces/patient";
 
+import { PatientAppointmentsList } from "../Appointment/appointmentListOnePatient";
+import { AppointmentByPatient } from "@/src/interfaces/appointment";
+
+
+
 interface PatientProfileProps {
   patient: PatientProfileType;
-  appointments?: { date: string; reason: string }[];
+  appointments?: AppointmentByPatient[];
 }
 
 export const PatientProfile = ({
@@ -407,41 +412,19 @@ export const PatientProfile = ({
 
           {/* APPOINTMENTS */}
           <TabsContent value="appointments">
-            <Card className="border-2 shadow-sm">
-              <CardHeader className="border-b-2 border-border">
-                <CardTitle className="flex items-center gap-3">
-                  <Calendar className="w-6 h-6 text-primary" /> Upcoming
-                  Appointments
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-6">
-                <div className="text-center text-muted-foreground py-8">
-                  {appointments.length === 0 ? (
-                    <>
-                      <Calendar className="w-12 h-12 mx-auto mb-4 text-muted-foreground/50" />
-                      <p className="text-lg font-medium">
-                        No upcoming appointments
-                      </p>
-                      <p className="text-sm">
-                        Schedule a new appointment to see it here
-                      </p>
-                    </>
-                  ) : (
-                    appointments.map((a, i) => (
-                      <div key={i} className="p-4 border rounded-lg mb-2">
-                        <p>
-                          <b>Date:</b> {formatDateToLocale(a.date)}
-                        </p>
-                        <p>
-                          <b>Reason:</b> {safeString(a.reason)}
-                        </p>
-                      </div>
-                    ))
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
+  <Card className="border-2 shadow-sm">
+    <CardHeader className="border-b-2 border-border">
+      <CardTitle className="flex items-center gap-3">
+        <Calendar className="w-6 h-6 text-primary" /> Upcoming Appointments
+      </CardTitle>
+    </CardHeader>
+    <CardContent className="p-6">
+      <PatientAppointmentsList appointments={appointments} />
+    </CardContent>
+  </Card>
+</TabsContent>
+
+
         </Tabs>
       </div>
     </div>

@@ -27,6 +27,13 @@ type Consultation {
   symptoms: String!
 }
 
+input CreateAppointmentInput {
+  date: String!
+  medecinId: Int!
+  patientKeycloakId: String!
+  time: String!
+}
+
 input CreateConsultationInput {
   additionalNotes: String
   diagnosis: String!
@@ -93,6 +100,7 @@ input MedicationInput {
 
 type Mutation {
   addPatient(input: CreatePatientInput!): Patient!
+  createAppointment(data: CreateAppointmentInput!): Appointment!
   createConsultation(data: CreateConsultationInput!): Consultation!
   deletePatient(id: Int!): Boolean!
   deleteUser(id: Int!): Boolean!
@@ -123,11 +131,14 @@ type Patient {
 
 type Query {
   findAllPatients: [Patient!]!
+  getAllMedecins: [Medecin!]!
   getAllStaff: [User!]!
+  getAppointmentsByPatientId(patientKeycloakId: String!): [Appointment!]!
   getCurrentUser: UserDto!
+  getMedecinBookedSlots(date: String!, medecinId: Int!): [Appointment!]!
   getMyAppointments: [Appointment!]!
   getMyMedecinAppointments: [Appointment!]!
-  getPatientAppointmentsForMe(patientId: Float!): [Appointment!]!
+  getPatientAppointmentsForMe(patientId: Int!): [Appointment!]!
   getPatientById(id: Int!): Patient!
   getPatientProfile(id: Int!): Patient!
   hello: String!
