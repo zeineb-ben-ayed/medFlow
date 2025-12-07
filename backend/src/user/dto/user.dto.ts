@@ -6,9 +6,6 @@ export class UserDto {
     id: string;
 
     @Field()
-    userId: number;
-
-    @Field()
     firstName: string;
 
     @Field()

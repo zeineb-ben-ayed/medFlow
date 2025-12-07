@@ -56,6 +56,40 @@ export const GET_PATIENT = gql`
     }
   }
 `;
+
+export const GET_PROFILE = gql`
+  query GetProfile {
+    getProfile {
+      id
+      role
+      firstName
+      lastName
+      email
+      dateNaissance
+      phoneNumber
+      ... on Medecin {
+        specialite
+        disponibilite
+      }
+
+      ... on Receptionniste {
+        poste
+        horaires
+      }
+
+      ... on Patient {
+        historiqueMedical
+        gender
+        bloodType
+        address
+        emergencyName
+        emergencyPhone
+        allergies
+      }
+    }
+  }
+`;
+
 export const GET_MY_MEDECIN_APPOINTMENTS = gql`
   query GetMyMedecinAppointments {
     getMyMedecinAppointments {

@@ -9,7 +9,8 @@ export class KeycloakAdminService {
   private readonly baseUrl = 'http://localhost:8080';
   private readonly realm = 'medFlow';
   private readonly clientId = 'nest-api';
-  private readonly clientSecret = process.env.KEYCLOAK_CLIENT_SECRET || 'eg9sUSqP6w6WW9WwJB9yEvQDKWRCUoVi';
+  private readonly clientSecret =
+    process.env.KEYCLOAK_CLIENT_SECRET || 'eg9sUSqP6w6WW9WwJB9yEvQDKWRCUoVi';
 
   // Get  an admin token from Keycloak
   async getAdminToken(): Promise<string> {

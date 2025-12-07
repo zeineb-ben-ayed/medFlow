@@ -13,6 +13,8 @@ import { Get, UseGuards } from '@nestjs/common';
 import { Medecin } from 'src/medecin/medecin.entity';
 import { Receptionniste } from 'src/receptionniste/receptionniste.entity';
 import { UserDto } from './dto/user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { Patient } from 'src/patient/patient.entity';
 
 @Resolver(() => User)
 @Resource('user')
@@ -32,6 +34,9 @@ export class UserResolver {
     }
     if (user.role === 'receptionniste') {
       return Receptionniste;
+    }
+    if (user.role === 'patient') {
+      return Patient;
     }
     return null;
   }
@@ -53,17 +58,32 @@ export class UserResolver {
 
   @Resource('user')
   @Query(() => UserDto)
-  async getCurrentUser(@AuthenticatedUser() user: any): Promise<UserDto> {
-    const dbUser = await this.userService.findByKeycloakId(user.sub);
-
+  getCurrentUser(@AuthenticatedUser() user: any): UserDto {
     return {
       id: user.sub,
-      userId: dbUser.id,
       username: user.preferred_username,
       firstName: user.given_name,
       lastName: user.family_name,
       email: user.email,
       roles: user?.realm_access?.roles || [],
     };
+  }
+
+  @Query(() => User)
+  @Resource('user')
+  @Roles({ roles: ['realm:admin', 'realm:medecin', 'realm:receptionniste', 'realm:patient'] })
+  getProfile(@AuthenticatedUser() kcUser: any) {
+    const keycloakId = kcUser.sub;
+    return this.userService.getProfile(keycloakId);
+  }
+
+  @Mutation(() => User)
+  @Resource('user')
+  @Roles({ roles: ['realm:admin', 'realm:medecin', 'realm:receptionniste', 'realm:patient'] })
+  async editProfile(
+    @AuthenticatedUser() kcUser: any,
+    @Args('updateData') updateData: UpdateUserDto,
+  ) {
+    return this.userService.updateProfile(kcUser.sub, updateData);
   }
 }

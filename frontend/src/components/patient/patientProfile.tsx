@@ -32,8 +32,7 @@ import { PatientProfileType } from "@/src/interfaces/patient";
 
 import { PatientAppointmentsList } from "../Appointment/appointmentListOnePatient";
 import { AppointmentByPatient } from "@/src/interfaces/appointment";
-
-
+import { useCurrentUser } from "@/src/hooks/useCurrentUser";
 
 interface PatientProfileProps {
   patient: PatientProfileType;
@@ -44,6 +43,8 @@ export const PatientProfile = ({
   patient,
   appointments = [],
 }: PatientProfileProps) => {
+  const { user } = useCurrentUser();
+  const roles = user?.roles;
   const [activeTab, setActiveTab] = useState<string>("overview");
   const safeString = (v?: string | null, fallback = "—"): string =>
     v ?? fallback;
@@ -81,9 +82,9 @@ export const PatientProfile = ({
   const splitByComma = (str?: string | null) =>
     str
       ? str
-        .split(",")
-        .map((s) => s.trim())
-        .filter(Boolean)
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean)
       : [];
 
   const patientId = generatePatientId(patient?.id);
@@ -412,19 +413,18 @@ export const PatientProfile = ({
 
           {/* APPOINTMENTS */}
           <TabsContent value="appointments">
-  <Card className="border-2 shadow-sm">
-    <CardHeader className="border-b-2 border-border">
-      <CardTitle className="flex items-center gap-3">
-        <Calendar className="w-6 h-6 text-primary" /> Upcoming Appointments
-      </CardTitle>
-    </CardHeader>
-    <CardContent className="p-6">
-      <PatientAppointmentsList appointments={appointments} />
-    </CardContent>
-  </Card>
-</TabsContent>
-
-
+            <Card className="border-2 shadow-sm">
+              <CardHeader className="border-b-2 border-border">
+                <CardTitle className="flex items-center gap-3">
+                  <Calendar className="w-6 h-6 text-primary" /> Upcoming
+                  Appointments
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-6">
+                <PatientAppointmentsList appointments={appointments} />
+              </CardContent>
+            </Card>
+          </TabsContent>
         </Tabs>
       </div>
     </div>

@@ -1,6 +1,5 @@
 "use client";
 import { useState } from "react";
-import { Button } from "@/src/components/ui/button";
 import { Badge } from "@/src/components/ui/badge";
 import { Plus, Eye, Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -33,6 +32,7 @@ import { Label } from "@/src/components/ui/label";
 import PageBreadcrumb from "@/src/components/layout/PageBreadcrumb";
 import { toast } from "sonner";
 import { Column } from "@/src/interfaces/column";
+import { Button } from "@/src/components/ui/button";
 
 interface GetAllStaffResponse {
   getAllStaff: Staff[];
@@ -402,7 +402,7 @@ const StaffList = () => {
                         }
                       >
                         <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Availability" />
+                          <SelectValue placeholder="Available" />
                         </SelectTrigger>
 
                         <SelectContent>
@@ -415,7 +415,7 @@ const StaffList = () => {
 
                   {role === "receptionniste" && (
                     <>
-                      <Label>Poste</Label>
+                      <Label>Position</Label>
                       <Select
                         value={formData.poste}
                         onValueChange={(val) =>
@@ -444,7 +444,7 @@ const StaffList = () => {
                       <Input
                         type="text"
                         name="horaires"
-                        placeholder="schedules"
+                        placeholder="shift"
                         value={formData.horaires}
                         onChange={handleInputChange}
                       />
