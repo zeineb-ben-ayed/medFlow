@@ -35,6 +35,7 @@ export const PatientAppointmentsList = ({ appointments }:PatientAppointmentsList
                   <Calendar className="w-6 h-6 text-primary" />
                 </div>
                 <div>
+                  
                   <p className="text-lg font-semibold">{d}</p>
                   <p className="text-sm text-muted-foreground">Appointment date</p>
                 </div>
