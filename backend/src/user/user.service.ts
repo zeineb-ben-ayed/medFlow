@@ -67,4 +67,15 @@ export class UserService {
         await this.keycloakAdmin.deleteUser(user.keycloak_id);
         await this.userRepository.delete(id);
     }
+
+    async findByKeycloakId(keycloakId: string): Promise<User> {
+        const user = await this.userRepository.findOne({
+            where: { keycloak_id: keycloakId },
+        });
+
+        if (!user) {
+            throw new NotFoundException('User not found in local database');
+        }
+        return user;
+    }
 }

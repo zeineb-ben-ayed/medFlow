@@ -176,5 +176,6 @@ type UserDto {
   id: String!
   lastName: String!
   roles: [String!]!
+  userId: Float!
   username: String!
 }

@@ -119,8 +119,8 @@ const StaffList = () => {
             value === "medecin"
               ? "default"
               : value === "receptionniste"
-              ? "secondary"
-              : "outline"
+                ? "secondary"
+                : "outline"
           }
         >
           {value}
@@ -194,9 +194,9 @@ const StaffList = () => {
     const extraData =
       role === "medecin"
         ? {
-            specialite: formData.specialite,
-            disponibilite: formData.disponibilite,
-          }
+          specialite: formData.specialite,
+          disponibilite: formData.disponibilite,
+        }
         : { poste: formData.poste, horaires: formData.horaires };
 
     registerUser({
@@ -365,13 +365,31 @@ const StaffList = () => {
                   {role === "medecin" && (
                     <>
                       <Label>Speciality</Label>
-                      <Input
-                        type="text"
-                        name="specialite"
-                        placeholder="Speciality"
+                      <Select
                         value={formData.specialite}
-                        onChange={handleInputChange}
-                      />
+                        onValueChange={(val) =>
+                          setFormData((prev) => ({ ...prev, specialite: val }))
+                        }
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select a speciality" />
+                        </SelectTrigger>
+
+                        <SelectContent>
+                          <SelectItem value="General Medicine">General Medicine</SelectItem>
+                          <SelectItem value="Cardiology">Cardiology</SelectItem>
+                          <SelectItem value="Dermatology">Dermatology</SelectItem>
+                          <SelectItem value="Neurology">Neurology</SelectItem>
+                          <SelectItem value="Pediatrics">Pediatrics</SelectItem>
+                          <SelectItem value="Gynecology">Gynecology</SelectItem>
+                          <SelectItem value="Ophthalmology">Ophthalmology</SelectItem>
+                          <SelectItem value="Orthopedics">Orthopedics</SelectItem>
+                          <SelectItem value="Urology">Urology</SelectItem>
+                          <SelectItem value="Oncology">Oncology</SelectItem>
+                          <SelectItem value="Psychiatry">Psychiatry</SelectItem>
+                          <SelectItem value="Radiology">Radiology</SelectItem>
+                        </SelectContent>
+                      </Select>
 
                       <Label>Disponibility</Label>
                       <Select
@@ -384,12 +402,12 @@ const StaffList = () => {
                         }
                       >
                         <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Disponibilité" />
+                          <SelectValue placeholder="Availability" />
                         </SelectTrigger>
 
                         <SelectContent>
-                          <SelectItem value="true">Disponible</SelectItem>
-                          <SelectItem value="false">Non disponible</SelectItem>
+                          <SelectItem value="true">Available</SelectItem>
+                          <SelectItem value="false">Not Available</SelectItem>
                         </SelectContent>
                       </Select>
                     </>
@@ -398,14 +416,30 @@ const StaffList = () => {
                   {role === "receptionniste" && (
                     <>
                       <Label>Poste</Label>
-                      <Input
-                        type="text"
-                        name="poste"
-                        placeholder="Poste"
+                      <Select
                         value={formData.poste}
-                        onChange={handleInputChange}
-                      />
+                        onValueChange={(val) =>
+                          setFormData((prev) => ({ ...prev, poste: val }))
+                        }
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select a desk" />
+                        </SelectTrigger>
 
+                        <SelectContent>
+                          <SelectItem value="Patient Admission Desk">
+                            Patient Admission Desk
+                          </SelectItem>
+                          <SelectItem value="Appointment Management">
+                            Appointment Management
+                          </SelectItem>
+                          <SelectItem value="Call Center">Call Center</SelectItem>
+                          <SelectItem value="Billing Desk">Billing Desk</SelectItem>
+                          <SelectItem value="Emergency Reception Desk">
+                            Emergency Reception Desk
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
                       <Label>Schedules</Label>
                       <Input
                         type="text"
@@ -452,11 +486,11 @@ const StaffList = () => {
                         {selectedStaff.specialite || "—"}
                       </p>
                       <p>
-                        <strong>Disponibility:</strong>{" "}
+                        <strong>Availability:</strong>{" "}
                         {selectedStaff.disponibilite !== undefined
                           ? selectedStaff.disponibilite
-                            ? "Disponible"
-                            : "Non disponible"
+                            ? "Available"
+                            : "Not Available"
                           : "—"}
                       </p>
                     </>

@@ -22,6 +22,7 @@ import {
 } from "@/src/components/ui/sidebar";
 import { useCurrentUser } from "@/src/hooks/useCurrentUser";
 import { protectedRoutes } from "@/src/middleware";
+import Image from "next/image";
 
 const menuItems = [
   { title: "Patients", url: "/patientList", icon: Users },
@@ -64,8 +65,14 @@ export default function AppSidebar() {
             />
           </div>
         ) : (
-          <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-primary via-primary-hover to-accent flex items-center justify-center shadow-sm">
-            <Heart className="h-4 w-4 text-primary-foreground" />
+          <div className="h-9 w-9 rounded-xl flex items-center justify-center shadow-sm">
+            <Image
+              src="/logo/iconlightNoBg.png"
+              alt="App Icon"
+              width={90}
+              height={90}
+              className="object-contain"
+            />
           </div>
         )}
       </div>

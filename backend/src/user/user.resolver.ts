@@ -44,18 +44,21 @@ export class UserResolver {
     await this.userService.deleteUserById(id);
     return true;
   }
-@Query(() => [Medecin])
-@Roles({ roles: ['realm:admin', 'realm:receptionniste', 'realm:patient'] })
-async getAllMedecins(): Promise<Medecin[]> {
-  const users = await this.userService.findAllMedecinsAndReceptionnistes();
-  return users.filter((u) => u.role === 'medecin') as Medecin[];
-}
+  @Query(() => [Medecin])
+  @Roles({ roles: ['realm:admin', 'realm:receptionniste', 'realm:patient'] })
+  async getAllMedecins(): Promise<Medecin[]> {
+    const users = await this.userService.findAllMedecinsAndReceptionnistes();
+    return users.filter((u) => u.role === 'medecin') as Medecin[];
+  }
 
   @Resource('user')
   @Query(() => UserDto)
-  getCurrentUser(@AuthenticatedUser() user: any): UserDto {
+  async getCurrentUser(@AuthenticatedUser() user: any): Promise<UserDto> {
+    const dbUser = await this.userService.findByKeycloakId(user.sub);
+
     return {
       id: user.sub,
+      userId: dbUser.id,
       username: user.preferred_username,
       firstName: user.given_name,
       lastName: user.family_name,
