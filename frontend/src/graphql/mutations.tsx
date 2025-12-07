@@ -136,10 +136,22 @@ export const EDIT_PROFILE = gql`
         poste
         horaires
       }
+
+      ... on Patient {
+        historiqueMedical
+        gender
+        bloodType
+        address
+        emergencyName
+        emergencyPhone
+        allergies
+      }
+        
       role
     }
   }
 `;
+
 export const LOGOUT_MUTATION = gql`
   mutation Logout {
     logout

@@ -9,6 +9,9 @@ import {
   Stethoscope,
   Briefcase,
   Clock,
+  Contact,
+  Heart,
+  FileText,
 } from "lucide-react";
 import { format } from "date-fns";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
@@ -27,9 +30,8 @@ export const PersonalInfoSection = ({
     {
       label: "Full Name",
       icon: <User className="h-5 w-5 text-primary" />,
-      value: `${profileData.firstName || ""} ${
-        profileData.lastName || ""
-      }`.trim(),
+      value: `${profileData.firstName || ""} ${profileData.lastName || ""
+        }`.trim(),
     },
     {
       label: "Email",
@@ -77,6 +79,32 @@ export const PersonalInfoSection = ({
         label: "Shift",
         icon: <Clock className="h-5 w-5 text-primary" />,
         value: profileData.horaires || "Not provided",
+      }
+    );
+  } else if (profileData.role === "patient") {
+    items.push(
+      {
+        label: "Gender",
+        icon: <User className="h-5 w-5 text-primary" />,
+        value: profileData.gender || "Not provided",
+      },
+      {
+        label: "Emergency Contact",
+        icon: <Contact className="h-5 w-5 text-primary" />,
+        value:
+          profileData.emergencyName || profileData.emergencyPhone
+            ? `${profileData.emergencyName} ‑ ${profileData.emergencyPhone}`.trim()
+            : "Not provided",
+      },
+      {
+        label: "Allergies",
+        icon: <Heart className="h-5 w-5 text-primary" />,
+        value: profileData.allergies || "None",
+      },
+      {
+        label: "Medical History",
+        icon: <FileText className="h-5 w-5 text-primary" />,
+        value: profileData.historiqueMedical || "None",
       }
     );
   }

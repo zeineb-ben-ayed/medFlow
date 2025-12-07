@@ -28,4 +28,25 @@ export class UpdateUserDto {
 
   @Field({ nullable: true })
   horaires?: string;
+
+  @Field({ nullable: true })
+  historiqueMedical?: string;
+
+  @Field({ nullable: true })
+  gender?: string;
+
+  @Field({ nullable: true })
+  bloodType?: string;
+
+  @Field({ nullable: true })
+  address?: string;
+
+  @Field({ nullable: true })
+  emergencyName?: string;
+
+  @Field({ nullable: true })
+  emergencyPhone?: string;
+
+  @Field({ nullable: true })
+  allergies?: string;
 }

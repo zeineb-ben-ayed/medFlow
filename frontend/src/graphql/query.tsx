@@ -76,6 +76,16 @@ export const GET_PROFILE = gql`
         poste
         horaires
       }
+
+      ... on Patient {
+        historiqueMedical
+        gender
+        bloodType
+        address
+        emergencyName
+        emergencyPhone
+        allergies
+      }
     }
   }
 `;

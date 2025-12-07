@@ -14,12 +14,13 @@ import { Medecin } from 'src/medecin/medecin.entity';
 import { Receptionniste } from 'src/receptionniste/receptionniste.entity';
 import { UserDto } from './dto/user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { Patient } from 'src/patient/patient.entity';
 
 @Resolver(() => User)
 @Resource('user')
 @UseGuards(AuthGuard, RoleGuard)
 export class UserResolver {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: UserService) { }
 
   @Query(() => [User])
   @Roles({ roles: ['realm:admin'] })
@@ -33,6 +34,9 @@ export class UserResolver {
     }
     if (user.role === 'receptionniste') {
       return Receptionniste;
+    }
+    if (user.role === 'patient') {
+      return Patient;
     }
     return null;
   }
@@ -67,7 +71,7 @@ export class UserResolver {
 
   @Query(() => User)
   @Resource('user')
-  @Roles({ roles: ['realm:admin', 'realm:medecin', 'realm:receptionniste'] })
+  @Roles({ roles: ['realm:admin', 'realm:medecin', 'realm:receptionniste', 'realm:patient'] })
   getProfile(@AuthenticatedUser() kcUser: any) {
     const keycloakId = kcUser.sub;
     return this.userService.getProfile(keycloakId);
@@ -75,7 +79,7 @@ export class UserResolver {
 
   @Mutation(() => User)
   @Resource('user')
-  @Roles({ roles: ['realm:admin', 'realm:medecin', 'realm:receptionniste'] })
+  @Roles({ roles: ['realm:admin', 'realm:medecin', 'realm:receptionniste', 'realm:patient'] })
   async editProfile(
     @AuthenticatedUser() kcUser: any,
     @Args('updateData') updateData: UpdateUserDto,
