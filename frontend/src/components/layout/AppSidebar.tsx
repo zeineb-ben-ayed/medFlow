@@ -9,6 +9,9 @@ import {
   DollarSign,
   Settings,
   Heart,
+  Grid,
+  Grid2x2,
+  LayoutGrid,
 } from "lucide-react";
 import {
   Sidebar,
@@ -25,6 +28,8 @@ import { protectedRoutes } from "@/src/middleware";
 import Image from "next/image";
 
 const menuItems = [
+  { title: "Dashboard", url: "/dashboardAdmin", icon: LayoutGrid },
+  { title: "Dashboard", url: "/dashboardReceptionniste", icon: LayoutGrid },
   { title: "Patients", url: "/patientList", icon: Users },
   { title: "Appointments", url: "/appointmentListPatient", icon: Calendar },
   { title: "Appointments (All)", url: "/appointmentList", icon: Calendar },

@@ -12,6 +12,8 @@ export const protectedRoutes: Record<string, string[]> = {
   "/consultation": ["medecin"],
   "/profile": ["medecin", "admin", "receptionniste"],
   "/patientEdit": ["admin", "receptionniste", "medecin"],
+  "/dashboardAdmin": ["admin"],
+  "/dashboardReceptionniste": ["receptionniste"],
 };
 
 // Public routes that don't require authentication
@@ -75,5 +77,7 @@ export const config = {
     "/consultation",
     "/profile",
     "/patientEdit/:path*",
+    "/dashboardAdmin",
+    "/dashboardReceptionniste",
   ],
 };

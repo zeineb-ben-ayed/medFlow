@@ -25,7 +25,9 @@ import { client } from "@/src/lib/apollo-client";
 export default function TopNav() {
   const { state, isMobile } = useSidebar();
   const { user } = useCurrentUser();
-  const initials = `${user?.firstName?.[0] ?? ""}${user?.lastName?.[0] ?? ""}`.toUpperCase();
+  const initials = `${user?.firstName?.[0] ?? ""}${
+    user?.lastName?.[0] ?? ""
+  }`.toUpperCase();
   const router = useRouter();
   const goToProfile = () => router.push("/profile");
 
@@ -35,7 +37,7 @@ export default function TopNav() {
       window.location.href = "/login";
     },
     onError: (err) => {
-      console.error('Logout failed', err);
+      console.error("Logout failed", err);
     },
   });
 
@@ -81,9 +83,7 @@ export default function TopNav() {
 
           <DropdownMenuContent align="end" className="w-48">
             {user?.roles.includes("admin") ? (
-              <DropdownMenuItem
-                className="flex flex-col items-start gap-0 font-semibold"
-              >
+              <DropdownMenuItem className="flex flex-col items-start gap-0 font-semibold">
                 <span>
                   {user.firstName} {user.lastName}
                 </span>
@@ -100,7 +100,12 @@ export default function TopNav() {
 
             <DropdownMenuSeparator />
 
-            <DropdownMenuItem className="text-red-500" onClick={async () => await logout()}>Logout</DropdownMenuItem>
+            <DropdownMenuItem
+              className="text-red-500"
+              onClick={async () => await logout()}
+            >
+              Logout
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
