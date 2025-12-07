@@ -106,7 +106,7 @@ type Mutation {
   deleteUser(id: Int!): Boolean!
   editPatient(input: CreatePatientInput!): Patient!
   login(password: String!, username: String!): AuthResponse!
-  refreshToken(refreshToken: String!): AuthResponse!
+  logout: Boolean!
   register(dateNaissance: String!, email: String!, extraData: ExtraDataInput, firstName: String!, lastName: String!, password: String!, phoneNumber: String!, role: String!, username: String!): String!
 }
 
@@ -175,5 +175,6 @@ type UserDto {
   firstName: String!
   id: String!
   lastName: String!
+  roles: [String!]!
   username: String!
 }

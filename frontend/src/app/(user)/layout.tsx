@@ -9,9 +9,15 @@ import {
   useSidebar,
 } from "@/src/components/ui/sidebar";
 import { cn } from "@/src/lib/utils";
+import { useEffect } from "react";
 
 function MainWrapper({ children }: { children: React.ReactNode }) {
   const { state, isMobile } = useSidebar();
+
+  useEffect(() => {
+    document.title = "Medflow";
+  }, []);
+
   return (
     <div
       className={cn(

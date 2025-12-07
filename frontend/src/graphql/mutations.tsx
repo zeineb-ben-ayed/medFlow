@@ -117,6 +117,13 @@ export const DELETE_PATIENT = gql`
     deletePatient(id: $id)
   }
 `;
+
+export const LOGOUT_MUTATION = gql`
+  mutation Logout {
+    logout
+  }
+`;
+
 export const CREATE_APPOINTMENT = gql`
   mutation CreateAppointment(
     $date: String!

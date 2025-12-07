@@ -5,10 +5,12 @@ import { jwtDecode } from "jwt-decode";
 
 
 // Mapping of protected routes → required roles
-const protectedRoutes: Record<string, string[]> = {
-    "/admin": ["admin"],
-    "/medecin": ["medecin"],
-    "/patient": ["patient"],
+export const protectedRoutes: Record<string, string[]> = {
+    "/staffList": ["admin"],
+    "/patientList": ["admin", "receptionniste"],
+    "/appointmentListPatient": ["patient"],
+    "/appointmentList": ["medecin"],
+    "/consultation": ["medecin"]
 };
 
 // Public routes that don't require authentication
@@ -65,5 +67,5 @@ export function middleware(req: NextRequest) {
 }
 
 export const config = {
-    matcher: ["/admin/:path*", "/medecin/:path*", "/patient/:path*"],
+    matcher: ["/staffList", "/patientList", "/appointmentListPatient", "/appointmentList", "/consultation"],
 };

@@ -67,6 +67,7 @@ export const GET_CURRENT_USER = gql`
       firstName
       lastName
       email
+      roles
     }
   }
 `;

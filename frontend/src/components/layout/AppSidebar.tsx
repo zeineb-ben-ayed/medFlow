@@ -20,18 +20,28 @@ import {
   SidebarMenuButton,
   useSidebar,
 } from "@/src/components/ui/sidebar";
+import { useCurrentUser } from "@/src/hooks/useCurrentUser";
+import { protectedRoutes } from "@/src/middleware";
 
 const menuItems = [
-  { title: "Dashboard", url: "/dashboard", icon: Home },
   { title: "Patients", url: "/patientList", icon: Users },
-  { title: "Appointments", url: "/appointments", icon: Calendar },
-  { title: "Billing", url: "/billing", icon: DollarSign },
-  { title: "Admin", url: "/admin", icon: Settings },
+  { title: "Appointments", url: "/appointmentListPatient", icon: Calendar },
+  { title: "Appointments (All)", url: "/appointmentList", icon: Calendar },
+  { title: "Consultation", url: "/consultation", icon: Heart },
+  { title: "Staff", url: "/staffList", icon: Users },
 ];
 
 export default function AppSidebar() {
   const { open } = useSidebar();
   const pathname = usePathname();
+  const { user } = useCurrentUser();
+  const roles = user?.roles;
+
+  const filteredMenuItems = menuItems.filter((item) => {
+    const allowedRoles = protectedRoutes[item.url];
+    if (!allowedRoles) return true;
+    return allowedRoles.some((role) => roles?.includes(role));
+  });
 
   return (
     <Sidebar
@@ -64,7 +74,7 @@ export default function AppSidebar() {
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
-              {menuItems.map((item) => {
+              {filteredMenuItems.map((item) => {
                 const isActive = pathname?.startsWith(item.url);
                 return (
                   <SidebarMenuItem key={item.title}>

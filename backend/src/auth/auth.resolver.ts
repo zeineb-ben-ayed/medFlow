@@ -13,7 +13,8 @@ export class AuthResolver {
   private keycloakUrl = 'http://localhost:8080';
   private realm = 'medFlow';
   private clientId = 'nest-api';
-  private clientSecret = 'IoT1qYcMnF01OAHnWxn1gVu3JSIQiShT';
+  private clientSecret = 'eg9sUSqP6w6WW9WwJB9yEvQDKWRCUoVi';
+
   @Public()
   @Mutation(() => AuthResponse)
   async login(
@@ -61,38 +62,6 @@ export class AuthResolver {
   }
 
   @Public()
-  @Mutation(() => AuthResponse)
-  async refreshToken(@Args('refreshToken') refreshToken: string, @Context('res') res: Response): Promise<AuthResponse> {
-    const params = new URLSearchParams();
-    params.append('grant_type', 'refresh_token');
-    params.append('client_id', this.clientId);
-    params.append('client_secret', this.clientSecret);
-    params.append('refresh_token', refreshToken);
-
-    const { data } = await axios.post(
-      `${this.keycloakUrl}/realms/${this.realm}/protocol/openid-connect/token`,
-      params.toString(),
-      { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
-    );
-
-    res.cookie('access_token', data.access_token, {
-      httpOnly: true,
-      secure: false,
-      sameSite: 'lax',
-      path: '/',
-    });
-
-    res.cookie('refresh_token', data.refresh_token, {
-      httpOnly: true,
-      secure: false,
-      sameSite: 'lax',
-      path: '/',
-    });
-
-    return data;
-  }
-
-  @Public()
   @Mutation(() => String)
   async register(
     @Args('username') username: string,
@@ -116,5 +85,14 @@ export class AuthResolver {
       phoneNumber,
       extraData,
     );
+  }
+
+  @Public()
+  @Mutation(() => Boolean)
+  async logout(@Context('res') res: Response): Promise<boolean> {
+    res.clearCookie('access_token', { path: '/' });
+    res.clearCookie('refresh_token', { path: '/' });
+
+    return true;
   }
 }

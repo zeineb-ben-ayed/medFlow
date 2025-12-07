@@ -60,6 +60,7 @@ async getAllMedecins(): Promise<Medecin[]> {
       firstName: user.given_name,
       lastName: user.family_name,
       email: user.email,
+      roles: user?.realm_access?.roles || [],
     };
   }
 }
