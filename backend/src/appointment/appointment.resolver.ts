@@ -38,4 +38,19 @@ async createAppointment(
 ) {
   return this.service.createAppointment(data);
 }
+
+@Query(() => [Appointment])
+async getMedecinBookedSlots(
+  @Args('medecinId', { type: () => Int }) medecinId: number,
+  @Args('date') date: string,
+) {
+  return this.service.getMedecinBookedSlots(medecinId, date);
+}
+@Roles({ roles: ['realm:patient'] })
+@Query(() => [Appointment]) 
+async getAppointmentsByPatientId(
+@Args('patientId', { type: () => Int }) patientId: number
+ ) { 
+  return this.service.getAppointmentsByPatientId(patientId);
+ }
 }

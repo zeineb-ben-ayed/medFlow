@@ -107,5 +107,57 @@ async createAppointment(data: CreateAppointmentInput) {
   return this.repo.save(appointment);
 }
 
+async getMedecinBookedSlots(medecinId: number, date: string) {
+  const appointments = await this.repo.find({
+    where: {
+      medecin: { id: medecinId },
+      date: date
+    }
+  });
+
+  return appointments;
+}
+async getAppointmentsByPatientId(patientId: number) {
+ 
+  const patient = await this.patientRepo.findOne({ where: { id: patientId } });
+  if (!patient) throw new NotFoundException("Patient not found");
+
+  const appointments = await this.repo.find({
+    where: { patient: { id: patient.id } },
+    order: { date: 'ASC', time: 'ASC' },
+    relations: ['medecin'], 
+  });
+  const enrichedAppointments = await Promise.all(
+  appointments.map(async (apt) => {
+    let medecinProfile = apt.medecin;
+
+    if (apt.medecin?.keycloak_id) {
+      try {
+        const kcUser = await this.keycloakAdmin.getUserById(apt.medecin.keycloak_id);
+
+        medecinProfile = {
+          ...apt.medecin,
+          firstName: kcUser.firstName,
+          lastName: kcUser.lastName,
+          email: kcUser.email,
+          phoneNumber: kcUser.attributes.phoneNumber[0],
+
+        };
+      } catch (error) {
+        console.error(`Error fetching Keycloak user ${apt.medecin.keycloak_id}:`, error.message);
+      }
+    }
+
+    return {
+      ...apt,
+      medecin: medecinProfile,
+    };
+  })
+);
+
+
+  return enrichedAppointments;
+}
+
 
 }

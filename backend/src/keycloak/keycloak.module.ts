@@ -11,7 +11,7 @@ import { KeycloakAdminService } from './keycloak-admin.service';
       clientId: 'nest-api',
       secret:
         process.env.KEYCLOAK_CLIENT_SECRET ||
-        'lesqS4bzVgytRxd4UU0bAStzcYRmN2Z8',
+        'IoT1qYcMnF01OAHnWxn1gVu3JSIQiShT',
       tokenValidation: TokenValidation.ONLINE,
     }),
   ],

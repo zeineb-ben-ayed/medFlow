@@ -4,7 +4,6 @@ export async function getValidToken() {
 
     // No refresh token → must login
     if (!refreshToken) {
-        redirectToLogin();
         return null;
     }
 

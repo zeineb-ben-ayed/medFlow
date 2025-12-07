@@ -2,88 +2,28 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { ArrowLeft, CalendarIcon, Clock, User, Check, ArrowRight } from "lucide-react";
 import { cn } from "@/src/lib/utils";
+import { Button } from "../ui/button";
+import { Card } from "../ui/card";
+import { Label } from "../ui/label";
+import { Calendar } from "../ui/calendar";
+import { Textarea } from "../ui/textarea";
+import { useQuery } from "@apollo/client/react";
+import { GET_ALL_MEDECINS, GET_MEDECIN_BOOKED_SLOTS } from "@/src/graphql/queries";
+import { GetAllMedecinsResponse } from "@/src/interfaces/staff";
+import { GetMedecinBookedSlotsResponse } from "@/src/interfaces/appointment";
 
 
-const staticDoctors = [
-  {
-    id: "1",
-    full_name: "Dr. Sarah Johnson",
-    specialization: "Cardiologie",
-    status: "active",
-    avatar_url: null,
-    email: "sarah.johnson@medflow.com",
-    phone: "+1 (555) 123-4567",
-    bio: "Spécialiste en cardiologie avec 10 ans d'expérience. Certifiée par l'American College of Cardiology."
-  },
-  {
-    id: "2",
-    full_name: "Dr. Michael Chen",
-    specialization: "Dermatologie",
-    status: "active",
-    avatar_url: null,
-    email: "michael.chen@medflow.com",
-    phone: "+1 (555) 234-5678",
-    bio: "Expert en dermatologie cosmétique et médicale. Diplômé de l'Université de Harvard."
-  },
-  {
-    id: "3",
-    full_name: "Dr. Maria Rodriguez",
-    specialization: "Pédiatrie",
-    status: "active",
-    avatar_url: null,
-    email: "maria.rodriguez@medflow.com",
-    phone: "+1 (555) 345-6789",
-    bio: "Pédiatre spécialisée dans les soins aux nouveau-nés et aux adolescents. 15 ans d'expérience."
-  },
-  {
-    id: "4",
-    full_name: "Dr. James Wilson",
-    specialization: "Orthopédie",
-    status: "active",
-    avatar_url: null,
-    email: "james.wilson@medflow.com",
-    phone: "+1 (555) 456-7890",
-    bio: "Chirurgien orthopédique spécialisé en chirurgie du genou et de la hanche."
-  },
-  {
-    id: "5",
-    full_name: "Dr. Lisa Thompson",
-    specialization: "Gynécologie",
-    status: "active",
-    avatar_url: null,
-    email: "lisa.thompson@medflow.com",
-    phone: "+1 (555) 567-8901",
-    bio: "Gynécologue-obstétricienne avec expertise en santé reproductive féminine."
-  },
-  {
-    id: "6",
-    full_name: "Dr. Robert Kim",
-    specialization: "Neurologie",
-    status: "active",
-    avatar_url: null,
-    email: "robert.kim@medflow.com",
-    phone: "+1 (555) 678-9012",
-    bio: "Neurologue spécialisé dans les troubles du mouvement et les maladies neurodégénératives."
-  }
-];
-
-// Données statiques pour les créneaux horaires
 const timeSlots = [
   "09:00", "09:30", "10:00", "10:30", "11:00", "11:30",
   "13:00", "13:30", "14:00", "14:30", "15:00", "15:30",
   "16:00", "16:30"
 ];
 
-// Données statiques pour le patient (simulé)
 const staticPatientRecord = {
   id: "patient-001",
   user_id: "user-001",
@@ -108,7 +48,38 @@ export default function BookAppointment() {
   const [selectedTime, setSelectedTime] = useState<string>("");
   const [notes, setNotes] = useState("");
   const [isBooking, setIsBooking] = useState(false);
+const {
+  data: medecinsData,
+  loading: medecinsLoading,
+  error: medecinsError
+} = useQuery<GetAllMedecinsResponse>(GET_ALL_MEDECINS);
 
+const doctors = medecinsData?.getAllMedecins || [];
+const {
+  data: bookedSlotsData
+} = useQuery<GetMedecinBookedSlotsResponse>(GET_MEDECIN_BOOKED_SLOTS, {
+  variables: { 
+    medecinId: Number(selectedDoctor), 
+    date: selectedDate ? format(selectedDate, "yyyy-MM-dd") : null 
+  },
+  skip: !selectedDoctor || !selectedDate,
+});
+
+const bookedTimes =
+  bookedSlotsData?.getMedecinBookedSlots?.map(slot => slot.time) ?? [];
+
+
+
+  
+  const formattedDoctors = doctors.map((d) => ({
+  id: d.id,
+  full_name: `${d.firstName} ${d.lastName}`,
+  specialization: d.specialite || "Médecin",
+  status: "active",
+  phone: d.phoneNumber,
+  email: d.email,
+  bio: "Médecin généraliste", 
+}));
   const handleBookAppointment = async () => {
     if (!selectedDoctor || !selectedDate || !selectedTime) {
       toast.error("Veuillez remplir toutes les informations requises");
@@ -123,7 +94,7 @@ export default function BookAppointment() {
       const appointmentData = {
         patient_id: staticPatientRecord.id,
         staff_id: selectedDoctor,
-        doctor_name: staticDoctors.find(d => d.id === selectedDoctor)?.full_name,
+        doctor_name: formattedDoctors.find(d => d.id === selectedDoctor)?.full_name,
         appointment_date: format(selectedDate, "yyyy-MM-dd"),
         appointment_time: selectedTime,
         duration_minutes: 30,
@@ -157,26 +128,11 @@ export default function BookAppointment() {
     }
   };
 
-  const selectedDoctorData = staticDoctors.find(d => d.id === selectedDoctor);
+  const selectedDoctorData = formattedDoctors.find(d => d.id === selectedDoctor);
 
   return (
-    <div className="min-h-screen bg-background p-4 md:p-8">
+    
       <div className="max-w-4xl mx-auto space-y-6">
-        {/* En-tête */}
-        <div className="flex items-center gap-4">
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            onClick={() => router.back()}
-            className="rounded-custom hover:bg-accent-light transition-all duration-200"
-          >
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          <div>
-            <h1 className="text-3xl md:text-4xl font-bold text-foreground">Prendre un Rendez-vous</h1>
-            <p className="text-muted-foreground mt-1">Étape {step} sur 3</p>
-          </div>
-        </div>
        {/* Indicateur de progression */}
 <div className="flex items-center justify-center gap-16 my-8">
   {[1, 2, 3].map((stepNumber, index) => (
@@ -222,7 +178,7 @@ export default function BookAppointment() {
             </div>
             
             <div className="grid gap-4">
-              {staticDoctors.map((doctor) => (
+              {formattedDoctors.map((doctor) => (
                 <button
                   key={doctor.id}
                   onClick={() => setSelectedDoctor(doctor.id)}
@@ -326,32 +282,41 @@ export default function BookAppointment() {
               </div>
             </div>
 
-            {selectedDate && (
-              <div>
-                <Label className="flex items-center gap-2 text-base font-medium mb-4">
-                  <Clock className="h-5 w-5 text-primary" />
-                  Créneaux horaires disponibles
-                </Label>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                  {timeSlots.map((time) => (
-                    <button
-                      key={time}
-                      onClick={() => setSelectedTime(time)}
-                      className={cn(
-                        "p-4 rounded-custom border text-center transition-all duration-200",
-                        "hover:shadow-md hover:border-primary/50 hover:translate-y-[-2px]",
-                        selectedTime === time
-                          ? "border-primary bg-primary text-primary-foreground shadow-md"
-                          : "border-border hover:bg-accent-light"
-                      )}
-                    >
-                      <div className="font-semibold">{time}</div>
-                      <div className="text-xs mt-1 opacity-75">30 min</div>
-                    </button>
-                  ))}
-                </div>
-              </div>
+           {selectedDate && (
+  <div>
+    <Label className="flex items-center gap-2 text-base font-medium mb-4">
+      <Clock className="h-5 w-5 text-primary" />
+      Available Time Slots
+    </Label>
+
+    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      {timeSlots.map((time) => {
+        const isBooked = bookedTimes.includes(time);
+
+        return (
+          <button
+            key={time}
+            onClick={() => !isBooked && setSelectedTime(time)}
+            disabled={isBooked}
+            className={cn(
+              "p-4 rounded-custom border text-center transition-all duration-200",
+              isBooked
+                ? "bg-gray-200 text-gray-400 border-gray-300 cursor-not-allowed"
+                : "hover:shadow-md hover:border-primary/50 hover:translate-y-[-2px]",
+              selectedTime === time && !isBooked
+                ? "border-primary bg-primary text-primary-foreground shadow-md"
+                : ""
             )}
+          >
+            <div className="font-semibold">{time}</div>
+            <div className="text-xs mt-1 opacity-75">30 min</div>
+          </button>
+        );
+      })}
+    </div>
+  </div>
+)}
+
 
             <div className="flex gap-3 pt-4">
               <Button 
@@ -493,6 +458,6 @@ export default function BookAppointment() {
           </Card>
         )}
       </div>
-    </div>
+   
   );
 }

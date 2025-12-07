@@ -11,11 +11,8 @@ import { FIND_ALL_PATIENTS } from "@/src/graphql/query";
 import { client } from "@/src/lib/apollo-client";
 import { FindAllPatientsData, Patient } from "@/src/interfaces/patient";
 import { Column } from "@/src/interfaces/column";
-<<<<<<<< HEAD:frontend/src/app/(user)/(receptionniste)/patientList/page.tsx
-import PageBreadcrumb from "@/components/layout/PageBreadcrumb";
-========
 import PageBreadcrumb from "@/src/components/layout/PageBreadcrumb";
->>>>>>>> debca883138e8d7c5948a0ebc1e1fb71cd76c81d:frontend/src/app/(user)/(patient)/(manage-patients)/patientList/page.tsx
+
 
 const PatientList = () => {
   const [searchQuery, setSearchQuery] = useState("");

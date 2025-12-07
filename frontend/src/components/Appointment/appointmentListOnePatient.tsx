@@ -1,8 +1,8 @@
 "use client";
 
 import { Calendar, Clock } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/src/components/ui/card";
+import { Badge } from "@/src/components/ui/badge";
 import { AppointmentByPatient } from "@/src/interfaces/appointment";
 interface PatientAppointmentsListProps {
   appointments: AppointmentByPatient[];
