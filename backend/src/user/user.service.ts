@@ -78,6 +78,7 @@ export class UserService {
 
     const merged = {
       ...user,
+      username: kcUser.username,
       firstName: kcUser.firstName,
       lastName: kcUser.lastName,
       email: kcUser.email,

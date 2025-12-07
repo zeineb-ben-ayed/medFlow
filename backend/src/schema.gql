@@ -130,6 +130,7 @@ type Query {
   getPatientAppointmentsForMe(patientId: Float!): [Appointment!]!
   getPatientById(id: Int!): Patient!
   getPatientProfile(id: Int!): Patient!
+  getProfile: User!
   hello: String!
 }
 

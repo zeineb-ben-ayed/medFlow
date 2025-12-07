@@ -10,11 +10,12 @@ import { KeycloakAdminService } from './keycloak-admin.service';
       realm: 'medFlow',
       clientId: 'nest-api',
       secret:
-        process.env.KEYCLOAK_CLIENT_SECRET || 'eg9sUSqP6w6WW9WwJB9yEvQDKWRCUoVi',
+        process.env.KEYCLOAK_CLIENT_SECRET ||
+        'lesqS4bzVgytRxd4UU0bAStzcYRmN2Z8',
       tokenValidation: TokenValidation.ONLINE,
     }),
   ],
   providers: [KeycloakAdminService],
   exports: [KeycloakConnectModule, KeycloakAdminService],
 })
-export class KeycloakModule { }
+export class KeycloakModule {}

@@ -56,3 +56,25 @@ export const GET_PATIENT = gql`
     }
   }
 `;
+
+export const GET_PROFILE = gql`
+  query GetProfile {
+    getProfile {
+      id
+      role
+      firstName
+      lastName
+      email
+
+      ... on Medecin {
+        specialite
+        disponibilite
+      }
+
+      ... on Receptionniste {
+        poste
+        horaires
+      }
+    }
+  }
+`;

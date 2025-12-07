@@ -18,7 +18,7 @@ import { UserDto } from './dto/user.dto';
 @Resource('user')
 @UseGuards(AuthGuard, RoleGuard)
 export class UserResolver {
-  constructor(private readonly userService: UserService) { }
+  constructor(private readonly userService: UserService) {}
 
   @Query(() => [User])
   @Roles({ roles: ['realm:admin'] })
@@ -55,5 +55,13 @@ export class UserResolver {
       lastName: user.family_name,
       email: user.email,
     };
+  }
+
+  @Query(() => User)
+  @Resource('user')
+  @Roles({ roles: ['realm:admin', 'realm:medecin', 'realm:receptionniste'] })
+  getProfile(@AuthenticatedUser() kcUser: any) {
+    const keycloakId = kcUser.sub;
+    return this.userService.getProfile(keycloakId);
   }
 }

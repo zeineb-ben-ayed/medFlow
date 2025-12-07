@@ -406,11 +406,11 @@ const StaffList = () => {
                         onChange={handleInputChange}
                       />
 
-                      <Label>Schedules</Label>
+                      <Label>Shift</Label>
                       <Input
                         type="text"
                         name="horaires"
-                        placeholder="schedules"
+                        placeholder="shift"
                         value={formData.horaires}
                         onChange={handleInputChange}
                       />
