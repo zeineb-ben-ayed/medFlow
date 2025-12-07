@@ -4,10 +4,12 @@ import axios from 'axios';
 import { Public } from 'nest-keycloak-connect';
 import { AuthService } from './auth.service';
 import { ExtraDataInput } from './dto/extra-data-input.dto';
+import { Context } from '@nestjs/graphql';
+import { Response } from 'express';
 
 @Resolver()
 export class AuthResolver {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) { }
   private keycloakUrl = 'http://localhost:8080';
   private realm = 'medFlow';
   private clientId = 'nest-api';
@@ -17,6 +19,7 @@ export class AuthResolver {
   async login(
     @Args('username') username: string,
     @Args('password') password: string,
+    @Context('res') res: Response,
   ): Promise<AuthResponse> {
     try {
       const params = new URLSearchParams();
@@ -35,6 +38,21 @@ export class AuthResolver {
         },
       );
 
+      // Store in secure HTTP-only cookies
+      res.cookie('access_token', data.access_token, {
+        httpOnly: true,
+        secure: false,
+        sameSite: 'lax',
+        path: '/',
+      });
+
+      res.cookie('refresh_token', data.refresh_token, {
+        httpOnly: true,
+        secure: false,
+        sameSite: 'lax',
+        path: '/',
+      });
+
       return data;
     } catch (error) {
       console.error('KEYCLOAK ERROR:', error.response?.data);
@@ -44,7 +62,7 @@ export class AuthResolver {
 
   @Public()
   @Mutation(() => AuthResponse)
-  async refreshToken(@Args('refreshToken') refreshToken: string): Promise<AuthResponse> {
+  async refreshToken(@Args('refreshToken') refreshToken: string, @Context('res') res: Response): Promise<AuthResponse> {
     const params = new URLSearchParams();
     params.append('grant_type', 'refresh_token');
     params.append('client_id', this.clientId);
@@ -56,6 +74,20 @@ export class AuthResolver {
       params.toString(),
       { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
     );
+
+    res.cookie('access_token', data.access_token, {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'lax',
+      path: '/',
+    });
+
+    res.cookie('refresh_token', data.refresh_token, {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'lax',
+      path: '/',
+    });
 
     return data;
   }

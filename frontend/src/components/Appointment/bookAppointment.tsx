@@ -5,17 +5,19 @@ import { useRouter } from "next/navigation";
 
 import { toast } from "sonner";
 import { format } from "date-fns";
-import { ArrowLeft, CalendarIcon, Clock, User, Check, ArrowRight } from "lucide-react";
+import { ArrowLeft, CalendarIcon, Clock, User, Check, ArrowRight, Hourglass, Stethoscope, Phone, Shield, Mail } from "lucide-react";
 import { cn } from "@/src/lib/utils";
 import { Button } from "../ui/button";
 import { Card } from "../ui/card";
 import { Label } from "../ui/label";
 import { Calendar } from "../ui/calendar";
 import { Textarea } from "../ui/textarea";
-import { useQuery } from "@apollo/client/react";
+import { useMutation, useQuery } from "@apollo/client/react";
 import { GET_ALL_MEDECINS, GET_MEDECIN_BOOKED_SLOTS } from "@/src/graphql/queries";
 import { GetAllMedecinsResponse } from "@/src/interfaces/staff";
 import { GetMedecinBookedSlotsResponse } from "@/src/interfaces/appointment";
+import { useCurrentUser } from "@/src/hooks/useCurrentUser";
+import { CREATE_APPOINTMENT } from "@/src/graphql/mutations";
 
 
 const timeSlots = [
@@ -24,35 +26,23 @@ const timeSlots = [
   "16:00", "16:30"
 ];
 
-const staticPatientRecord = {
-  id: "patient-001",
-  user_id: "user-001",
-  full_name: "Jean Dupont",
-  date_of_birth: "1985-04-15",
-  gender: "Male",
-  phone_number: "+1 (555) 987-6543",
-  emergency_contact: "+1 (555) 876-5432",
-  medical_history: "Aucun antécédent notable",
-  allergies: "Pénicilline",
-  blood_type: "O+",
-  insurance_provider: "Assurance Santé Plus",
-  policy_number: "POL-2024-001",
-  created_at: "2024-01-15T10:00:00Z"
-};
 
 export default function BookAppointment() {
   const router = useRouter();
+  const { user } = useCurrentUser();
   const [step, setStep] = useState(1);
   const [selectedDoctor, setSelectedDoctor] = useState<string>("");
   const [selectedDate, setSelectedDate] = useState<Date>();
   const [selectedTime, setSelectedTime] = useState<string>("");
   const [notes, setNotes] = useState("");
   const [isBooking, setIsBooking] = useState(false);
+  const [createAppointment] = useMutation(CREATE_APPOINTMENT);
 const {
   data: medecinsData,
   loading: medecinsLoading,
   error: medecinsError
 } = useQuery<GetAllMedecinsResponse>(GET_ALL_MEDECINS);
+const patientKeycloakId = user?.id;
 
 const doctors = medecinsData?.getAllMedecins || [];
 const {
@@ -78,51 +68,54 @@ const bookedTimes =
   status: "active",
   phone: d.phoneNumber,
   email: d.email,
-  bio: "Médecin généraliste", 
+  bio:`${d.specialite ? d.specialite + " Specialist" : "General Practitioner"}`, 
 }));
   const handleBookAppointment = async () => {
     if (!selectedDoctor || !selectedDate || !selectedTime) {
-      toast.error("Veuillez remplir toutes les informations requises");
+      toast.error("Please fill in all required information");
       return;
     }
 
     setIsBooking(true);
     
     try {
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      const appointmentData = {
-        patient_id: staticPatientRecord.id,
-        staff_id: selectedDoctor,
-        doctor_name: formattedDoctors.find(d => d.id === selectedDoctor)?.full_name,
-        appointment_date: format(selectedDate, "yyyy-MM-dd"),
-        appointment_time: selectedTime,
-        duration_minutes: 30,
-        status: "scheduled",
-        notes: notes || null,
-        reference_number: `REF-${Date.now()}`
-      };
+    const appointmentData = {
+      patient_keycloak_id: patientKeycloakId,
+      staff_id: selectedDoctor,
+      doctor_name: formattedDoctors.find(d => d.id === selectedDoctor)?.full_name,
+      appointment_date: format(selectedDate, "yyyy-MM-dd"),
+      appointment_time: selectedTime,
+      duration_minutes: 30,
+      status: "scheduled",
+      notes: notes || null,
+      reference_number: `REF-${Date.now()}`
+    };
+    console.log("Appointment booked (local object):", appointmentData);
 
-      console.log("Appointment booked:", appointmentData);
-      
+    await createAppointment({
+      variables: {
+        date: appointmentData.appointment_date,
+        time: appointmentData.appointment_time,
+        medecinId: Number(selectedDoctor),
+        patientKeycloakId: patientKeycloakId,
+      }
+    });
+
       toast.success(
         <div className="flex flex-col gap-1">
-          <div className="flex items-center gap-2">
-            <Check className="h-5 w-5" />
-            <span className="font-semibold">Rendez-vous confirmé !</span>
-          </div>
-          <span className="text-sm">Votre référence : {appointmentData.reference_number}</span>
-        </div>,
-        { duration: 5000 }
+          
+            <span className="font-semibold">Appointment Confirmed!</span>
+          </div>,
+       
+        { duration: 3000 }
       );
       
-      // Redirection après succès
       setTimeout(() => {
-        router.push("/patient/appointments");
+        router.push("/appointmentListPatient");
       }, 2000);
       
     } catch (error: any) {
-      toast.error(error.message || "Échec de la réservation du rendez-vous");
+      toast.error(error.message || "Failed to book the appointment");
     } finally {
       setIsBooking(false);
     }
@@ -172,8 +165,8 @@ const bookedTimes =
                 <User className="h-6 w-6 text-primary" />
               </div>
               <div>
-                <h2 className="text-2xl font-semibold">Choisir un Médecin</h2>
-                <p className="text-muted-foreground">Sélectionnez un professionnel de santé</p>
+                <h2 className="text-2xl font-semibold">Choose a Doctor</h2>
+                <p className="text-muted-foreground">Select a healthcare professional</p>
               </div>
             </div>
             
@@ -203,7 +196,7 @@ const bookedTimes =
                               {doctor.specialization}
                             </span>
                             <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">
-                              Disponible
+                              Available
                             </span>
                           </div>
                         </div>
@@ -212,8 +205,10 @@ const bookedTimes =
                         {doctor.bio}
                       </p>
                       <div className="flex items-center gap-4 mt-3 text-sm text-muted-foreground">
-                        <span>📞 {doctor.phone}</span>
-                        <span>✉️ {doctor.email}</span>
+                        <Phone className="h-4 w-4 text-primary" />
+                        <span >{doctor.phone}</span>
+                        <Mail className="h-4 w-4 text-primary" />
+                        <span> {doctor.email}</span>
                       </div>
                     </div>
                     {selectedDoctor === doctor.id && (
@@ -237,7 +232,7 @@ const bookedTimes =
                     : "bg-muted text-muted-foreground"
                 )}
               >
-                {selectedDoctor ? "Continuer" : "Sélectionnez un médecin"}
+                {selectedDoctor ? "Continue" : "Select a Physician"}
               </Button>
             </div>
           </Card>
@@ -251,13 +246,13 @@ const bookedTimes =
                 <CalendarIcon className="h-6 w-6 text-primary" />
               </div>
               <div>
-                <h2 className="text-2xl font-semibold">Date et Heure</h2>
-                <p className="text-muted-foreground">Choisissez la date et l'heure du rendez-vous</p>
+                <h2 className="text-2xl font-semibold">Date & Time</h2>
+                <p className="text-muted-foreground">Choose the appointment date and time</p>
               </div>
             </div>
             
             <div>
-              <Label className="text-base font-medium">Sélectionnez une date</Label>
+              <Label className="text-base font-medium">Select a Date</Label>
               <div className="flex justify-center mt-4">
                 <Calendar
                   mode="single"
@@ -266,7 +261,7 @@ const bookedTimes =
                   disabled={(date) => {
                     const today = new Date();
                     today.setHours(0, 0, 0, 0);
-                    return date < today || date.getDay() === 0; // Désactiver les dimanches
+                    return date < today || date.getDay() === 0; 
                   }}
                   className="rounded-custom border border-border bg-card p-4"
                   modifiers={{
@@ -324,7 +319,7 @@ const bookedTimes =
                 onClick={() => setStep(1)} 
                 className="flex-1 rounded-custom border-border hover:bg-accent-light transition-all duration-200"
               >
-                ← Retour
+                 Back
               </Button>
               <Button
                 onClick={() => setStep(3)}
@@ -336,7 +331,7 @@ const bookedTimes =
                     : "bg-muted text-muted-foreground"
                 )}
               >
-                {selectedDate && selectedTime ? "Vérifier" : "Sélectionnez date & heure"}
+                {selectedDate && selectedTime ? "Review" : "Select Date & Time"}
               </Button>
             </div>
           </Card>
@@ -346,15 +341,15 @@ const bookedTimes =
         {step === 3 && (
           <Card className="medical-card p-6 space-y-6">
             <div>
-              <h2 className="text-2xl font-semibold">Confirmation du Rendez-vous</h2>
-              <p className="text-muted-foreground">Vérifiez les détails avant de confirmer</p>
+              <h2 className="text-2xl font-semibold">Appointment Confirmation</h2>
+              <p className="text-muted-foreground">Review the details before confirming</p>
             </div>
             
             <div className="space-y-6">
               {/* Résumé du rendez-vous */}
               <div className="p-5 bg-gradient-to-r from-primary/5 to-accent-light/20 rounded-custom space-y-4 border border-border">
                 <div className="flex items-center gap-3">
-                  <User className="h-5 w-5 text-primary" />
+                  <User className="h-5 w-5 text-primary self-start translate-y-1" />
                   <div className="flex-1">
                     <div className="flex justify-between items-start">
                       <div>
@@ -362,7 +357,7 @@ const bookedTimes =
                         <p className="text-sm text-muted-foreground">{selectedDoctorData?.specialization}</p>
                       </div>
                       <span className="px-3 py-1 bg-primary text-primary-foreground rounded-full text-sm font-medium">
-                        Confirmé
+                        Confirmed
                       </span>
                     </div>
                     <p className="text-sm mt-2">{selectedDoctorData?.bio}</p>
@@ -374,56 +369,57 @@ const bookedTimes =
                     <div className="flex items-center gap-2 text-sm">
                       <CalendarIcon className="h-4 w-4 text-muted-foreground" />
                       <span className="font-medium">Date :</span>
-                      <span className="ml-auto font-semibold text-foreground">
+                      <span className=" font-semibold text-foreground">
                         {selectedDate && format(selectedDate, "EEEE dd MMMM yyyy")}
                       </span>
                     </div>
                     <div className="flex items-center gap-2 text-sm">
                       <Clock className="h-4 w-4 text-muted-foreground" />
-                      <span className="font-medium">Heure :</span>
-                      <span className="ml-auto font-semibold text-foreground">{selectedTime}</span>
+                      <span className="font-medium">Time :</span>
+                      <span className="font-semibold text-foreground">{selectedTime}</span>
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <div className="text-sm">
-                      <span className="font-medium">Durée :</span>
-                      <span className="ml-2 font-semibold text-foreground">30 minutes</span>
+                    <div className="flex items-center gap-2 text-sm">
+                      <Hourglass className="h-3.5 w-3.5 text-muted-foreground" />
+                      <span className="font-medium">Duration :</span>
+                      <span className=" font-semibold text-foreground">30 minutes</span>
                     </div>
-                    <div className="text-sm">
-                      <span className="font-medium">Type de consultation :</span>
+                    <div className="flex items-center gap-2 text-sm">
+                      <Stethoscope className="h-3.5 w-3.5 text-muted-foreground" />
+                      <span className="font-medium">Consultation Type :</span>
                       <span className="ml-2 font-semibold text-foreground">Consultation standard</span>
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* Notes supplémentaires */}
-              <div>
-                <Label htmlFor="notes" className="text-base font-medium mb-2">
-                  Notes supplémentaires (optionnel)
-                </Label>
-                <Textarea
-                  id="notes"
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                  placeholder="Décrivez vos symptômes, vos préoccupations ou toute information pertinente pour le médecin..."
-                  className="rounded-custom border-border focus-visible:ring-primary min-h-[100px] resize-none"
-                  rows={4}
-                />
-                <p className="text-xs text-muted-foreground mt-2">
-                  Ces informations seront partagées avec votre médecin avant la consultation.
-                </p>
-              </div>
+             
 
               {/* Informations patient */}
-              <div className="p-4 bg-muted rounded-custom">
-                <h4 className="font-semibold mb-2">Vos informations</h4>
-                <div className="text-sm space-y-1">
-                  <p><span className="font-medium">Patient :</span> {staticPatientRecord.full_name}</p>
-                  <p><span className="font-medium">Téléphone :</span> {staticPatientRecord.phone_number}</p>
-                  <p><span className="font-medium">Assurance :</span> {staticPatientRecord.insurance_provider}</p>
+              <div className="p-4 bg-muted rounded-custom shadow-sm">
+                <h4 className="font-semibold mb-3 text-lg">Your Information</h4>
+                <div className="text-sm space-y-2">
+                  <div className="flex items-center gap-2">
+                    <User className="h-4 w-4 text-primary" />
+                    <span className="font-medium">Patient :</span>
+                    <span className="ml-1 font-semibold text-foreground">{user?.firstName} {user?.lastName}</span>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <Phone className="h-4 w-4 text-primary" />
+                    <span className="font-medium">Phone :</span>
+                    <span className="ml-1 font-semibold text-foreground">{user?.phoneNumber || "Non renseigné"}</span>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <Shield className="h-4 w-4 text-primary" />
+                    <span className="font-medium">Insurance :</span>
+                    <span className="ml-1 font-semibold text-foreground">Assurance Santé Plus</span>
+                  </div>
                 </div>
               </div>
+
             </div>
 
             <div className="flex gap-3 pt-4">
@@ -433,7 +429,7 @@ const bookedTimes =
                 className="flex-1 rounded-custom border-border hover:bg-accent-light transition-all duration-200"
                 disabled={isBooking}
               >
-                ← Modifier
+                 Modify
               </Button>
               <Button 
                 onClick={handleBookAppointment} 
@@ -448,10 +444,10 @@ const bookedTimes =
                 {isBooking ? (
                   <div className="flex items-center gap-2">
                     <div className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
-                    <span>Confirmation en cours...</span>
+                    <span>Confirming...</span>
                   </div>
                 ) : (
-                  "Confirmer le rendez-vous"
+                  "Confirm Appointment"
                 )}
               </Button>
             </div>

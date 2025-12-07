@@ -43,8 +43,8 @@ export const GET_MEDECIN_BOOKED_SLOTS = gql`
   }
 `;
 export const GET_APPOINTMENTS = gql`
-  query getAppointmentsByPatientId($patientId: Int!) {
-    getAppointmentsByPatientId(patientId: $patientId) {
+  query getAppointmentsByPatientId($patientKeycloakId: String!) {
+    getAppointmentsByPatientId(patientKeycloakId: $patientKeycloakId) {
       id
       date
       time
@@ -55,7 +55,18 @@ export const GET_APPOINTMENTS = gql`
         lastName
         email
         phoneNumber
-      }
+}
+        }
+}
+`;
+export const GET_CURRENT_USER = gql`
+  query GetCurrentUser {
+    getCurrentUser {
+      id
+      username
+      firstName
+      lastName
+      email
     }
   }
 `;

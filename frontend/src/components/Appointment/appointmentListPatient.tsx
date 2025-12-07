@@ -6,20 +6,17 @@ import { Badge } from '@/src/components/ui/badge';
 import { Card, CardContent } from '@/src/components/ui/card';
 import { AppointmentEnriched, AppointmentFromQuery, QueryData } from '@/src/interfaces/appointment';
 import { GET_APPOINTMENTS } from '@/src/graphql/queries';
+import { useCurrentUser } from '@/src/hooks/useCurrentUser';
 
 
-
-interface AppointmentsListProps {
-  patientId: number;
-}
-
-const AppointmentsList = ({ patientId }: AppointmentsListProps) => {
+const AppointmentsList = () => {
   const [appointments, setAppointments] = useState<AppointmentEnriched[]>([]);
-  patientId=4; 
+  const { user } = useCurrentUser();
+  const patientKeycloakId = user?.id;
   const { data, loading, error } = useQuery<QueryData>(GET_APPOINTMENTS, {
-    variables: { patientId },
-  });
-
+  variables: { patientKeycloakId },
+  skip: !patientKeycloakId,
+});
   const getAppointmentStatus = (date: string, time: string): 'completed' | 'scheduled' => {
     const appointmentDateTime = new Date(`${date}T${time}`);
     return appointmentDateTime < new Date() ? 'completed' : 'scheduled';
@@ -47,14 +44,14 @@ const AppointmentsList = ({ patientId }: AppointmentsListProps) => {
   const getStatusBadge = (status: 'completed' | 'scheduled') => {
     switch (status) {
       case 'completed':
-        return <Badge variant="secondary">Terminé</Badge>;
+        return <Badge variant="secondary">Completed</Badge>;
       case 'scheduled':
-        return <Badge className="bg-green-100 text-green-800">Programmé</Badge>;
+        return <Badge className="bg-green-100 text-green-800">Scheduled</Badge>;
     }
   };
 
-  if (loading) return <div>Chargement...</div>;
-  if (error) return <div>Erreur: {error.message}</div>;
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error.message}</div>;
 
   return (
     <div className="p-8 space-y-4">
@@ -71,7 +68,7 @@ const AppointmentsList = ({ patientId }: AppointmentsListProps) => {
                   <Badge className="bg-green-100 text-green-800">Disponible</Badge>
                 </div>
                 <div className="text-sm text-muted-foreground">
-                 Médecin {appointment.doctor.specialty}
+                 Doctor {appointment.doctor.specialty}
 
                 </div>
                 <div className="flex flex-wrap gap-4 mt-3 text-sm text-muted-foreground">
@@ -92,7 +89,7 @@ const AppointmentsList = ({ patientId }: AppointmentsListProps) => {
               </div>
               <div className="flex items-center gap-3">
                 <MapPin size={20} className="text-primary" />
-                Présentiel
+                In-person
               </div>
               <div className="flex items-center gap-3">
                 <FileText size={20} className="text-primary" />

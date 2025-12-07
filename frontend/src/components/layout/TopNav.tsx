@@ -16,9 +16,14 @@ import {
 } from "@/src/components/ui/avatar";
 import { Button } from "@/src/components/ui/button";
 import { cn } from "@/src/lib/utils";
+import { useCurrentUser } from "@/src/hooks/useCurrentUser";
 
 export default function TopNav() {
   const { state, isMobile } = useSidebar();
+  const { user } = useCurrentUser();
+  const initials = `${user?.firstName?.[0] ?? ""}${user?.lastName?.[0] ?? ""}`.toUpperCase();
+  console.log("user: ", user)
+
   return (
     <header
       className={cn(
@@ -55,7 +60,7 @@ export default function TopNav() {
           <DropdownMenuTrigger asChild>
             <Avatar className="cursor-pointer">
               <AvatarImage src="/avatar.png" alt="User" />
-              <AvatarFallback>MF</AvatarFallback>
+              <AvatarFallback>{initials}</AvatarFallback>
             </Avatar>
           </DropdownMenuTrigger>
 

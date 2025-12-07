@@ -7,13 +7,6 @@ import PatientForm from "@/src/components/patient/patientForm";
 import { Patient } from "@/src/interfaces/patient";
 import { ADD_PATIENT_MUTATION } from "@/src/graphql/mutations";
 import { useMutation } from "@apollo/client/react";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-} from "@/src/components/ui/card";
 import PageBreadcrumb from "@/src/components/layout/PageBreadcrumb";
 export default function CreatePatientPage() {
   const router = useRouter();

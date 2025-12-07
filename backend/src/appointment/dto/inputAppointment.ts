@@ -8,8 +8,8 @@ export class CreateAppointmentInput {
   @Field()
   time: string;
 
-  @Field(() => Int)
-  patientId: number;
+  @Field()
+  patientKeycloakId: string;
 
   @Field(() => Int)
   medecinId: number;

@@ -88,24 +88,58 @@ export class AppointmentService {
   return enrichedAppointments;
 }
 async createAppointment(data: CreateAppointmentInput) {
-  const { date, time, patientId, medecinId } = data;
+  const { date, time, patientKeycloakId, medecinId } = data;
 
-  const patient = await this.patientRepo.findOne({ where: { id: patientId } });
+  const patient = await this.patientRepo.findOne({ where: { keycloak_id: patientKeycloakId } });
   if (!patient) throw new Error("Patient not found");
 
+  let enrichedPatient = patient;
+  try {
+    const kcPatient = await this.keycloakAdmin.getUserById(patient.keycloak_id);
+    enrichedPatient = {
+      ...patient,
+      firstName: kcPatient.firstName,
+      lastName: kcPatient.lastName,
+      email: kcPatient.email,
+      phoneNumber: kcPatient.attributes?.phoneNumber?.[0] || null,
+      dateNaissance: kcPatient.attributes?.dateNaissance?.[0] || null
+    };
+  } catch (err) {
+    console.error(`Could not fetch KC patient ${patient.keycloak_id}: ${err.message}`);
+  }
   const medecin = await this.medecinRepo.findOne({ where: { id: medecinId } });
   if (!medecin) throw new Error("Medecin not found");
 
+  let enrichedMedecin = medecin;
+  try {
+    const kcUser = await this.keycloakAdmin.getUserById(medecin.keycloak_id);
+    enrichedMedecin = {
+      ...medecin,
+      firstName: kcUser.firstName,
+      lastName: kcUser.lastName,
+      email: kcUser.email,
+      phoneNumber: kcUser.attributes?.phoneNumber?.[0] || null,
+    };
+  } catch (err) {
+    console.error(`Could not fetch KC medecin ${medecin.keycloak_id}: ${err.message}`);
+  }
   const appointment = this.repo.create({
     date,
     time,
-    patient,
-    medecin,
+    patient,  
+    medecin,   
     status: "PENDING"
   });
 
-  return this.repo.save(appointment);
+  const saved = await this.repo.save(appointment);
+
+  return {
+    ...saved,
+    patient: enrichedPatient,
+    medecin: enrichedMedecin
+  };
 }
+
 
 async getMedecinBookedSlots(medecinId: number, date: string) {
   const appointments = await this.repo.find({
@@ -117,9 +151,10 @@ async getMedecinBookedSlots(medecinId: number, date: string) {
 
   return appointments;
 }
-async getAppointmentsByPatientId(patientId: number) {
+async getAppointmentsByPatientId(patientKeycloakId: string) {
  
-  const patient = await this.patientRepo.findOne({ where: { id: patientId } });
+  const patient = await this.patientRepo.findOne({ where: { keycloak_id: patientKeycloakId } });
+
   if (!patient) throw new NotFoundException("Patient not found");
 
   const appointments = await this.repo.find({

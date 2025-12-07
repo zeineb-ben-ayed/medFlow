@@ -1,7 +1,6 @@
 "use client";
 import "../globals.css";
 import AppSidebar from "@/src/components/layout/AppSidebar";
-import { ContentArea } from "@/src/components/layout/ContentArea";
 import TopNav from "@/src/components/layout/TopNav";
 import {
   SidebarInset,
@@ -9,9 +8,7 @@ import {
   SidebarTrigger,
   useSidebar,
 } from "@/src/components/ui/sidebar";
-import { useIsTabletOrMobile } from "@/src/hooks/useIsTabletOrMobile";
 import { cn } from "@/src/lib/utils";
-import { useEffect, useState } from "react";
 
 function MainWrapper({ children }: { children: React.ReactNode }) {
   const { state, isMobile } = useSidebar();
@@ -44,7 +41,9 @@ export default function DashboardLayout({
     <SidebarProvider>
       <div className="flex min-h-screen w-full">
         <AppSidebar />
-        <MainWrapper>{children}</MainWrapper>
+        <MainWrapper>
+          {children}
+        </MainWrapper>
       </div>
     </SidebarProvider>
   );

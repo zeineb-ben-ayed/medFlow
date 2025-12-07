@@ -102,3 +102,48 @@ export const CREATE_CONSULTATION = gql`
     }
   }
 `;
+
+export const REFRESH_MUTATION = gql`
+  mutation RefreshToken($refreshToken: String!) {
+    refreshToken(refreshToken: $refreshToken) {
+      access_token
+      refresh_token
+    }
+  }
+`;
+
+export const DELETE_PATIENT = gql`
+  mutation DeletePatient($id: Int!) {
+    deletePatient(id: $id)
+  }
+`;
+export const CREATE_APPOINTMENT = gql`
+  mutation CreateAppointment(
+    $date: String!
+    $time: String!
+    $patientKeycloakId: String!
+    $medecinId: Int!
+  ) {
+    createAppointment(
+      data: {
+        date: $date
+        time: $time
+        patientKeycloakId: $patientKeycloakId
+        medecinId: $medecinId
+      }
+    ) {
+      id
+      date
+      time
+      status
+      patient {
+        firstName
+        lastName
+      }
+      medecin {
+        firstName
+        lastName
+      }
+    }
+  }
+`;

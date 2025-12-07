@@ -171,4 +171,15 @@ export class PatientService {
       dateNaissance: attributes.dateNaissance?.[0] ?? patient.dateNaissance,
     };
   }
+
+  async deletePatientById(id: number): Promise<void> {
+    const user = await this.patientRepository.findOne({ where: { id } });
+
+    if (!user) {
+      throw new NotFoundException(`User with id ${id} not found`);
+    }
+
+    await this.keycloakAdmin.deleteUser(user.keycloak_id);
+    await this.patientRepository.delete(id);
+  }
 }

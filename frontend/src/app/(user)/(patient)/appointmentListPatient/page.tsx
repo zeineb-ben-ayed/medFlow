@@ -39,7 +39,7 @@ const router = useRouter();
           </div>
 
           {/* Appointments List */}
-          <AppointmentsList patientId={4} />
+          <AppointmentsList />
         </div>
       </div>
     </>

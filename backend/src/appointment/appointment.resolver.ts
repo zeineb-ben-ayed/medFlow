@@ -49,8 +49,8 @@ async getMedecinBookedSlots(
 @Roles({ roles: ['realm:patient'] })
 @Query(() => [Appointment]) 
 async getAppointmentsByPatientId(
-@Args('patientId', { type: () => Int }) patientId: number
+@Args('patientKeycloakId', { type: () => String }) patientKeycloakId: string
  ) { 
-  return this.service.getAppointmentsByPatientId(patientId);
+  return this.service.getAppointmentsByPatientId(patientKeycloakId);
  }
 }

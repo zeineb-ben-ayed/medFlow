@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 
 export const FIND_ALL_PATIENTS = gql`
-  query {
+  query FindAllPatients {
     findAllPatients {
       id
       keycloak_id
