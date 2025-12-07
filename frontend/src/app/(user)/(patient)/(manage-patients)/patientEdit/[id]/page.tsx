@@ -7,13 +7,6 @@ import PatientForm from "@/src/components/patient/patientForm";
 import { Patient } from "@/src/interfaces/patient";
 import { EDIT_PATIENT_MUTATION } from "@/src/graphql/mutations";
 import { useMutation, useQuery } from "@apollo/client/react";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-} from "@/src/components/ui/card";
 import { GET_PATIENT } from "@/src/graphql/query";
 import PageBreadcrumb from "@/src/components/layout/PageBreadcrumb";
 
@@ -24,7 +17,7 @@ export default function EditPatientPage() {
   const [loading, setLoading] = useState(false);
 
   const { data, loading: fetching } = useQuery<
-    { getPatientById: Patient },
+    { getPatientProfile: Patient },
     { id: number }
   >(GET_PATIENT, {
     variables: { id: Number(id) },
@@ -37,8 +30,9 @@ export default function EditPatientPage() {
   const [formData, setFormData] = useState<Patient | null>(null);
 
   useEffect(() => {
-    if (data?.getPatientById) {
-      setFormData(data.getPatientById);
+    console.log("data", data);
+    if (data?.getPatientProfile) {
+      setFormData(data.getPatientProfile);
     }
   }, [data]);
 

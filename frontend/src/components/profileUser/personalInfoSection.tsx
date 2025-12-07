@@ -22,7 +22,6 @@ export const PersonalInfoSection = ({
   const dob = profileData.dateNaissance
     ? format(new Date(profileData.dateNaissance), "MMMM d, yyyy")
     : "Not provided";
-
   // Base personal info
   const items = [
     {

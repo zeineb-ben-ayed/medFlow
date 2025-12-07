@@ -5,6 +5,7 @@ import { User } from 'src/user/user.entity';
 import { Receptionniste } from 'src/receptionniste/receptionniste.entity';
 import { Medecin } from 'src/medecin/medecin.entity';
 import { KeycloakAdminService } from 'src/keycloak/keycloak-admin.service';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UserService {
@@ -100,5 +101,56 @@ export class UserService {
     }
 
     return merged;
+  }
+
+  async updateProfile(
+    keycloakId: string,
+    updateData: Partial<UpdateUserDto>,
+  ): Promise<User> {
+    const user = await this.userRepository.findOne({
+      where: { keycloak_id: keycloakId },
+    });
+    if (!user) throw new NotFoundException('User not found');
+
+    // Get current Keycloak user
+    const kcUser = await this.keycloakAdmin.getUserById(keycloakId);
+
+    const currentKeycloakData = {
+      firstName: kcUser.firstName,
+      lastName: kcUser.lastName,
+      email: kcUser.email,
+      phoneNumber: kcUser.attributes?.phoneNumber?.[0],
+      dateNaissance: kcUser.attributes?.dateNaissance?.[0],
+    };
+
+    // Merge updated values OR keep old Keycloak values
+    await this.keycloakAdmin.updateUser(keycloakId, {
+      firstName: updateData.firstName ?? currentKeycloakData.firstName,
+      lastName: updateData.lastName ?? currentKeycloakData.lastName,
+      email: updateData.email ?? currentKeycloakData.email,
+      attributes: {
+        phoneNumber: updateData.phoneNumber ?? currentKeycloakData.phoneNumber,
+        dateNaissance:
+          updateData.dateNaissance ?? currentKeycloakData.dateNaissance,
+      },
+    });
+
+    // Update DB fields (only what the user changed)
+    Object.assign(user, updateData);
+    await this.userRepository.save(user);
+
+    // Return correct subtype
+    if (user.role === 'medecin') {
+      const m = new Medecin();
+      Object.assign(m, user);
+      return m;
+    }
+    if (user.role === 'receptionniste') {
+      const r = new Receptionniste();
+      Object.assign(r, user);
+      return r;
+    }
+
+    return user;
   }
 }

@@ -65,7 +65,8 @@ export const GET_PROFILE = gql`
       firstName
       lastName
       email
-
+      dateNaissance
+      phoneNumber
       ... on Medecin {
         specialite
         disponibilite

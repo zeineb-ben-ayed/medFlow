@@ -17,8 +17,10 @@ import { Profile } from "@/src/interfaces/staff";
 
 export const ProfileOverviewCard = ({
   profileData,
+  onEditClick,
 }: {
   profileData: Profile;
+  onEditClick: () => void;
 }) => {
   const initials = `${profileData.firstName[0] || ""}${
     profileData.lastName[0] || ""
@@ -97,7 +99,7 @@ export const ProfileOverviewCard = ({
         </div>
 
         <div className="flex flex-col gap-3">
-          <Button className="rounded-xl">
+          <Button className="rounded-xl" onClick={onEditClick}>
             <Edit2 className="h-4 w-4 mr-2" />
             Edit Profile
           </Button>

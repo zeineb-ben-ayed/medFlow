@@ -13,6 +13,7 @@ import { Get, UseGuards } from '@nestjs/common';
 import { Medecin } from 'src/medecin/medecin.entity';
 import { Receptionniste } from 'src/receptionniste/receptionniste.entity';
 import { UserDto } from './dto/user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Resolver(() => User)
 @Resource('user')
@@ -63,5 +64,15 @@ export class UserResolver {
   getProfile(@AuthenticatedUser() kcUser: any) {
     const keycloakId = kcUser.sub;
     return this.userService.getProfile(keycloakId);
+  }
+
+  @Mutation(() => User)
+  @Resource('user')
+  @Roles({ roles: ['realm:admin', 'realm:medecin', 'realm:receptionniste'] })
+  async editProfile(
+    @AuthenticatedUser() kcUser: any,
+    @Args('updateData') updateData: UpdateUserDto,
+  ) {
+    return this.userService.updateProfile(kcUser.sub, updateData);
   }
 }

@@ -388,8 +388,8 @@ const StaffList = () => {
                         </SelectTrigger>
 
                         <SelectContent>
-                          <SelectItem value="true">Disponible</SelectItem>
-                          <SelectItem value="false">Non disponible</SelectItem>
+                          <SelectItem value="true">Available</SelectItem>
+                          <SelectItem value="false">Not Available</SelectItem>
                         </SelectContent>
                       </Select>
                     </>
