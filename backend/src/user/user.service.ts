@@ -6,151 +6,165 @@ import { Receptionniste } from 'src/receptionniste/receptionniste.entity';
 import { Medecin } from 'src/medecin/medecin.entity';
 import { KeycloakAdminService } from 'src/keycloak/keycloak-admin.service';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { Patient } from 'src/patient/patient.entity';
 
 @Injectable()
 export class UserService {
-  constructor(
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
-    private readonly keycloakAdmin: KeycloakAdminService,
-  ) {}
+    constructor(
+        @InjectRepository(User)
+        private readonly userRepository: Repository<User>,
+        private readonly keycloakAdmin: KeycloakAdminService,
+    ) { }
 
-  async findAllMedecinsAndReceptionnistes(): Promise<User[]> {
-    const users = await this.userRepository.find({
-      where: [{ role: 'medecin' }, { role: 'receptionniste' }],
-    });
+    async findAllMedecinsAndReceptionnistes(): Promise<User[]> {
+        const users = await this.userRepository.find({
+            where: [{ role: 'medecin' }, { role: 'receptionniste' }],
+        });
 
-    const fulluser = await Promise.all(
-      users.map(async (p) => {
-        try {
-          const kcUser = await this.keycloakAdmin.getUserById(p.keycloak_id);
-          return {
-            ...p,
+        const fulluser = await Promise.all(
+            users.map(async (p) => {
+                try {
+                    const kcUser = await this.keycloakAdmin.getUserById(p.keycloak_id);
+                    return {
+                        ...p,
+                        firstName: kcUser.firstName,
+                        lastName: kcUser.lastName,
+                        email: kcUser.email,
+                        phoneNumber: kcUser.attributes?.phoneNumber?.[0] || null,
+                        dateNaissance: kcUser.attributes?.dateNaissance?.[0] || null,
+                    };
+                } catch (err) {
+                    console.error(`Could not fetch user ${p.keycloak_id}:, err.message`);
+                    return p;
+                }
+            }),
+        );
+
+        return fulluser.map((fulluser) => {
+            if (fulluser.role === 'medecin') {
+                const med = new Medecin();
+                Object.assign(med, fulluser);
+                return med;
+            }
+
+            if (fulluser.role === 'receptionniste') {
+                const rec = new Receptionniste();
+                Object.assign(rec, fulluser);
+                return rec;
+            }
+            return fulluser;
+        });
+    }
+
+    async deleteUserById(id: number): Promise<void> {
+        const user = await this.userRepository.findOne({ where: { id } });
+
+        if (!user) {
+            throw new NotFoundException(`User with id ${id} not found`);
+        }
+
+        await this.keycloakAdmin.deleteUser(user.keycloak_id);
+        await this.userRepository.delete(id);
+    }
+
+    async getProfile(keycloakId: string): Promise<User> {
+        const user = await this.userRepository.findOne({
+            where: { keycloak_id: keycloakId },
+        });
+
+        if (!user) {
+            throw new NotFoundException('User not found');
+        }
+
+        const kcUser = await this.keycloakAdmin.getUserById(keycloakId);
+
+        const merged = {
+            ...user,
+            username: kcUser.username,
             firstName: kcUser.firstName,
             lastName: kcUser.lastName,
             email: kcUser.email,
             phoneNumber: kcUser.attributes?.phoneNumber?.[0] || null,
             dateNaissance: kcUser.attributes?.dateNaissance?.[0] || null,
-          };
-        } catch (err) {
-          console.error(`Could not fetch user ${p.keycloak_id}:, err.message`);
-          return p;
+        };
+
+        // Convert to correct subclass
+        if (merged.role === 'medecin') {
+            const m = new Medecin();
+            Object.assign(m, merged);
+            return m;
         }
-      }),
-    );
 
-    return fulluser.map((fulluser) => {
-      if (fulluser.role === 'medecin') {
-        const med = new Medecin();
-        Object.assign(med, fulluser);
-        return med;
-      }
+        if (merged.role === 'receptionniste') {
+            const r = new Receptionniste();
+            Object.assign(r, merged);
+            return r;
+        }
 
-      if (fulluser.role === 'receptionniste') {
-        const rec = new Receptionniste();
-        Object.assign(rec, fulluser);
-        return rec;
-      }
-      return fulluser;
-    });
-  }
+        if (merged.role === 'patient') {
+            const r = new Patient();
+            Object.assign(r, merged);
+            return r;
+        }
 
-  async deleteUserById(id: number): Promise<void> {
-    const user = await this.userRepository.findOne({ where: { id } });
-
-    if (!user) {
-      throw new NotFoundException(`User with id ${id} not found`);
+        return merged;
     }
 
-    await this.keycloakAdmin.deleteUser(user.keycloak_id);
-    await this.userRepository.delete(id);
-  }
+    async updateProfile(
+        keycloakId: string,
+        updateData: Partial<UpdateUserDto>,
+    ): Promise<User> {
+        const user = await this.userRepository.findOne({
+            where: { keycloak_id: keycloakId },
+        });
+        if (!user) throw new NotFoundException('User not found');
 
-  async getProfile(keycloakId: string): Promise<User> {
-    const user = await this.userRepository.findOne({
-      where: { keycloak_id: keycloakId },
-    });
+        // Get current Keycloak user
+        const kcUser = await this.keycloakAdmin.getUserById(keycloakId);
 
-    if (!user) {
-      throw new NotFoundException('User not found');
+        const currentKeycloakData = {
+            firstName: kcUser.firstName,
+            lastName: kcUser.lastName,
+            email: kcUser.email,
+            phoneNumber: kcUser.attributes?.phoneNumber?.[0],
+            dateNaissance: kcUser.attributes?.dateNaissance?.[0],
+        };
+
+        // Merge updated values OR keep old Keycloak values
+        await this.keycloakAdmin.updateUser(keycloakId, {
+            firstName: updateData.firstName ?? currentKeycloakData.firstName,
+            lastName: updateData.lastName ?? currentKeycloakData.lastName,
+            email: updateData.email ?? currentKeycloakData.email,
+            attributes: {
+                phoneNumber: updateData.phoneNumber ?? currentKeycloakData.phoneNumber,
+                dateNaissance:
+                    updateData.dateNaissance ?? currentKeycloakData.dateNaissance,
+            },
+        });
+
+        // Update DB fields (only what the user changed)
+        Object.assign(user, updateData);
+        await this.userRepository.save(user);
+
+        // Return correct subtype
+        if (user.role === 'medecin') {
+            const m = new Medecin();
+            Object.assign(m, user);
+            return m;
+        }
+
+        if (user.role === 'receptionniste') {
+            const r = new Receptionniste();
+            Object.assign(r, user);
+            return r;
+        }
+
+        if (user.role === 'patient') {
+            const r = new Patient();
+            Object.assign(r, user);
+            return r;
+        }
+
+        return user;
     }
-
-    const kcUser = await this.keycloakAdmin.getUserById(keycloakId);
-
-    const merged = {
-      ...user,
-      username: kcUser.username,
-      firstName: kcUser.firstName,
-      lastName: kcUser.lastName,
-      email: kcUser.email,
-      phoneNumber: kcUser.attributes?.phoneNumber?.[0] || null,
-      dateNaissance: kcUser.attributes?.dateNaissance?.[0] || null,
-    };
-
-    // Convert to correct subclass
-    if (merged.role === 'medecin') {
-      const m = new Medecin();
-      Object.assign(m, merged);
-      return m;
-    }
-
-    if (merged.role === 'receptionniste') {
-      const r = new Receptionniste();
-      Object.assign(r, merged);
-      return r;
-    }
-
-    return merged;
-  }
-
-  async updateProfile(
-    keycloakId: string,
-    updateData: Partial<UpdateUserDto>,
-  ): Promise<User> {
-    const user = await this.userRepository.findOne({
-      where: { keycloak_id: keycloakId },
-    });
-    if (!user) throw new NotFoundException('User not found');
-
-    // Get current Keycloak user
-    const kcUser = await this.keycloakAdmin.getUserById(keycloakId);
-
-    const currentKeycloakData = {
-      firstName: kcUser.firstName,
-      lastName: kcUser.lastName,
-      email: kcUser.email,
-      phoneNumber: kcUser.attributes?.phoneNumber?.[0],
-      dateNaissance: kcUser.attributes?.dateNaissance?.[0],
-    };
-
-    // Merge updated values OR keep old Keycloak values
-    await this.keycloakAdmin.updateUser(keycloakId, {
-      firstName: updateData.firstName ?? currentKeycloakData.firstName,
-      lastName: updateData.lastName ?? currentKeycloakData.lastName,
-      email: updateData.email ?? currentKeycloakData.email,
-      attributes: {
-        phoneNumber: updateData.phoneNumber ?? currentKeycloakData.phoneNumber,
-        dateNaissance:
-          updateData.dateNaissance ?? currentKeycloakData.dateNaissance,
-      },
-    });
-
-    // Update DB fields (only what the user changed)
-    Object.assign(user, updateData);
-    await this.userRepository.save(user);
-
-    // Return correct subtype
-    if (user.role === 'medecin') {
-      const m = new Medecin();
-      Object.assign(m, user);
-      return m;
-    }
-    if (user.role === 'receptionniste') {
-      const r = new Receptionniste();
-      Object.assign(r, user);
-      return r;
-    }
-
-    return user;
-  }
 }

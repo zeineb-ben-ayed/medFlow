@@ -41,7 +41,7 @@ export class AuthService {
       tokenParams.append('client_id', 'nest-api');
       tokenParams.append(
         'client_secret',
-        process.env.KEYCLOAK_CLIENT_SECRET || '',
+        process.env.KEYCLOAK_CLIENT_SECRET || 'eg9sUSqP6w6WW9WwJB9yEvQDKWRCUoVi',
       );
       tokenParams.append('grant_type', 'client_credentials');
 

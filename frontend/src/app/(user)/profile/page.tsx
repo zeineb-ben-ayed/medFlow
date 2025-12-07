@@ -53,6 +53,13 @@ export default function ProfileContent() {
     poste: "",
     horaires: "",
     role: "",
+    historiqueMedical: "",
+    gender: "",
+    bloodType: "",
+    address: "",
+    emergencyName: "",
+    emergencyPhone: "",
+    allergies: "",
   });
 
   useEffect(() => {
@@ -68,6 +75,13 @@ export default function ProfileContent() {
         poste: profile.poste ?? "",
         horaires: profile.horaires ?? "",
         role: profile.role ?? "",
+        historiqueMedical: profile.historiqueMedical ?? "",
+        gender: profile.gender ?? "",
+        bloodType: profile.bloodType ?? "",
+        address: profile.address ?? "",
+        emergencyName: profile.emergencyName ?? "",
+        emergencyPhone: profile.emergencyPhone ?? "",
+        allergies: profile.allergies ?? "",
       });
     }
   }, [profile]);
@@ -94,6 +108,14 @@ export default function ProfileContent() {
       } else if (formData.role === "receptionniste") {
         updateData.poste = formData.poste;
         updateData.horaires = formData.horaires;
+      } else if (formData.role === "patient") {
+        updateData.historiqueMedical = formData.historiqueMedical;
+        updateData.gender = formData.gender;
+        updateData.bloodType = formData.bloodType;
+        updateData.address = formData.address;
+        updateData.emergencyName = formData.emergencyName;
+        updateData.emergencyPhone = formData.emergencyPhone;
+        updateData.allergies = formData.allergies;
       }
 
       await editProfile({
@@ -298,6 +320,104 @@ export default function ProfileContent() {
                           <SelectItem value="false">Not Available</SelectItem>
                         </SelectContent>
                       </Select>
+                    </div>
+                  </>
+                )}
+                {formData.role === "patient" && (
+                  <>
+                    {/* HistoriqueMedical */}
+                    <div className="space-y-2 md:col-span-2">
+                      <Label>Medical History</Label>
+                      <Textarea
+                        value={formData.historiqueMedical}
+                        onChange={(e) => handleChange("historiqueMedical", e.target.value)}
+                        className="rounded-[12px] resize-none"
+                        rows={2}
+                        placeholder="My medical History"
+                      />
+                    </div>
+                    {/* Gender */}
+                    <div className="space-y-2">
+                      <Label>Gender</Label>
+                      <Select
+                        value={formData.gender}
+                        onValueChange={(v) => handleChange("gender", v)}
+                      >
+                        <SelectTrigger className="rounded-[12px]">
+                          <SelectValue placeholder="Select gender" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Male">Male</SelectItem>
+                          <SelectItem value="Female">Female</SelectItem>
+                          <SelectItem value="Other">Other</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* Blood type */}
+                    <div className="space-y-2">
+                      <Label>Blood type</Label>
+                      <Select
+                        value={formData.bloodType}
+                        onValueChange={(v) => handleChange("bloodType", v)}
+                      >
+                        <SelectTrigger className="rounded-[12px]">
+                          <SelectValue placeholder="Select blood type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"].map((bt) => (
+                            <SelectItem key={bt} value={bt}>
+                              {bt}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* Address */}
+                    <div className="space-y-2 md:col-span-2">
+                      <Label>Address</Label>
+                      <Textarea
+                        value={formData.address}
+                        onChange={(e) => handleChange("address", e.target.value)}
+                        className="rounded-[12px] resize-none"
+                        rows={2}
+                        placeholder="Street, City, ZIP"
+                      />
+                    </div>
+
+                    {/* Emergency contact name */}
+                    <div className="space-y-2">
+                      <Label>Emergency contact name</Label>
+                      <Input
+                        value={formData.emergencyName}
+                        onChange={(e) => handleChange("emergencyName", e.target.value)}
+                        className="rounded-[12px]"
+                        placeholder="Contact full name"
+                      />
+                    </div>
+
+                    {/* Emergency phone */}
+                    <div className="space-y-2">
+                      <Label>Emergency phone</Label>
+                      <Input
+                        value={formData.emergencyPhone}
+                        onChange={(e) => handleChange("emergencyPhone", e.target.value)}
+                        className="rounded-[12px]"
+                        placeholder="+216 00 000 000"
+                      />
+                    </div>
+
+                    {/* Allergies */}
+                    <div className="space-y-2 md:col-span-2">
+                      <Label>Allergies</Label>
+                      <Textarea
+                        value={formData.allergies}
+                        onChange={(e) => handleChange("allergies", e.target.value)}
+                        className="rounded-[12px] resize-none"
+                        rows={2}
+                        placeholder="List any allergies"
+                      />
                     </div>
                   </>
                 )}

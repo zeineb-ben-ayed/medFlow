@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { Button } from "../ui/button";
 import { Profile } from "@/src/interfaces/staff";
+import { Badge } from "../ui/badge";
 
 export const ProfileOverviewCard = ({
   profileData,
@@ -22,9 +23,8 @@ export const ProfileOverviewCard = ({
   profileData: Profile;
   onEditClick: () => void;
 }) => {
-  const initials = `${profileData.firstName[0] || ""}${
-    profileData.lastName[0] || ""
-  }`.toUpperCase();
+  const initials = `${profileData.firstName[0] || ""}${profileData.lastName[0] || ""
+    }`.toUpperCase();
   const generateId = (id?: number | string, role?: string) => {
     const n = typeof id === "number" ? id : Number(id ?? 0);
     const prefix =
@@ -42,9 +42,22 @@ export const ProfileOverviewCard = ({
         </Avatar>
 
         <div className="flex-1 space-y-4">
-          <h2 className="text-3xl font-bold">
-            {`${profileData.firstName} ${profileData.lastName}`}
-          </h2>
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+            <h2 className="text-3xl font-bold">
+              {`${profileData.firstName} ${profileData.lastName}`}
+            </h2>
+
+            {profileData.role === "patient" && profileData.bloodType && (
+              <div className="flex gap-2">
+                <Badge
+                  variant="outline"
+                  className="border-primary text-primary"
+                >
+                  {profileData.bloodType}
+                </Badge>
+              </div>
+            )}
+          </div>
 
           <div className="flex flex-col gap-4 mt-4 text-muted-foreground">
             {/* Row 1: RPPS + Email */}
@@ -92,6 +105,12 @@ export const ProfileOverviewCard = ({
                 <div className="flex items-center gap-2">
                   <ShieldCheck className="h-4 w-4 text-primary" />
                   <span>3 years of service</span>
+                </div>
+              )}
+              {profileData.role === "patient" && (
+                <div className="flex items-center gap-2">
+                  <MapPin className="h-4 w-4 text-primary" />
+                  <span>{profileData.address || "No address provided"}</span>
                 </div>
               )}
             </div>
