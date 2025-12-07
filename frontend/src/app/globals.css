@@ -165,10 +165,12 @@
   }
 
   .medical-gradient {
-    background-image: linear-gradient(to bottom right,
-        hsl(350 35% 42% / 0.05),
-        hsl(350 30% 85% / 0.3),
-        hsl(350 30% 91%));
+    background-image: linear-gradient(
+      to bottom right,
+      hsl(350 35% 42% / 0.05),
+      hsl(350 30% 85% / 0.3),
+      hsl(350 30% 91%)
+    );
   }
 
   .glass-effect {
@@ -247,4 +249,19 @@
 .hide-scrollbar::-webkit-scrollbar {
   display: none;
   /* Chrome, Safari, Opera */
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+/* create the utility */
+@utility animate-float {
+  animation: float 6s ease-in-out infinite;
 }
