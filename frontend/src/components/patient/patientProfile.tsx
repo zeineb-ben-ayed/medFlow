@@ -30,15 +30,21 @@ import {
 import { InfoField } from "../Fields/infoFields";
 import { PatientProfileType } from "@/src/interfaces/patient";
 
+import { PatientAppointmentsList } from "../Appointment/appointmentListOnePatient";
+import { AppointmentByPatient } from "@/src/interfaces/appointment";
+import { useCurrentUser } from "@/src/hooks/useCurrentUser";
+
 interface PatientProfileProps {
   patient: PatientProfileType;
-  appointments?: { date: string; reason: string }[];
+  appointments?: AppointmentByPatient[];
 }
 
 export const PatientProfile = ({
   patient,
   appointments = [],
 }: PatientProfileProps) => {
+  const { user } = useCurrentUser();
+  const roles = user?.roles;
   const [activeTab, setActiveTab] = useState<string>("overview");
   const safeString = (v?: string | null, fallback = "—"): string =>
     v ?? fallback;
@@ -76,9 +82,9 @@ export const PatientProfile = ({
   const splitByComma = (str?: string | null) =>
     str
       ? str
-        .split(",")
-        .map((s) => s.trim())
-        .filter(Boolean)
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean)
       : [];
 
   const patientId = generatePatientId(patient?.id);
@@ -415,30 +421,7 @@ export const PatientProfile = ({
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-6">
-                <div className="text-center text-muted-foreground py-8">
-                  {appointments.length === 0 ? (
-                    <>
-                      <Calendar className="w-12 h-12 mx-auto mb-4 text-muted-foreground/50" />
-                      <p className="text-lg font-medium">
-                        No upcoming appointments
-                      </p>
-                      <p className="text-sm">
-                        Schedule a new appointment to see it here
-                      </p>
-                    </>
-                  ) : (
-                    appointments.map((a, i) => (
-                      <div key={i} className="p-4 border rounded-lg mb-2">
-                        <p>
-                          <b>Date:</b> {formatDateToLocale(a.date)}
-                        </p>
-                        <p>
-                          <b>Reason:</b> {safeString(a.reason)}
-                        </p>
-                      </div>
-                    ))
-                  )}
-                </div>
+                <PatientAppointmentsList appointments={appointments} />
               </CardContent>
             </Card>
           </TabsContent>

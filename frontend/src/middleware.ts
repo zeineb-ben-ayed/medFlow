@@ -6,16 +6,16 @@ import { jwtDecode } from "jwt-decode";
 // Mapping of protected routes → required roles
 export const protectedRoutes: Record<string, string[]> = {
   "/staffList": ["admin"],
-  "/patientList": ["admin", "receptionniste"],
+  "/patientList": ["admin", "receptionniste", "medecin"],
   "/appointmentListPatient": ["patient"],
   "/appointmentList": ["medecin"],
   "/consultation": ["medecin"],
   "/profile": ["medecin", "admin", "receptionniste"],
-  "/patientEdit": ["admin", "receptionniste"],
+  "/patientEdit": ["admin", "receptionniste", "medecin"],
 };
 
 // Public routes that don't require authentication
-const publicPaths = ["/login", "/register"];
+const publicPaths = ["/login", "/register", "/"];
 
 export function middleware(req: NextRequest) {
   const url = req.nextUrl.clone();

@@ -120,4 +120,13 @@ export class AuthResolver {
       extraData,
     );
   }
+
+  @Public()
+  @Mutation(() => Boolean)
+  async logout(@Context('res') res: Response): Promise<boolean> {
+    res.clearCookie('access_token', { path: '/' });
+    res.clearCookie('refresh_token', { path: '/' });
+
+    return true;
+  }
 }

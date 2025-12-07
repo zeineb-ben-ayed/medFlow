@@ -8,12 +8,14 @@ import { Patient } from "@/src/interfaces/patient";
 import { ADD_PATIENT_MUTATION } from "@/src/graphql/mutations";
 import { useMutation } from "@apollo/client/react";
 import PageBreadcrumb from "@/src/components/layout/PageBreadcrumb";
+import { FIND_ALL_PATIENTS } from "@/src/graphql/query";
 export default function CreatePatientPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
-  const [addPatient] = useMutation(ADD_PATIENT_MUTATION);
-
+  const [addPatient] = useMutation(ADD_PATIENT_MUTATION, {
+    refetchQueries: [{ query: FIND_ALL_PATIENTS }],
+  });
   const [formData, setFormData] = useState({
     username: "",
     firstName: "",

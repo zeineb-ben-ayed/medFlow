@@ -7,7 +7,7 @@ import PatientForm from "@/src/components/patient/patientForm";
 import { Patient } from "@/src/interfaces/patient";
 import { EDIT_PATIENT_MUTATION } from "@/src/graphql/mutations";
 import { useMutation, useQuery } from "@apollo/client/react";
-import { GET_PATIENT } from "@/src/graphql/query";
+import { FIND_ALL_PATIENTS, GET_PATIENT } from "@/src/graphql/query";
 import PageBreadcrumb from "@/src/components/layout/PageBreadcrumb";
 
 export default function EditPatientPage() {
@@ -25,7 +25,9 @@ export default function EditPatientPage() {
     fetchPolicy: "network-only",
   });
 
-  const [updatePatient] = useMutation(EDIT_PATIENT_MUTATION);
+  const [updatePatient] = useMutation(EDIT_PATIENT_MUTATION, {
+    refetchQueries: [{ query: FIND_ALL_PATIENTS }],
+  });
 
   const [formData, setFormData] = useState<Patient | null>(null);
 

@@ -17,12 +17,27 @@ import {
 import { Button } from "@/src/components/ui/button";
 import { cn } from "@/src/lib/utils";
 import { useCurrentUser } from "@/src/hooks/useCurrentUser";
+import { useRouter } from "next/navigation";
+import { useMutation } from "@apollo/client/react";
+import { LOGOUT_MUTATION } from "@/src/graphql/mutations";
+import { client } from "@/src/lib/apollo-client";
 
 export default function TopNav() {
   const { state, isMobile } = useSidebar();
   const { user } = useCurrentUser();
   const initials = `${user?.firstName?.[0] ?? ""}${user?.lastName?.[0] ?? ""}`.toUpperCase();
-  console.log("user: ", user)
+  const router = useRouter();
+  const goToProfile = () => router.push("/profile");
+
+  const [logout] = useMutation(LOGOUT_MUTATION, {
+    onCompleted: async () => {
+      await client.clearStore();
+      window.location.href = "/login";
+    },
+    onError: (err) => {
+      console.error('Logout failed', err);
+    },
+  });
 
   return (
     <header
@@ -65,14 +80,27 @@ export default function TopNav() {
           </DropdownMenuTrigger>
 
           <DropdownMenuContent align="end" className="w-48">
-            <DropdownMenuItem className="font-semibold">
-              My Profile
-            </DropdownMenuItem>
+            {user?.roles.includes("admin") ? (
+              <DropdownMenuItem
+                className="flex flex-col items-start gap-0 font-semibold"
+              >
+                <span>
+                  {user.firstName} {user.lastName}
+                </span>
+                <span className="text-xs text-muted-foreground">
+                  {user.email}
+                </span>
+              </DropdownMenuItem>
+            ) : (
+              <DropdownMenuItem className="font-semibold" onClick={goToProfile}>
+                My Profile
+              </DropdownMenuItem>
+            )}
             <DropdownMenuItem>Settings</DropdownMenuItem>
 
             <DropdownMenuSeparator />
 
-            <DropdownMenuItem className="text-red-500">Logout</DropdownMenuItem>
+            <DropdownMenuItem className="text-red-500" onClick={async () => await logout()}>Logout</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

@@ -79,3 +79,28 @@ export const GET_PROFILE = gql`
     }
   }
 `;
+
+export const GET_MY_MEDECIN_APPOINTMENTS = gql`
+  query GetMyMedecinAppointments {
+    getMyMedecinAppointments {
+      id
+      date
+      time
+      patient {
+        id
+        firstName
+        lastName
+      }
+    }
+  }
+`;
+
+export const GET_PATIENT_APPOINTMENTS_FOR_ME = gql`
+  query GetPatientAppointmentsForMe($patientId: Int!) {
+    getPatientAppointmentsForMe(patientId: $patientId) {
+      id
+      date
+      time
+    }
+  }
+`;

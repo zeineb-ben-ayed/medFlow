@@ -25,3 +25,14 @@ export type Profile = {
   phoneNumber?: string;
   dateNaissance?: string;
 };
+export type GetAllMedecinsResponse = {
+  getAllMedecins: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    phoneNumber: string;
+    specialite: string;
+    disponibilite: string;
+  }[];
+};
