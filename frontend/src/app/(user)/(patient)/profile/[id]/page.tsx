@@ -1,34 +1,50 @@
 "use client";
 import { useQuery } from "@apollo/client/react";
 import { useParams } from "next/navigation";
-import { GET_PATIENT } from "@/src/graphql/query";
+import { GET_PATIENT, GET_PATIENT_APPOINTMENTS_FOR_ME } from "@/src/graphql/query";
 import { PatientProfile } from "@/src/components/patient/patientProfile";
 import { GetPatientData, GetPatientVars } from "@/src/interfaces/patient";
+import { GetPatientAppointmentsData, GetPatientAppointmentsVars } from "@/src/interfaces/appointment";
 import PageBreadcrumb from "@/src/components/layout/PageBreadcrumb";
 
 export default function PatientDetailsPage() {
+  const params = useParams();
+  console.log("params:", params);
   const { id } = useParams();
 
-  const { data, loading, error } = useQuery<GetPatientData, GetPatientVars>(
-    GET_PATIENT,
-    {
-      variables: { id: Number(id) },
-    }
-  );
+   const patientId = Number(params.id);
+ 
+  const {
+    data: patientData,
+    loading: patientLoading,
+    error: patientError
+  } = useQuery<GetPatientData, GetPatientVars>(GET_PATIENT, {
+    variables: { id: Number(id) },
+  });
 
-  const appointments: any[] = [];
+  const {
+    data: appointmentsData,
+    loading: appointmentsLoading,
+    error: appointmentsError,
+  } = useQuery<GetPatientAppointmentsData, GetPatientAppointmentsVars>(GET_PATIENT_APPOINTMENTS_FOR_ME, {
+    variables: { patientId },
+  });
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error loading patient.</p>;
-  if (!data?.getPatientProfile) return <p>No patient found</p>;
+
+  if (patientLoading || appointmentsLoading) return <p>Loading...</p>;
+  if (patientError) return <p>Error loading patient.</p>;
+  if (appointmentsError) return <p>Error loading appointments.</p>;
+
+  if (!patientData?.getPatientProfile)
+    return <p>No patient found</p>;
 
   return (
     <>
-      <PageBreadcrumb pageTitle="Patient Profile" />
+ <PageBreadcrumb pageTitle="Patient Profile" />
       <PatientProfile
-        patient={data.getPatientProfile}
-        appointments={appointments}
+        patient={patientData.getPatientProfile}
+        appointments={appointmentsData?.getPatientAppointmentsForMe || []}
       />
-    </>
+ </>
   );
 }

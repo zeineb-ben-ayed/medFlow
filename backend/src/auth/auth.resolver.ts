@@ -13,7 +13,7 @@ export class AuthResolver {
   private keycloakUrl = 'http://localhost:8080';
   private realm = 'medFlow';
   private clientId = 'nest-api';
-  private clientSecret = 'eg9sUSqP6w6WW9WwJB9yEvQDKWRCUoVi';
+  private clientSecret = 'IoT1qYcMnF01OAHnWxn1gVu3JSIQiShT';
   @Public()
   @Mutation(() => AuthResponse)
   async login(

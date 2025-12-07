@@ -117,3 +117,33 @@ export const DELETE_PATIENT = gql`
     deletePatient(id: $id)
   }
 `;
+export const CREATE_APPOINTMENT = gql`
+  mutation CreateAppointment(
+    $date: String!
+    $time: String!
+    $patientKeycloakId: String!
+    $medecinId: Int!
+  ) {
+    createAppointment(
+      data: {
+        date: $date
+        time: $time
+        patientKeycloakId: $patientKeycloakId
+        medecinId: $medecinId
+      }
+    ) {
+      id
+      date
+      time
+      status
+      patient {
+        firstName
+        lastName
+      }
+      medecin {
+        firstName
+        lastName
+      }
+    }
+  }
+`;

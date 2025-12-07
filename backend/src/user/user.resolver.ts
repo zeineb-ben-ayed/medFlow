@@ -44,6 +44,12 @@ export class UserResolver {
     await this.userService.deleteUserById(id);
     return true;
   }
+@Query(() => [Medecin])
+@Roles({ roles: ['realm:admin', 'realm:receptionniste', 'realm:patient'] })
+async getAllMedecins(): Promise<Medecin[]> {
+  const users = await this.userService.findAllMedecinsAndReceptionnistes();
+  return users.filter((u) => u.role === 'medecin') as Medecin[];
+}
 
   @Resource('user')
   @Query(() => UserDto)
