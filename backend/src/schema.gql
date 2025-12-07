@@ -105,8 +105,10 @@ type Mutation {
   deletePatient(id: Int!): Boolean!
   deleteUser(id: Int!): Boolean!
   editPatient(input: CreatePatientInput!): Patient!
+  editProfile(updateData: UpdateUserDto!): User!
   login(password: String!, username: String!): AuthResponse!
   logout: Boolean!
+  refreshToken(refreshToken: String!): AuthResponse!
   register(dateNaissance: String!, email: String!, extraData: ExtraDataInput, firstName: String!, lastName: String!, password: String!, phoneNumber: String!, role: String!, username: String!): String!
 }
 
@@ -141,6 +143,7 @@ type Query {
   getPatientAppointmentsForMe(patientId: Int!): [Appointment!]!
   getPatientById(id: Int!): Patient!
   getPatientProfile(id: Int!): Patient!
+  getProfile: User!
   hello: String!
 }
 
@@ -156,6 +159,18 @@ type Receptionniste implements User {
   poste: String!
   role: String!
   username: String
+}
+
+input UpdateUserDto {
+  dateNaissance: String
+  disponibilite: Boolean
+  email: String
+  firstName: String
+  horaires: String
+  lastName: String
+  phoneNumber: String
+  poste: String
+  specialite: String
 }
 
 interface User {

@@ -13,6 +13,7 @@ import { Button } from "@/src/components/ui/button";
 import { Textarea } from "../ui/textarea";
 import { Patient } from "@/src/interfaces/patient";
 import { Save, SquarePen } from "lucide-react";
+import { DatePicker } from "../ui/date-picker";
 
 type PatientFormProps = {
   mode: "create" | "edit";
@@ -60,7 +61,12 @@ export default function PatientForm({
     e.preventDefault();
     onSubmit(formData);
   };
-
+  const handleDateChange = (date: Date | undefined) => {
+    setFormData((prev) => ({
+      ...prev,
+      dateNaissance: date ? date.toISOString() : "",
+    }));
+  };
   return (
     <form onSubmit={handleSubmit} className="space-y-10">
       <section className="space-y-7">
@@ -97,11 +103,14 @@ export default function PatientForm({
           </div>
           <div className="flex flex-col space-y-3">
             <Label>Date Of Birth</Label>
-            <Input
-              type="date"
-              name="dateNaissance"
-              value={formData.dateNaissance ?? ""}
-              onChange={(e) => update("dateNaissance", e.target.value)}
+            <DatePicker
+              value={
+                formData.dateNaissance
+                  ? new Date(formData.dateNaissance)
+                  : undefined
+              }
+              onChange={handleDateChange}
+              maxDate={new Date()}
             />
           </div>
           <div className="flex flex-col space-y-3">

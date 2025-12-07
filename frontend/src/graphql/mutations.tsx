@@ -118,6 +118,28 @@ export const DELETE_PATIENT = gql`
   }
 `;
 
+export const EDIT_PROFILE = gql`
+  mutation EditProfile($updateData: UpdateUserDto!) {
+    editProfile(updateData: $updateData) {
+      id
+      firstName
+      lastName
+      email
+      phoneNumber
+      dateNaissance
+      ... on Medecin {
+        specialite
+        disponibilite
+      }
+
+      ... on Receptionniste {
+        poste
+        horaires
+      }
+      role
+    }
+  }
+`;
 export const LOGOUT_MUTATION = gql`
   mutation Logout {
     logout

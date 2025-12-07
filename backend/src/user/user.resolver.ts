@@ -13,12 +13,13 @@ import { Get, UseGuards } from '@nestjs/common';
 import { Medecin } from 'src/medecin/medecin.entity';
 import { Receptionniste } from 'src/receptionniste/receptionniste.entity';
 import { UserDto } from './dto/user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Resolver(() => User)
 @Resource('user')
 @UseGuards(AuthGuard, RoleGuard)
 export class UserResolver {
-  constructor(private readonly userService: UserService) { }
+  constructor(private readonly userService: UserService) {}
 
   @Query(() => [User])
   @Roles({ roles: ['realm:admin'] })
@@ -44,12 +45,12 @@ export class UserResolver {
     await this.userService.deleteUserById(id);
     return true;
   }
-@Query(() => [Medecin])
-@Roles({ roles: ['realm:admin', 'realm:receptionniste', 'realm:patient'] })
-async getAllMedecins(): Promise<Medecin[]> {
-  const users = await this.userService.findAllMedecinsAndReceptionnistes();
-  return users.filter((u) => u.role === 'medecin') as Medecin[];
-}
+  @Query(() => [Medecin])
+  @Roles({ roles: ['realm:admin', 'realm:receptionniste', 'realm:patient'] })
+  async getAllMedecins(): Promise<Medecin[]> {
+    const users = await this.userService.findAllMedecinsAndReceptionnistes();
+    return users.filter((u) => u.role === 'medecin') as Medecin[];
+  }
 
   @Resource('user')
   @Query(() => UserDto)
@@ -62,5 +63,23 @@ async getAllMedecins(): Promise<Medecin[]> {
       email: user.email,
       roles: user?.realm_access?.roles || [],
     };
+  }
+
+  @Query(() => User)
+  @Resource('user')
+  @Roles({ roles: ['realm:admin', 'realm:medecin', 'realm:receptionniste'] })
+  getProfile(@AuthenticatedUser() kcUser: any) {
+    const keycloakId = kcUser.sub;
+    return this.userService.getProfile(keycloakId);
+  }
+
+  @Mutation(() => User)
+  @Resource('user')
+  @Roles({ roles: ['realm:admin', 'realm:medecin', 'realm:receptionniste'] })
+  async editProfile(
+    @AuthenticatedUser() kcUser: any,
+    @Args('updateData') updateData: UpdateUserDto,
+  ) {
+    return this.userService.updateProfile(kcUser.sub, updateData);
   }
 }

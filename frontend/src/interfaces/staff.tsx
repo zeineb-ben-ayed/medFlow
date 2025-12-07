@@ -11,6 +11,20 @@ export interface Staff {
   horaires?: string;
   specialite?: string;
 }
+
+export type Profile = {
+  id: number;
+  role: "admin" | "medecin" | "receptionniste";
+  firstName: string;
+  lastName: string;
+  email: string;
+  specialite?: string;
+  disponibilite?: boolean;
+  poste?: string;
+  horaires?: string;
+  phoneNumber?: string;
+  dateNaissance?: string;
+};
 export type GetAllMedecinsResponse = {
   getAllMedecins: {
     id: string;

@@ -14,6 +14,7 @@ import { Column } from "@/src/interfaces/column";
 import PageBreadcrumb from "@/src/components/layout/PageBreadcrumb";
 import { DELETE_PATIENT } from "@/src/graphql/mutations";
 import DeleteDialog from "@/src/components/ui/deleteDialog";
+import { useCurrentUser } from "@/src/hooks/useCurrentUser";
 
 const PatientList = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -28,6 +29,9 @@ const PatientList = () => {
     refetchQueries: ["FindAllPatients"],
     onError: (err) => console.error(err),
   });
+
+  const { user } = useCurrentUser();
+  const roles = user?.roles;
 
   const patients = data?.findAllPatients || [];
 
@@ -121,19 +125,22 @@ const PatientList = () => {
       align: "center",
       render: (_, row) => (
         <div className="flex justify-end gap-2">
+          {roles?.includes("medecin") && (
+            <Button
+              className="cursor-pointer"
+              variant="ghost"
+              size="sm"
+              onClick={() => router.push(`/profile/${row.id}`)}
+            >
+              <Eye className="h-4 w-4" />
+            </Button>
+          )}
+
           <Button
-            className="cursor-pointer"
-            variant="ghost"
-            size="sm"
-            onClick={() => router.push(`/profile/${row.id}`)}
-          >
-            <Eye className="h-4 w-4" />
-          </Button>
-          <Button
             variant="ghost"
             className="cursor-pointer"
             size="sm"
-            onClick={() => router.push(`/patients/${row.id}/edit`)}
+            onClick={() => router.push(`/patientEdit/${row.id}`)}
           >
             <Edit className="h-4 w-4" />
           </Button>
