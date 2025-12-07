@@ -6,6 +6,7 @@ import "./globals.css";
 import { Toaster } from "sonner";
 import { ApolloProvider } from "@apollo/client/react";
 import { client } from "../lib/apollo-client";
+import { useEffect } from "react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,6 +28,10 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  useEffect(() => {
+    document.title = "Medflow";
+  }, []);
+
   return (
     <html lang="en" className="h-full" suppressHydrationWarning>
       <body

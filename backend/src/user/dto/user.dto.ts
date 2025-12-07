@@ -16,4 +16,7 @@ export class UserDto {
 
     @Field()
     email: string;
+
+    @Field((() => [String]))
+    roles: string[];
 }
